@@ -1,0 +1,82 @@
+plugins {
+    id 'com.android.application'
+    id "org.sonarqube" version "3.0"
+}
+
+apply plugin: "com.vanniktech.android.junit.jacoco"
+
+junitJacoco {
+    jacocoVersion = '0.8.6' // type String
+    ignoreProjects = [] // type String array
+    excludes // type String List
+    includeNoLocationClasses = false // type boolean
+    includeInstrumentationCoverageInMergedReport = false // type boolean
+}
+
+sonarqube {
+    properties {
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.organization", "isuc"
+        property "sonar.login", "120537998e2c122476f30cade8d4a25865210fa6"
+        property "sonar.projectKey", "AppOcio2021"
+        property "sonar.projectName", "AppOcio2021"
+
+        // I need this property to avoid the error where sonarqube does not close some files and
+        // prevents a clean afterwards
+        property "sonar.scm.disabled", true
+
+        // this property is deprecated, now I use the xml file defined below it
+        // property "sonar.jacoco.reportPaths", "${project.buildDir}/jacoco/testDebugUnitTest.exec"
+        property "sonar.coverage.jacoco.xmlReportPaths", "${project.buildDir}/reports/jacoco/debug/jacoco.xml"
+    }
+}
+
+android {
+    compileSdkVersion 31
+
+    defaultConfig {
+        applicationId "com.isunican.eventossantander"
+        minSdkVersion 23
+        targetSdkVersion 31
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.appcompat:appcompat:1.3.0'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.test.espresso:espresso-idling-resource:3.4.0'
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+    // new for tests
+    androidTestImplementation 'androidx.test:rules:1.4.0'
+
+    // for advanced string manipulation
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+
+    // retrofit (for REST access)
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+    // picasso (for image loading from URL)
+    implementation 'com.squareup.picasso:picasso:2.8'
+
+}

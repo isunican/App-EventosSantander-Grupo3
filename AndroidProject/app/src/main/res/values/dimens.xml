@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dimension logo  -->
+    <dimen name="logo">60dp</dimen>
+    <dimen name="marginLogo">10dp</dimen>
+    <dimen name="marginTextView">10dp</dimen>
+    <dimen name="marginTop">10dp</dimen>
+    <dimen name="detailImageHeight">200dp</dimen>
+</resources>
