@@ -3,4 +3,7 @@
     <string name="menu_reload">Reload</string>
     <string name="menu_info">Info</string>
     <string name="info_text">Aplicación creada para el Proyecto Integrado del curso 2021-2022</string>
+    <string name="date">Fecha evento: </string>
+
+    <string name="accesibility_image_events_detail">Imagen representativa del evento</string>
 </resources>
