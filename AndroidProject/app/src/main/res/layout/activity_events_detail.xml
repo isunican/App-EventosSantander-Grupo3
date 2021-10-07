@@ -28,18 +28,6 @@
             tools:srcCompat="@tools:sample/avatars" />
 
         <ImageView
-            android:id="@+id/event_detail_gradient"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:contentDescription="@string/accesibility_image_events_detail"
-            app:layout_constraintBottom_toBottomOf="@+id/event_detail_image"
-            app:layout_constraintEnd_toEndOf="@+id/event_detail_image"
-            app:layout_constraintStart_toStartOf="@+id/event_detail_image"
-            app:layout_constraintTop_toTopOf="@+id/event_detail_image"
-            app:srcCompat="@drawable/white_drawable"
-            tools:ignore="ImageContrastCheck" />
-
-        <ImageView
             android:id="@+id/imageView3"
             android:layout_width="60dp"
             android:layout_height="60dp"
