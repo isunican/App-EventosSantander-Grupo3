@@ -34,7 +34,7 @@ public class EventsDetailActivity extends AppCompatActivity {
         // Set information
         eventTitleText.setText(event.getNombre());
         eventDateText.setText(event.getFecha());
-        eventDescriptionText.setText(event.getDescripcion());
+        eventDescriptionText.setText(Html.fromHtml(event.getDescripcion()));
         Picasso.get().load(event.getImagen()).into(eventImage);
     }
 }
