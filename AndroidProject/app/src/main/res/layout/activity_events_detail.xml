@@ -27,17 +27,6 @@
             tools:layout_editor_absoluteY="20dp"
             tools:srcCompat="@tools:sample/avatars" />
 
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:scaleType="centerCrop"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/buttom_back" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
