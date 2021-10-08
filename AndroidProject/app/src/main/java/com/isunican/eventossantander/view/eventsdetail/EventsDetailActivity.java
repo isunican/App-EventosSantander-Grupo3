@@ -33,8 +33,14 @@ public class EventsDetailActivity extends AppCompatActivity {
 
         // Set information
         eventTitleText.setText(event.getNombre());
-        eventDateText.setText(event.getFecha());
+        eventDateText.setText(cutDate(event.getFecha()));
         eventDescriptionText.setText(Html.fromHtml(event.getDescripcion()));
         Picasso.get().load(event.getImagen()).into(eventImage);
+    }
+
+    private String cutDate(String fecha) {
+        String[] date1 = fecha.split(" ");
+        String[] dateDefinitive = date1[1].split(",");
+        return dateDefinitive[0];
     }
 }
