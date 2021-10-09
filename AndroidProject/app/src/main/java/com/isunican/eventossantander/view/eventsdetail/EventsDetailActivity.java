@@ -26,14 +26,21 @@ public class EventsDetailActivity extends AppCompatActivity {
         TextView eventTitleText = findViewById(R.id.event_detail_title);
         TextView eventDateText = findViewById(R.id.event_detail_date);
         TextView eventDescriptionText = findViewById(R.id.event_detail_description);
-        ///////ImageView eventImage = findViewById(R.id.event_detail_image);
+        ImageView eventImage = findViewById(R.id.event_detail_image);
 
         // Get Event from the intent that triggered this activity
         Event event = getIntent().getExtras().getParcelable(INTENT_EVENT);
 
         // Set information
         eventTitleText.setText(event.getNombre());
-        eventDateText.setText(event.getFecha());
-        eventDescriptionText.setText(event.getDescripcion());
+        eventDateText.setText(cutDate(event.getFecha()));
+        eventDescriptionText.setText(Html.fromHtml(event.getDescripcion()));
+        Picasso.get().load(event.getImagen()).into(eventImage);
+    }
+
+    private String cutDate(String fecha) {
+        String[] date1 = fecha.split(" ");
+        String[] dateDefinitive = date1[1].split(",");
+        return dateDefinitive[0];
     }
 }

@@ -6,6 +6,7 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.Matchers.anything;
 
 import android.os.SystemClock;
@@ -45,12 +46,16 @@ public class DetailActivityUITest {
 
 
     @Test
-    public void vistaDetalladaGasolinera(){
+    public void vistaDetalladaEvento(){
         // Open detail view of first event
 //        SystemClock.sleep(20000);
         onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0).perform(click());
 
         // Check if data matches
-        onView(withId(R.id.event_detail_title)).check(matches(withText("Centro de Arte Faro  Cabo Mayor")));
+
+
+        onView(withId(R.id.event_detail_title)).check(matches(withText("Abierto el plazo de inscripción para el Concurso Internacional de Piano de Santander Paloma O'Shea")));
+        onView(withId(R.id.event_detail_description)).check(matches(withText(containsString("Hasta el 18 de octubre de 2021"))));
+        onView(withId(R.id.event_detail_date)).check(matches(withText("31/07/2021")));
     }
 }
