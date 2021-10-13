@@ -6,4 +6,6 @@
     <string name="date">Fecha evento:</string>
 
     <string name="accesibility_image_events_detail">Imagen representativa del evento</string>
+    <string name="filtrar">Filtrar</string>
+    <string name="ordenar">Ordenar</string>
 </resources>
