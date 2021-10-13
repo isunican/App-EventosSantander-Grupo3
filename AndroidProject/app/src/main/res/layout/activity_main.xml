@@ -35,6 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
+                android:drawableRight="@android:drawable/ic_menu_sort_alphabetically"
                 android:text="@string/ordenar"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
