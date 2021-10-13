@@ -190,7 +190,4 @@ public class Event implements Parcelable {
         }
     };
 
-    public int compareTo(String s) {
-        return this.categoria.equals(s) ? 1 : 0;
-    }
 }

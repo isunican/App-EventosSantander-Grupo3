@@ -2,6 +2,7 @@ package com.isunican.eventossantander.presenter.events;
 
 import com.isunican.eventossantander.model.Event;
 import com.isunican.eventossantander.model.EventsRepository;
+import com.isunican.eventossantander.model.comparators.EventsComparatorCategoria;
 import com.isunican.eventossantander.view.Listener;
 import com.isunican.eventossantander.view.events.IEventsContract;
 
@@ -11,6 +12,10 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
     private final IEventsContract.View view;
     private List<Event> cachedEvents;
+    private List<Event> cachedEventsOrdenados;
+    private List<Event> cachedEventsOriginal;
+
+
 
     public EventsPresenter(IEventsContract.View view) {
         this.view = view;
@@ -24,6 +29,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
                 view.onEventsLoaded(data);
                 view.onLoadSuccess(data.size());
                 cachedEvents = data;
+                cachedEventsOriginal = cachedEvents;
             }
 
             @Override
@@ -50,5 +56,22 @@ public class EventsPresenter implements IEventsContract.Presenter {
     @Override
     public void onInfoClicked() {
         view.openInfoView();
+    }
+
+    @Override
+    public void onOrdenarCategoriaAscendenteClicked() {
+        EventsComparatorCategoria ecc = new EventsComparatorCategoria();
+        java.util.Collections.sort(cachedEvents,ecc);
+        cachedEventsOrdenados = cachedEvents;
+        view.onEventsLoaded(cachedEventsOrdenados);
+    }
+
+    @Override
+    public void onOrdenarCategoriaDescendenteClicked() {
+        EventsComparatorCategoria ecc = new EventsComparatorCategoria();
+        java.util.Collections.sort(cachedEvents,ecc);
+        java.util.Collections.sort(cachedEvents, java.util.Collections.reverseOrder());
+        cachedEventsOrdenados = cachedEvents;
+        view.onEventsLoaded(cachedEventsOrdenados);
     }
 }
