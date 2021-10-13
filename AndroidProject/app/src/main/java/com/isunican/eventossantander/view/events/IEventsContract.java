@@ -14,6 +14,10 @@ public interface IEventsContract {
 
         void onInfoClicked();
 
+        void onOrdenarCategoriaAscendenteClicked();
+
+        void onOrdenarCategoriaDescendenteClicked();
+
     }
 
     public interface View {
