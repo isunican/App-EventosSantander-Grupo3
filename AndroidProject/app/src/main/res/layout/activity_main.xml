@@ -27,7 +27,7 @@
                 android:drawableTint="#FBFBFB"
                 android:onClick="onClick"
                 android:text="@string/filtrar"
-                app:iconPadding="0dp"
+                app:iconPadding="5dp"
                 app:iconTint="@color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/btn_ordenar"

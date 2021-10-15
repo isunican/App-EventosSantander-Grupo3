@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -29,6 +30,9 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     private EventArrayAdapter adapter;
 
     private Button btnFiltrar;
+
+    private List<String> tipostotales;
+    private List<String> tiposSeleccionados;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,8 +121,12 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
 
     @Override
     public AlertDialog onFilterAlertDialog(){
-        //Creamos una lista donde meter los eventos que cumplan el filtro
-        List eventosFiltrados = new ArrayList<Event>();
+        //Creamos dos listas donde tenemos los tipos de evento, y los tipos marcados para filtrar
+        tipostotales = new ArrayList<String>();
+        anhadirTiposeventos(tipostotales);
+        tipostotales.toArray(new String[tipostotales.size()]);
+
+        tiposSeleccionados = new ArrayList<String>();
 
         //Creamos una AlertDialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -127,9 +135,41 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         builder.setTitle("Filtrar");
 
         //Creamos los elementos de la seleccion de tipo multiple
-        //builder.setMultiChoiceItems();
+        builder.setMultiChoiceItems(tipostotales.toArray(new String[tipostotales.size()]), null, new DialogInterface.OnMultiChoiceClickListener(){
+            @Override
+            public void onClick(DialogInterface dialog, int which,
+                                boolean estaMarcado) {
+                if (estaMarcado) {
+                    // If the user checked the item, add it to the selected items
+                    tiposSeleccionados.add(tipostotales.get(which));
+                } else if (tiposSeleccionados.contains(which)) {
+                    // Else, if the item is already in the array, remove it
+                    tiposSeleccionados.remove(which);
+                }
+            }
+        });
+
+
+        //Creamos el boton de aplicar
+        builder.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                presenter.onFiltrarClicked(tiposSeleccionados);
+            }
+        });
+        builder.setNegativeButton("Cancelar",  new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
 
         return builder.create();
+    }
+
+    public void anhadirTiposeventos(List<String> tipostotales){
+        tipostotales.add("Música");
+        tipostotales.add("Artes Plasticas");
     }
 
 }
