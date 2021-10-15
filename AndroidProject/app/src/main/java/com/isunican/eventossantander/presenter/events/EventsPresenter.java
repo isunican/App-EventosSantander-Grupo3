@@ -1,5 +1,6 @@
 package com.isunican.eventossantander.presenter.events;
 
+
 import com.isunican.eventossantander.model.Event;
 import com.isunican.eventossantander.model.EventsRepository;
 import com.isunican.eventossantander.model.comparators.EventsComparatorCategoria;
@@ -73,5 +74,10 @@ public class EventsPresenter implements IEventsContract.Presenter {
         java.util.Collections.sort(cachedEvents, java.util.Collections.reverseOrder());
         cachedEventsOrdenados = cachedEvents;
         view.onEventsLoaded(cachedEventsOrdenados);
+    }
+
+    @Override
+    public void onFiltrarClicked(List<String> checkboxSeleccionados){
+
     }
 }
