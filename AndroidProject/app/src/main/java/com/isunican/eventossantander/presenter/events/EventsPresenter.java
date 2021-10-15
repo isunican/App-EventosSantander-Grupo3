@@ -6,6 +6,7 @@ import com.isunican.eventossantander.model.comparators.EventsComparatorCategoria
 import com.isunican.eventossantander.view.Listener;
 import com.isunican.eventossantander.view.events.IEventsContract;
 
+import java.util.Collections;
 import java.util.List;
 
 public class EventsPresenter implements IEventsContract.Presenter {
@@ -59,19 +60,21 @@ public class EventsPresenter implements IEventsContract.Presenter {
     }
 
     @Override
-    public void onOrdenarCategoriaAscendenteClicked() {
-        EventsComparatorCategoria ecc = new EventsComparatorCategoria();
-        java.util.Collections.sort(cachedEvents,ecc);
-        cachedEventsOrdenados = cachedEvents;
-        view.onEventsLoaded(cachedEventsOrdenados);
-    }
-
-    @Override
-    public void onOrdenarCategoriaDescendenteClicked() {
-        EventsComparatorCategoria ecc = new EventsComparatorCategoria();
-        java.util.Collections.sort(cachedEvents,ecc);
-        java.util.Collections.sort(cachedEvents, java.util.Collections.reverseOrder());
-        cachedEventsOrdenados = cachedEvents;
-        view.onEventsLoaded(cachedEventsOrdenados);
+    public void onOrdenarCategoriaClicked(int tipoOrdenacion) {
+        if (tipoOrdenacion == 0) { //ascendente
+            EventsComparatorCategoria ecc = new EventsComparatorCategoria();
+            Collections.sort(cachedEvents,ecc);
+            cachedEventsOrdenados = cachedEvents;
+            for(Event e: cachedEventsOrdenados) {
+                System.out.println("Categoria: "+e.getCategoria());
+            }
+            view.onEventsLoaded(cachedEventsOrdenados);
+        } else if(tipoOrdenacion == 1) { //descendente
+            EventsComparatorCategoria ecc = new EventsComparatorCategoria();
+            java.util.Collections.sort(cachedEvents,ecc);
+            Collections.reverse(cachedEvents);
+            cachedEventsOrdenados = cachedEvents;
+            view.onEventsLoaded(cachedEventsOrdenados);
+        }
     }
 }

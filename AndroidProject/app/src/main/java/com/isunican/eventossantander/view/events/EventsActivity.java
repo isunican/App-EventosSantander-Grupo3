@@ -1,10 +1,10 @@
 package com.isunican.eventossantander.view.events;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,8 +22,8 @@ import com.isunican.eventossantander.model.Event;
 import com.isunican.eventossantander.presenter.events.EventsPresenter;
 import com.isunican.eventossantander.view.eventsdetail.EventsDetailActivity;
 import com.isunican.eventossantander.view.info.InfoActivity;
-
 import java.lang.reflect.Array;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,9 +33,13 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     private EventArrayAdapter adapter;
 
     // Declaramos campos para enlazar con widgets del layout
-    private Button btnFiltrar, btnOrdenar;
+    private Button btnOrdenar;
     private  ArrayList selectedItems;
     private  ArrayList selectedItemsFinales;
+
+    private Button btnFiltrar;
+    private int posi;
+
 
 
     @Override
@@ -47,14 +51,17 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         setContentView(R.layout.activity_main);
 
         // Enlazamos con los widgets del layout
-        btnFiltrar = findViewById(R.id.btn_filtrar);
+
         btnOrdenar = findViewById(R.id.btn_ordenar);
 
         // Asignamos los listeners para los botones
-        btnFiltrar.setOnClickListener(this);
         btnOrdenar.setOnClickListener(this);
 
         // Creamos objeto presenter para cargar los datos del modelo y mostrarlos en la vista
+        //enlazamos con el layout y asignamos listener para el boton de filtrar
+        btnFiltrar = findViewById(R.id.btn_filtrar);
+        btnFiltrar.setOnClickListener(this);
+
         presenter = new EventsPresenter(this);
     }
 
@@ -123,64 +130,67 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         }
     }
 
-    @Override
     public void onClick(View view) {
-        // listener para el boton filtrar
         if (view.getId() == R.id.btn_filtrar) {
-            AlertDialog a = onCreateDialog();
-
-            // listener para el boton ordenar
+            AlertDialog ad = onFilterAlertDialog();
+            ad.show();
         } else if (view.getId() == R.id.btn_ordenar) {
-
-            Intent intent = new Intent(this, InfoActivity.class);
-            startActivity(intent);
+            AlertDialog ado = onFilterAlertDialogOrdenar();
+            ado.show();
         }
     }
 
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        selectedItems = new ArrayList();  // Where we track the selected items
-        selectedItemsFinales = new ArrayList();
+    @Override
+    public AlertDialog onFilterAlertDialog(){
+        //Creamos una lista donde meter los eventos que cumplan el filtro
+        List eventosFiltrados = new ArrayList<Event>();
+
+        //Creamos una AlertDialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        // Set the dialog title
-        builder.setTitle("ORDENAR")
-                // Specify the list array, the items to be selected by default (null for none),
-                // and the listener through which to receive callbacks when items are selected
-                .setMultiChoiceItems(R.array.toppings, null,
-                        new DialogInterface.OnMultiChoiceClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which,
-                                                boolean isChecked) {
-                                if (isChecked) {
-                                    // If the user checked the item, add it to the selected items
-                                    selectedItems.add(which);
-                                } else if (selectedItems.contains(which)) {
-                                    // Else, if the item is already in the array, remove it
-                                    selectedItems.remove(which);
-                                }
-                            }
-                        })
-                // Set the action buttons
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User clicked OK, so save the selectedItems results somewhere
-                        // or return them to the component that opened the dialog
-                        selectedItemsFinales = selectedItems;
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        selectedItemsFinales.clear();
-                    }
-                });
+
+        //Le ponemos un titulo
+        builder.setTitle("Filtrar");
+
+        //Creamos los elementos de la seleccion de tipo multiple
+        //builder.setMultiChoiceItems();
 
         return builder.create();
     }
 
+    public AlertDialog onFilterAlertDialogOrdenar(){
+        //Creamos una lista donde meter los eventos que cumplan el filtro
+        List eventosFiltrados = new ArrayList<Event>();
 
-    @Override
-    public void onPointerCaptureChanged(boolean hasCapture) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        String[] array = {"Ascendente(A-Z)", "Descendente(Z-A)"};
+        builder.setTitle("Ordenar");
+        //int checkedItem, final DialogInterface.OnClickListener listener
+//        builder.setSingleChoiceItems(array, null, new DialogInterface.OnClickListener() {
+ //                   @Override
+ //                   public void onClick(DialogInterface dialogInterface, int i) {
+  //                      posi = i;
+   //                 }
+    //            });
+        builder.setSingleChoiceItems(array, 0, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                posi = i;
+            }
+        });
+                // Set the action buttons
+        builder.setPositiveButton("Aplicar", (dialog, id) -> {
+            // User clicked OK, so save the selectedItems results somewhere
+            // or return them to the component that opened the dialog
+            presenter.onOrdenarCategoriaClicked(posi);
+            selectedItemsFinales = selectedItems;
+        });
+        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        //selectedItems.clear();
 
+                    }
+                });
+        return builder.create();
     }
 }
