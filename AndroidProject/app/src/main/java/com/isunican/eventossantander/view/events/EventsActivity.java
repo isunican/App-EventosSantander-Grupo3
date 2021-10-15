@@ -23,6 +23,7 @@ import com.isunican.eventossantander.presenter.events.EventsPresenter;
 import com.isunican.eventossantander.view.eventsdetail.EventsDetailActivity;
 import com.isunican.eventossantander.view.info.InfoActivity;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +35,8 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     // Declaramos campos para enlazar con widgets del layout
     private Button btnFiltrar, btnOrdenar;
     private  ArrayList selectedItems;
+    private  ArrayList selectedItemsFinales;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,6 +139,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         selectedItems = new ArrayList();  // Where we track the selected items
+        selectedItemsFinales = new ArrayList();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         // Set the dialog title
         builder.setTitle("ORDENAR")
@@ -161,15 +165,13 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
                     public void onClick(DialogInterface dialog, int id) {
                         // User clicked OK, so save the selectedItems results somewhere
                         // or return them to the component that opened the dialog
-                        //TODO deberia devolver la lista de marcados
-                        return selectedItems;
-
+                        selectedItemsFinales = selectedItems;
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                   //TODO   no deberia devolver nada
+                        selectedItemsFinales.clear();
                     }
                 });
 
