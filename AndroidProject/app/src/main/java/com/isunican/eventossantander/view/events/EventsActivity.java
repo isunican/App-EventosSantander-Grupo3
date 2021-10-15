@@ -42,6 +42,9 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
 
 
 
+    private List<String> tipostotales;
+    private List<String> tiposSeleccionados;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // es importante llamar siempre al método de la clase padre, para inicializar
@@ -142,8 +145,12 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
 
     @Override
     public AlertDialog onFilterAlertDialog(){
-        //Creamos una lista donde meter los eventos que cumplan el filtro
-        List eventosFiltrados = new ArrayList<Event>();
+        //Creamos dos listas donde tenemos los tipos de evento, y los tipos marcados para filtrar
+        tipostotales = new ArrayList<String>();
+        anhadirTiposeventos(tipostotales);
+        tipostotales.toArray(new String[tipostotales.size()]);
+
+        tiposSeleccionados = new ArrayList<String>();
 
         //Creamos una AlertDialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -152,7 +159,34 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         builder.setTitle("Filtrar");
 
         //Creamos los elementos de la seleccion de tipo multiple
-        //builder.setMultiChoiceItems();
+        builder.setMultiChoiceItems(tipostotales.toArray(new String[tipostotales.size()]), null, new DialogInterface.OnMultiChoiceClickListener(){
+            @Override
+            public void onClick(DialogInterface dialog, int which,
+                                boolean estaMarcado) {
+                if (estaMarcado) {
+                    // If the user checked the item, add it to the selected items
+                    tiposSeleccionados.add(tipostotales.get(which));
+                } else if (tiposSeleccionados.contains(tipostotales.get(which))) {
+                    // Else, if the item is already in the array, remove it
+                    tiposSeleccionados.remove(tipostotales.get(which));
+                }
+            }
+        });
+
+
+        //Creamos el boton de aplicar
+        builder.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                presenter.onFiltrarClicked(tiposSeleccionados);
+            }
+        });
+        builder.setNegativeButton("Cancelar",  new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
 
         return builder.create();
     }
@@ -164,13 +198,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         String[] array = {"Ascendente(A-Z)", "Descendente(Z-A)"};
         builder.setTitle("Ordenar");
-        //int checkedItem, final DialogInterface.OnClickListener listener
-//        builder.setSingleChoiceItems(array, null, new DialogInterface.OnClickListener() {
- //                   @Override
- //                   public void onClick(DialogInterface dialogInterface, int i) {
-  //                      posi = i;
-   //                 }
-    //            });
+
         builder.setSingleChoiceItems(array, 0, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -192,5 +220,19 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
                     }
                 });
         return builder.create();
+    }
+
+    public void anhadirTiposeventos(List<String> tipostotales){
+        tipostotales.add("Arquitectura");
+        tipostotales.add("Artes plásticas");
+        tipostotales.add("Cine/Audiovisual");
+        tipostotales.add("Edición/Literatura");
+        tipostotales.add("Formación/Talleres");
+        tipostotales.add("Fotografía");
+        tipostotales.add("Infantil");
+        tipostotales.add("Música");
+        tipostotales.add("Online");
+        tipostotales.add("Otros");
+
     }
 }

@@ -6,6 +6,7 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.isunican.eventossantander.model.Event;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface IEventsContract {
@@ -19,6 +20,10 @@ public interface IEventsContract {
         void onInfoClicked();
 
         void onOrdenarCategoriaClicked(int tipoOrdenacion);
+
+
+        void onFiltrarClicked(List<String> checkboxSeleccionados);
+
     }
 
     public interface View {
