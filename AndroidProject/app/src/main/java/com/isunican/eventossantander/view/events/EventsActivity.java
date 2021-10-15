@@ -142,7 +142,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
                 if (estaMarcado) {
                     // If the user checked the item, add it to the selected items
                     tiposSeleccionados.add(tipostotales.get(which));
-                } else if (tiposSeleccionados.contains(which)) {
+                } else if (tiposSeleccionados.contains(tipostotales.get(which))) {
                     // Else, if the item is already in the array, remove it
                     tiposSeleccionados.remove(which);
                 }
@@ -168,8 +168,17 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     }
 
     public void anhadirTiposeventos(List<String> tipostotales){
+        tipostotales.add("Arquitectura");
+        tipostotales.add("Artes plásticas");
+        tipostotales.add("Cine/Audiovisual");
+        tipostotales.add("Edición/Literatura");
+        tipostotales.add("Formación/Talleres");
+        tipostotales.add("Fotografía");
+        tipostotales.add("Infantil");
         tipostotales.add("Música");
-        tipostotales.add("Artes Plasticas");
+        tipostotales.add("Online");
+        tipostotales.add("Otros");
+
     }
 
 }
