@@ -144,7 +144,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
                     tiposSeleccionados.add(tipostotales.get(which));
                 } else if (tiposSeleccionados.contains(tipostotales.get(which))) {
                     // Else, if the item is already in the array, remove it
-                    tiposSeleccionados.remove(which);
+                    tiposSeleccionados.remove(tipostotales.get(which));
                 }
             }
         });
