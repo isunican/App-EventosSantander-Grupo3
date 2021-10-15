@@ -25,6 +25,7 @@
                 android:backgroundTint="@color/black"
                 android:drawableRight="@drawable/icono_filtro"
                 android:drawableTint="#FBFBFB"
+                android:onClick="onClick"
                 android:text="@string/filtrar"
                 app:iconPadding="0dp"
                 app:iconTint="@color/black"
