@@ -7,6 +7,7 @@ import com.isunican.eventossantander.model.comparators.EventsComparatorCategoria
 import com.isunican.eventossantander.view.Listener;
 import com.isunican.eventossantander.view.events.IEventsContract;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EventsPresenter implements IEventsContract.Presenter {
@@ -15,6 +16,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
     private List<Event> cachedEvents;
     private List<Event> cachedEventsOrdenados;
     private List<Event> cachedEventsOriginal;
+    private List<Event> filteredEvents;
 
 
 
@@ -78,6 +80,21 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
     @Override
     public void onFiltrarClicked(List<String> checkboxSeleccionados){
+        filteredEvents = new ArrayList<>();
+        for (Event e : cachedEvents){
+            for (String tipo : checkboxSeleccionados){
+                if (e.getCategoria().equals(tipo)){
+                    filteredEvents.add(e);
+                }
+            }
+        }
+
+        if (filteredEvents.size() == 0){
+            filteredEvents = cachedEvents;
+        }
+
+        view.onEventsLoaded(filteredEvents);
+        view.onLoadSuccess(filteredEvents.size());
 
     }
 }
