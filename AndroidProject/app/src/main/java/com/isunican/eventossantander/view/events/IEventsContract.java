@@ -19,9 +19,8 @@ public interface IEventsContract {
 
         void onInfoClicked();
 
-        void onOrdenarCategoriaAscendenteClicked();
+        void onOrdenarCategoriaClicked(int tipoOrdenacion);
 
-        void onOrdenarCategoriaDescendenteClicked();
 
         void onFiltrarClicked(List<String> checkboxSeleccionados);
 
