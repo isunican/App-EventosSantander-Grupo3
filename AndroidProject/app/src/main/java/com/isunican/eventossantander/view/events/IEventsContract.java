@@ -21,9 +21,7 @@ public interface IEventsContract {
 
         void onOrdenarCategoriaClicked(int tipoOrdenacion);
 
-
         void onFiltrarClicked(List<String> checkboxSeleccionados);
-
     }
 
     public interface View {
@@ -37,8 +35,5 @@ public interface IEventsContract {
         void openEventDetails(Event event);
 
         void openInfoView();
-
-        AlertDialog onFilterAlertDialog();
-
     }
 }
