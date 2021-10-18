@@ -143,7 +143,6 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         }
     }
 
-    @Override
     public AlertDialog onFilterAlertDialog(){
         //Creamos dos listas donde tenemos los tipos de evento, y los tipos marcados para filtrar
         tipostotales = new ArrayList<String>();
@@ -190,6 +189,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
 
         return builder.create();
     }
+
 
     public AlertDialog onFilterAlertDialogOrdenar(){
         //Creamos una lista donde meter los eventos que cumplan el filtro
