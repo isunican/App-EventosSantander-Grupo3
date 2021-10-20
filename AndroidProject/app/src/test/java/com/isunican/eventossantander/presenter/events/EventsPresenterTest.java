@@ -12,13 +12,19 @@ import org.robolectric.RobolectricTestRunner;
 @RunWith(RobolectricTestRunner.class)
 public class EventsPresenterTest {
 
+    EventsPresenter eventsPresenter;
+
     @Before
-    public void init() {
-        EventsPresenter eventsPresenter = Robolectric.buildActivity(EventsPresenter.class);
+    public void setUp() throws Exception {
+        eventsPresenter = Robolectric.buildActivity(EventsPresenter.class)
+                .create()
+                .resume()
+                .get();
     }
 
     @Test
     public void testOrdenar() {
+        eventsPresenter.onOrdenarCategoriaClicked(1);
 
     }
 }
