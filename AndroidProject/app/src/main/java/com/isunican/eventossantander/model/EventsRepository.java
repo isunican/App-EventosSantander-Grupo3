@@ -85,6 +85,13 @@ public class EventsRepository {
     public static void setOnlineSource() {
         source = EventsAPIService.Source.AYTO;
     }
+
+    /**
+     * Set the source of data to the repository hosted by the Ayuntamiento de Santander
+     */
+    public static void setFakeSource() {
+        source = EventsAPIService.Source.FAKE;
+    }
     
     /*
      * Idling Resources methods
