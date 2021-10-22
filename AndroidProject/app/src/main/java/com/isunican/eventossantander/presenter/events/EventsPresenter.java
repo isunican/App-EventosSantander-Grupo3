@@ -21,8 +21,6 @@ public class EventsPresenter implements IEventsContract.Presenter {
     private List<Event> cachedEventsOriginal;
     private List<Event> filteredEvents;
 
-
-
     public EventsPresenter(IEventsContract.View view) {
         this.view = view;
         loadData();
@@ -70,9 +68,6 @@ public class EventsPresenter implements IEventsContract.Presenter {
             EventsComparatorCategoria ecc = new EventsComparatorCategoria();
             Collections.sort(cachedEvents,ecc);
             cachedEventsOrdenados = cachedEvents;
-            for(Event e: cachedEventsOrdenados) {
-                System.out.println("Categoria: "+e.getCategoria());
-            }
             view.onEventsLoaded(cachedEventsOrdenados);
         } else if(tipoOrdenacion == 1) { //descendente
             EventsComparatorCategoria ecc = new EventsComparatorCategoria();
@@ -93,13 +88,23 @@ public class EventsPresenter implements IEventsContract.Presenter {
                 }
             }
         }
-
-        if (filteredEvents.size() == 0){
+        if (filteredEvents.isEmpty()){
             filteredEvents = cachedEvents;
         }
-
         view.onEventsLoaded(filteredEvents);
         view.onLoadSuccess(filteredEvents.size());
+    }
 
+        public List<Event> getCachedEventsOrdenados() {
+        return cachedEventsOrdenados;
+
+    }
+
+    public List<Event> getFilteredEvents() {
+        return filteredEvents;
+    }
+
+    public List<Event> getCachedEvents() {
+        return cachedEvents;
     }
 }

@@ -3,9 +3,7 @@ package com.isunican.eventossantander.view.events;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
 
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,7 +20,6 @@ import com.isunican.eventossantander.model.Event;
 import com.isunican.eventossantander.presenter.events.EventsPresenter;
 import com.isunican.eventossantander.view.eventsdetail.EventsDetailActivity;
 import com.isunican.eventossantander.view.info.InfoActivity;
-import java.lang.reflect.Array;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,14 +27,11 @@ import java.util.List;
 public class EventsActivity extends AppCompatActivity implements IEventsContract.View, View.OnClickListener {
 
     private IEventsContract.Presenter presenter;
-    private EventArrayAdapter adapter;
 
     // Declaramos campos para enlazar con widgets del layout
-    private Button btnOrdenar;
-    private  ArrayList selectedItems;
-    private  ArrayList selectedItemsFinales;
+    private  ArrayList<String> selectedItems;
+    private  ArrayList<String> selectedItemsFinales;
 
-    private Button btnFiltrar;
     private int posi;
 
 
@@ -55,14 +49,14 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
 
         // Enlazamos con los widgets del layout
 
-        btnOrdenar = findViewById(R.id.btn_ordenar);
+        Button btnOrdenar = findViewById(R.id.btn_ordenar);
 
         // Asignamos los listeners para los botones
         btnOrdenar.setOnClickListener(this);
 
         // Creamos objeto presenter para cargar los datos del modelo y mostrarlos en la vista
         //enlazamos con el layout y asignamos listener para el boton de filtrar
-        btnFiltrar = findViewById(R.id.btn_filtrar);
+        Button btnFiltrar = findViewById(R.id.btn_filtrar);
         btnFiltrar.setOnClickListener(this);
 
         presenter = new EventsPresenter(this);
@@ -71,7 +65,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
 
     @Override
     public void onEventsLoaded(List<Event> events) {
-        adapter = new EventArrayAdapter(EventsActivity.this, 0, events);
+        EventArrayAdapter adapter = new EventArrayAdapter(EventsActivity.this, 0, events);
         ListView listView = findViewById(R.id.eventsListView);
         listView.setAdapter(adapter);
 
@@ -82,7 +76,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
 
     @Override
     public void onLoadError() {
-
+        //Error de carga
     }
 
     @Override
@@ -143,15 +137,15 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         }
     }
 
-    @Override
     public AlertDialog onFilterAlertDialog(){
         //Creamos dos listas donde tenemos los tipos de evento, y los tipos marcados para filtrar
-        tipostotales = new ArrayList<String>();
+        tipostotales = new ArrayList<>();
         anhadirTiposeventos(tipostotales);
         tipostotales.toArray(new String[tipostotales.size()]);
 
-        tiposSeleccionados = new ArrayList<String>();
+        tiposSeleccionados = new ArrayList<>();
 
+        //Creamos una AlertDialog
         //Creamos una AlertDialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -184,12 +178,13 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         builder.setNegativeButton("Cancelar",  new DialogInterface.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-
+                //si se cancela no se hace nada
             }
         });
 
         return builder.create();
     }
+
 
     public AlertDialog onFilterAlertDialogOrdenar(){
         //Creamos una lista donde meter los eventos que cumplan el filtro
