@@ -14,6 +14,9 @@ public interface IEventsContract {
 
         void onInfoClicked();
 
+        void onOrdenarCategoriaClicked(int tipoOrdenacion);
+
+        void onFiltrarClicked(List<String> checkboxSeleccionados);
     }
 
     public interface View {
@@ -27,6 +30,5 @@ public interface IEventsContract {
         void openEventDetails(Event event);
 
         void openInfoView();
-
     }
 }
