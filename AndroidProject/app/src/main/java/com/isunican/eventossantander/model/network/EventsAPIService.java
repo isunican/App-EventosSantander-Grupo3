@@ -7,7 +7,8 @@ public class EventsAPIService {
 
     public enum Source {
         AYTO("http://datos.santander.es/api/rest/datasets/"),
-        UNICAN("https://personales.unican.es/rivasjm/resources/");
+        UNICAN("https://personales.unican.es/rivasjm/resources/"),
+        FAKE("https://xxxxx");
 
         private final String url;
 
