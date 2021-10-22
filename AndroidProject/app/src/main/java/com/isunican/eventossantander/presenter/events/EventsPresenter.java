@@ -102,4 +102,12 @@ public class EventsPresenter implements IEventsContract.Presenter {
         view.onLoadSuccess(filteredEvents.size());
 
     }
+
+    public List<Event> getFilteredEvents() {
+        return filteredEvents;
+    }
+
+    public List<Event> getCachedEvents() {
+        return cachedEvents;
+    }
 }
