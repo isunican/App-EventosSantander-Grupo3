@@ -105,6 +105,11 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
     public List<Event> getCachedEventsOrdenados() {
         return cachedEventsOrdenados;
+
+    }
+
+    public List<Event> getFilteredEvents() {
+        return filteredEvents;
     }
 
     public List<Event> getCachedEvents() {
