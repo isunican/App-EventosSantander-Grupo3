@@ -21,8 +21,6 @@ public class EventsAPIService {
         }
     }
 
-    private static EventsAPI eventosService;
-
     public static EventsAPI getEventsServiceInstance() {
         return getEventsServiceInstance(Source.AYTO);
     }
@@ -32,7 +30,7 @@ public class EventsAPIService {
                 .baseUrl(source.getURL())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        eventosService = retrofit.create(EventsAPI.class);
+        EventsAPI eventosService = retrofit.create(EventsAPI.class);
         return eventosService;
     }
 }
