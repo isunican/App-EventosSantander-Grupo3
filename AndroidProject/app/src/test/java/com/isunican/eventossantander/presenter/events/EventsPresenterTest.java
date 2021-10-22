@@ -1,12 +1,8 @@
 package com.isunican.eventossantander.presenter.events;
 
-import static org.junit.Assert.assertTrue;
-
 import com.isunican.eventossantander.model.Event;
 import com.isunican.eventossantander.model.EventsRepository;
-import com.isunican.eventossantander.view.events.EventsActivity;
 import com.isunican.eventossantander.view.events.IEventsContract;
-import com.isunican.eventossantander.presenter.events.EventsPresenter;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -96,28 +92,28 @@ public class EventsPresenterTest {
         // IT.1A: Se comprueba que si la lista de tipos de evento introducida contiene un
         // tipo de evento, los eventos filtrados corresponderán solo a los del tipo de evento seleccionado.
         sut.onFiltrarClicked(listaConElemento);
-        assertTrue(sut.getFilteredEvents().size() == 92);
-        assertTrue(sut.getFilteredEvents().get(5).getCategoria().equals("Música"));
-        assertTrue(sut.getFilteredEvents().get(24).getCategoria().equals("Música"));
-        assertTrue(sut.getFilteredEvents().get(68).getCategoria().equals("Música"));
+        assertEquals(sut.getFilteredEvents().size(), 92);
+        assertEquals(sut.getFilteredEvents().get(5).getCategoria(),("Música"));
+        assertEquals(sut.getFilteredEvents().get(24).getCategoria(),("Música"));
+        assertEquals(sut.getFilteredEvents().get(68).getCategoria(),("Música"));
 
         // IT.1B: Se comprueba que si la lista de tipos de evento introducida está vacía,
         // los eventos filtrados sean igual a los eventos cacheados.
         sut.onFiltrarClicked(listaVacia);
-        assertTrue(sut.getFilteredEvents().equals(sut.getCachedEvents()));
-        assertTrue(sut.getFilteredEvents().size() == 345);
+        assertEquals(sut.getFilteredEvents(),(sut.getCachedEvents()));
+        assertEquals(sut.getFilteredEvents().size(), 345);
 
         // IT.1C: Se comprueba que si la lista de tipos de evento introducida contiene
         // todos los tipos de evento, los eventos filtrados sean todos los eventos
         // caheados menos aquellos que no tengan tipo.
         sut.onFiltrarClicked(listaLlena);
-        assertTrue(sut.getFilteredEvents().size() == 310);
+        assertEquals(sut.getFilteredEvents().size(),310);
 
         // IT.1D: Se comprueba que si la lista introducida contiene un tipo de evento
         // no existente, los eventos filtrados sean igual a los eventos cacheados.
         sut.onFiltrarClicked(listaErronea);
-        assertTrue(sut.getFilteredEvents().equals(sut.getCachedEvents()));
-        assertTrue(sut.getFilteredEvents().size() == 345);
+        assertEquals(sut.getFilteredEvents(),(sut.getCachedEvents()));
+        assertEquals(sut.getFilteredEvents().size(),345);
 
     }
 
@@ -136,11 +132,11 @@ public class EventsPresenterTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        assertTrue(sut.getCachedEvents().size() == 345);
-        assertTrue(sut.getCachedEvents().get(0).getCategoria().equals("Música"));
-        assertTrue(sut.getCachedEvents().get(0).getNombre().equals("Abierto el plazo de inscripción para el Concurso Internacional de Piano de Santander Paloma O'Shea"));
-        assertTrue(sut.getCachedEvents().get(3).getCategoria().equals("Artes plásticas"));
-        assertTrue(sut.getCachedEvents().get(3).getNombre().equals("Gabinete de estampas virtual de la UC"));
+        assertEquals(sut.getCachedEvents().size(),345);
+        assertEquals(sut.getCachedEvents().get(0).getCategoria(),("Música"));
+        assertEquals(sut.getCachedEvents().get(0).getNombre(),("Abierto el plazo de inscripción para el Concurso Internacional de Piano de Santander Paloma O'Shea"));
+        assertEquals(sut.getCachedEvents().get(3).getCategoria(),("Artes plásticas"));
+        assertEquals(sut.getCachedEvents().get(3).getNombre(),("Gabinete de estampas virtual de la UC"));
 
         // IT.2B: Se comprueba que cuando no se puede acceder a la base de datos, no se
         // cargan los eventos
@@ -151,7 +147,7 @@ public class EventsPresenterTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        assertTrue(sut.getCachedEvents() == null);
+        assertEquals(sut.getCachedEvents(),null);
 
     }
 
