@@ -20,6 +20,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
     private List<Event> cachedEventsOrdenados;
     private List<Event> cachedEventsOriginal;
     private List<Event> filteredEvents;
+    private List<Event> filteredEventsCopy;
 
     public EventsPresenter(IEventsContract.View view) {
         this.view = view;
@@ -34,6 +35,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
                 view.onLoadSuccess(data.size());
                 cachedEvents = data;
                 cachedEventsOriginal = cachedEvents;
+                filteredEventsCopy = new ArrayList<>();
             }
 
             @Override
@@ -42,7 +44,6 @@ public class EventsPresenter implements IEventsContract.Presenter {
                 cachedEvents = null;
             }
         });
-        filteredEvents = new ArrayList<>();
     }
 
     @Override
@@ -67,24 +68,24 @@ public class EventsPresenter implements IEventsContract.Presenter {
     public void onOrdenarCategoriaClicked(int tipoOrdenacion) {
         if (tipoOrdenacion == 0) { //ascendente
             EventsComparatorCategoria ecc = new EventsComparatorCategoria();
-            if (filteredEvents.isEmpty()) {
+            if (filteredEventsCopy.isEmpty()) {
                 Collections.sort(cachedEvents,ecc);
                 cachedEventsOrdenados = cachedEvents;
             } else {
-                Collections.sort(filteredEvents,ecc);
-                cachedEventsOrdenados = filteredEvents;
+                Collections.sort(filteredEventsCopy,ecc);
+                cachedEventsOrdenados = filteredEventsCopy;
             }
             view.onEventsLoaded(cachedEventsOrdenados);
         } else if(tipoOrdenacion == 1) { //descendente
             EventsComparatorCategoria ecc = new EventsComparatorCategoria();
-            if (filteredEvents.isEmpty()) {
+            if (filteredEventsCopy.isEmpty()) {
                 java.util.Collections.sort(cachedEvents,ecc);
                 Collections.reverse(cachedEvents);
                 cachedEventsOrdenados = cachedEvents;
             } else {
-                java.util.Collections.sort(filteredEvents,ecc);
-                Collections.reverse(filteredEvents);
-                cachedEventsOrdenados = filteredEvents;
+                java.util.Collections.sort(filteredEventsCopy,ecc);
+                Collections.reverse(filteredEventsCopy);
+                cachedEventsOrdenados = filteredEventsCopy;
             }
             view.onEventsLoaded(cachedEventsOrdenados);
         }
@@ -92,6 +93,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
     @Override
     public void onFiltrarClicked(List<String> checkboxSeleccionados) {
+        filteredEvents = new ArrayList<>();
         for (Event e : cachedEvents){
             for (String tipo : checkboxSeleccionados){
                 if (e.getCategoria().equals(tipo)){
@@ -104,6 +106,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
         }
         view.onEventsLoaded(filteredEvents);
         view.onLoadSuccess(filteredEvents.size());
+        filteredEventsCopy = filteredEvents;
     }
 
         public List<Event> getCachedEventsOrdenados() {
