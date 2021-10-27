@@ -97,7 +97,7 @@ public class FiltrarEventosPorTipoUITest {
         onView(withText("Formación/Talleres")).perform(click()); // Se marca el checkbox de "Formación/Talleres"
         onView(withText("Fotografía")).perform(click()); // Se marca el checkbox de "Fotografía"
         onView(withText("Infantil")).perform(click()); // Se marca el checkbox de "Infantil"
-        onView(withText("Música")).perform(click()); // Se marca el checkbox de "Música"
+        //onView(withText("Música")).perform(click()); // Se marca el checkbox de "Música"
         onView(withText("Online")).perform(click()); // Se marca el checkbox de "Online"
         onView(withText("Otros")).perform(click()); // Se marca el checkbox de "Otros"
         onView(withText("APLICAR")).perform(click()); // Se selecciona el botón de aplicar
