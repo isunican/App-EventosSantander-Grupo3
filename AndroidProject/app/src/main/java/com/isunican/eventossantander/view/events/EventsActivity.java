@@ -31,9 +31,10 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     // Declaramos campos para enlazar con widgets del layout
     private  ArrayList<String> selectedItems;
     private  ArrayList<String> selectedItemsFinales;
+    private  boolean[] checked;
 
     private int posi;
-
+    private int posChecked;
 
 
     private List<String> tipostotales;
@@ -152,8 +153,24 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         //Le ponemos un titulo
         builder.setTitle("Filtrar");
 
+        //Comprobamos los elementos seleccionados previamente
+            checked= new boolean[tipostotales.size()];
+            posChecked=0;
+            for(int i=0 ; i<checked.length;i++){
+                checked[i]=false;
+            }
+            for(String s : tipostotales){
+                for(String t : tiposSeleccionados){
+                    if(s.equals(t)){
+                        checked[posChecked]= true;
+                    }
+                }
+                posChecked++;
+            }
+
+
         //Creamos los elementos de la seleccion de tipo multiple
-        builder.setMultiChoiceItems(tipostotales.toArray(new String[tipostotales.size()]), null, new DialogInterface.OnMultiChoiceClickListener(){
+        builder.setMultiChoiceItems(tipostotales.toArray(new String[tipostotales.size()]), checked, new DialogInterface.OnMultiChoiceClickListener(){
             @Override
             public void onClick(DialogInterface dialog, int which,
                                 boolean estaMarcado) {
