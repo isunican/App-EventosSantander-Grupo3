@@ -1,4 +1,4 @@
-package com.isunican.eventossantander;
+package com.isunican.eventossantander.view.events;
 
 
 import static androidx.test.espresso.Espresso.onData;
@@ -12,8 +12,10 @@ import static org.hamcrest.Matchers.anything;
 
 import androidx.test.espresso.DataInteraction;
 import androidx.test.espresso.IdlingRegistry;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
+import com.isunican.eventossantander.R;
 import com.isunican.eventossantander.model.EventsRepository;
 import com.isunican.eventossantander.view.events.EventsActivity;
 
@@ -57,7 +59,7 @@ public class FiltrarEventosPorTipoUITest {
          * opciones de filtrado, se muestra la lista de eventos original sin ningún filtrado.
          */
 
-        onView(withId(R.id.btn_filtrar)).perform(click()); // Se selecciona el botón de filtrar
+        onView(ViewMatchers.withId(R.id.btn_filtrar)).perform(click()); // Se selecciona el botón de filtrar
         onView(withText("APLICAR")).perform(click()); // Se selecciona el botón de aplicar
         // Comprobamos que se muestra la lista de eventos original
         DataInteraction evento; // Objeto para referenciar el contenido dentro de los elementos del ListView
