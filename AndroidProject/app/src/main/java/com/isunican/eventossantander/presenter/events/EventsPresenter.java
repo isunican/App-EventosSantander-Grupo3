@@ -42,6 +42,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
                 cachedEvents = null;
             }
         });
+        filteredEvents = new ArrayList<>();
     }
 
     @Override
@@ -66,21 +67,31 @@ public class EventsPresenter implements IEventsContract.Presenter {
     public void onOrdenarCategoriaClicked(int tipoOrdenacion) {
         if (tipoOrdenacion == 0) { //ascendente
             EventsComparatorCategoria ecc = new EventsComparatorCategoria();
-            Collections.sort(cachedEvents,ecc);
-            cachedEventsOrdenados = cachedEvents;
+            if (filteredEvents.isEmpty()) {
+                Collections.sort(cachedEvents,ecc);
+                cachedEventsOrdenados = cachedEvents;
+            } else {
+                Collections.sort(filteredEvents,ecc);
+                cachedEventsOrdenados = filteredEvents;
+            }
             view.onEventsLoaded(cachedEventsOrdenados);
         } else if(tipoOrdenacion == 1) { //descendente
             EventsComparatorCategoria ecc = new EventsComparatorCategoria();
-            java.util.Collections.sort(cachedEvents,ecc);
-            Collections.reverse(cachedEvents);
-            cachedEventsOrdenados = cachedEvents;
+            if (filteredEvents.isEmpty()) {
+                java.util.Collections.sort(cachedEvents,ecc);
+                Collections.reverse(cachedEvents);
+                cachedEventsOrdenados = cachedEvents;
+            } else {
+                java.util.Collections.sort(filteredEvents,ecc);
+                Collections.reverse(filteredEvents);
+                cachedEventsOrdenados = filteredEvents;
+            }
             view.onEventsLoaded(cachedEventsOrdenados);
         }
     }
 
     @Override
-    public void onFiltrarClicked(List<String> checkboxSeleccionados){
-        filteredEvents = new ArrayList<>();
+    public void onFiltrarClicked(List<String> checkboxSeleccionados) {
         for (Event e : cachedEvents){
             for (String tipo : checkboxSeleccionados){
                 if (e.getCategoria().equals(tipo)){
