@@ -184,7 +184,6 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
             }
         });
 
-
         //Creamos el boton de aplicar
         builder.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
             @Override
