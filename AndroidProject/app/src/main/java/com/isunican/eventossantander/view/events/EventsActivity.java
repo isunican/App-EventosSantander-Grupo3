@@ -39,6 +39,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
 
     private List<String> tipostotales;
     private List<String> tiposSeleccionados;
+    private List<String> tiposSeleccionadosPrevio;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +62,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         btnFiltrar.setOnClickListener(this);
 
         presenter = new EventsPresenter(this);
+        tiposSeleccionadosPrevio= new ArrayList<>();
     }
 
 
@@ -118,6 +120,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_refresh:
+                tiposSeleccionadosPrevio.clear();
                 presenter.onReloadClicked();
                 return true;
             case R.id.menu_info:
@@ -159,10 +162,11 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
             for(int i=0 ; i<checked.length;i++){
                 checked[i]=false;
             }
-            for(String s : tipostotales){
-                for(String t : tiposSeleccionados){
-                    if(s.equals(t)){
-                        checked[posChecked]= true;
+             for(String s : tipostotales){
+                for(String p : tiposSeleccionadosPrevio){
+                    if(s.equals(p)){
+                        checked[posChecked]=true;
+                        tiposSeleccionados.add(s);
                     }
                 }
                 posChecked++;
@@ -177,9 +181,11 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
                 if (estaMarcado) {
                     // If the user checked the item, add it to the selected items
                     tiposSeleccionados.add(tipostotales.get(which));
+                    tiposSeleccionadosPrevio=tiposSeleccionados;
                 } else if (tiposSeleccionados.contains(tipostotales.get(which))) {
                     // Else, if the item is already in the array, remove it
                     tiposSeleccionados.remove(tipostotales.get(which));
+                    tiposSeleccionadosPrevio=tiposSeleccionados;
                 }
             }
         });
