@@ -1,17 +1,22 @@
 package com.isunican.eventossantander.view.events;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -22,6 +27,7 @@ import com.isunican.eventossantander.view.eventsdetail.EventsDetailActivity;
 import com.isunican.eventossantander.view.info.InfoActivity;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class EventsActivity extends AppCompatActivity implements IEventsContract.View, View.OnClickListener {
@@ -40,6 +46,12 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     private List<String> tipostotales;
     private List<String> tiposSeleccionados;
     private List<String> tiposSeleccionadosPrevio;
+
+    // Declaramos los campos para la filtrar por fecha.
+    private int dia,mes,ano;
+    // Variables para guardar las fechas seleccionadas
+    private String fechaIni;
+    private String fechaFin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -251,5 +263,75 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         tipostotales.add("Online");
         tipostotales.add("Otros");
 
+    }
+    //TODO
+    public AlertDialog onDateFilterAlertDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("Duaración del viaje");
+        builder.setMessage("Fecha comienzo:");
+        builder.setMessage("Fecha finalización:");
+        //Botones para introducir fechas
+        builder.setNeutralButton("Fecha comienzo", new DialogInterface.OnClickListener() {
+            //TODO
+            //no se si esto esta bien
+            private Context DatePickerDialog;
+
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                final Calendar c = Calendar.getInstance();
+                dia = c.get(Calendar.DAY_OF_MONTH);
+                mes = c.get(Calendar.MONTH);
+                ano = c.get(Calendar.YEAR);
+                //TODO
+                //En vez de DatePickerDialog en el ejemplo pone This
+                DatePickerDialog fechaIniDialog = new DatePickerDialog(DatePickerDialog,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
+                        fechaIni = (dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                    }
+                }
+                        , dia, mes, ano);
+                fechaIniDialog.show();
+            }
+        });
+        builder.setNeutralButton("Fecha finalización:", new DialogInterface.OnClickListener() {
+            //TODO
+            //no se si esto esta bien
+            private Context DatePickerDialog;
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                final Calendar c = Calendar.getInstance();
+                dia = c.get(Calendar.DAY_OF_MONTH);
+                mes = c.get(Calendar.MONTH);
+                ano = c.get(Calendar.YEAR);
+                //TODO
+                //En vez de DatePickerDialog en el ejemplo pone This
+                DatePickerDialog fechaFinDialog = new DatePickerDialog(DatePickerDialog, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
+                        fechaFin = (dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                    }
+                }
+                        , dia, mes, ano);
+                fechaFinDialog.show();
+            }
+        });
+
+
+        builder.setPositiveButton("Aplicar", (dialog, id) -> {
+                    // User clicked OK, so save the selectedItems results somewhere
+                    // or return them to the component that opened the dialog
+
+                });
+        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                //selectedItems.clear();
+
+            }
+        });
+        return builder.create();
     }
 }
