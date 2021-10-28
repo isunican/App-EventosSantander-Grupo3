@@ -31,13 +31,15 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     // Declaramos campos para enlazar con widgets del layout
     private  ArrayList<String> selectedItems;
     private  ArrayList<String> selectedItemsFinales;
+    private  boolean[] checked;
 
     private int posi;
-
+    private int posChecked;
 
 
     private List<String> tipostotales;
     private List<String> tiposSeleccionados;
+    private List<String> tiposSeleccionadosPrevio;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +62,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         btnFiltrar.setOnClickListener(this);
 
         presenter = new EventsPresenter(this);
+        tiposSeleccionadosPrevio= new ArrayList<>();
     }
 
 
@@ -117,6 +120,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_refresh:
+                tiposSeleccionadosPrevio.clear();
                 presenter.onReloadClicked();
                 return true;
             case R.id.menu_info:
@@ -152,21 +156,39 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         //Le ponemos un titulo
         builder.setTitle("Filtrar");
 
+        //Comprobamos los elementos seleccionados previamente
+            checked= new boolean[tipostotales.size()];
+            posChecked=0;
+            for(int i=0 ; i<checked.length;i++){
+                checked[i]=false;
+            }
+             for(String s : tipostotales){
+                for(String p : tiposSeleccionadosPrevio){
+                    if(s.equals(p)){
+                        checked[posChecked]=true;
+                        tiposSeleccionados.add(s);
+                    }
+                }
+                posChecked++;
+            }
+
+
         //Creamos los elementos de la seleccion de tipo multiple
-        builder.setMultiChoiceItems(tipostotales.toArray(new String[tipostotales.size()]), null, new DialogInterface.OnMultiChoiceClickListener(){
+        builder.setMultiChoiceItems(tipostotales.toArray(new String[tipostotales.size()]), checked, new DialogInterface.OnMultiChoiceClickListener(){
             @Override
             public void onClick(DialogInterface dialog, int which,
                                 boolean estaMarcado) {
                 if (estaMarcado) {
                     // If the user checked the item, add it to the selected items
                     tiposSeleccionados.add(tipostotales.get(which));
+                    tiposSeleccionadosPrevio=tiposSeleccionados;
                 } else if (tiposSeleccionados.contains(tipostotales.get(which))) {
                     // Else, if the item is already in the array, remove it
                     tiposSeleccionados.remove(tipostotales.get(which));
+                    tiposSeleccionadosPrevio=tiposSeleccionados;
                 }
             }
         });
-
 
         //Creamos el boton de aplicar
         builder.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
