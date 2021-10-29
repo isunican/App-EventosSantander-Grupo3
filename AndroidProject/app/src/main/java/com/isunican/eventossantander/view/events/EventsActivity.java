@@ -42,6 +42,9 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     private int posi;
     private int posChecked;
 
+    private final String APLICAR = "Aplicar";
+    private final String CANCELAR = "Cancelar";
+
 
     private List<String> tipostotales;
     private List<String> tiposSeleccionados;
@@ -203,13 +206,13 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         });
 
         //Creamos el boton de aplicar
-        builder.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(APLICAR, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 presenter.onFiltrarClicked(tiposSeleccionados);
             }
         });
-        builder.setNegativeButton("Cancelar",  new DialogInterface.OnClickListener(){
+        builder.setNegativeButton(CANCELAR,  new DialogInterface.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 //si se cancela no se hace nada
@@ -235,13 +238,13 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
             }
         });
                 // Set the action buttons
-        builder.setPositiveButton("Aplicar", (dialog, id) -> {
+        builder.setPositiveButton(APLICAR, (dialog, id) -> {
             // User clicked OK, so save the selectedItems results somewhere
             // or return them to the component that opened the dialog
             presenter.onOrdenarCategoriaClicked(posi);
             selectedItemsFinales = selectedItems;
         });
-        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(CANCELAR, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         //selectedItems.clear();
@@ -320,12 +323,12 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         });
 
 
-        builder.setPositiveButton("Aplicar", (dialog, id) -> {
+        builder.setPositiveButton(APLICAR, (dialog, id) -> {
                     // User clicked OK, so save the selectedItems results somewhere
                     // or return them to the component that opened the dialog
 
                 });
-        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(CANCELAR, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
                 //selectedItems.clear();
