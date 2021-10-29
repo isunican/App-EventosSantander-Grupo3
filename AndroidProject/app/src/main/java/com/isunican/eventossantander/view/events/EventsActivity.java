@@ -1,7 +1,6 @@
 package com.isunican.eventossantander.view.events;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,7 +8,6 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -42,8 +40,8 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     private int posi;
     private int posChecked;
 
-    private final String APLICAR = "Aplicar";
-    private final String CANCELAR = "Cancelar";
+    private static final String APLICAR = "Aplicar";
+    private static final String CANCELAR = "Cancelar";
 
 
     private List<String> tipostotales;
@@ -51,7 +49,9 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     private List<String> tiposSeleccionadosPrevio;
 
     // Declaramos los campos para la filtrar por fecha.
-    private int dia,mes,ano;
+    private int dia;
+    private int mes;
+    private int ano;
     // Variables para guardar las fechas seleccionadas
     private String fechaIni;
     private String fechaFin;
@@ -247,7 +247,6 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         builder.setNegativeButton(CANCELAR, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        //selectedItems.clear();
 
                     }
                 });
@@ -278,7 +277,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         builder.setNeutralButton("Fecha comienzo", new DialogInterface.OnClickListener() {
             //TODO
             //no se si esto esta bien
-            private Context DatePickerDialog;
+            private Context datePickerDialog;
 
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -288,7 +287,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
                 ano = c.get(Calendar.YEAR);
                 //TODO
                 //En vez de DatePickerDialog en el ejemplo pone This
-                DatePickerDialog fechaIniDialog = new DatePickerDialog(DatePickerDialog,
+                DatePickerDialog fechaIniDialog = new DatePickerDialog(datePickerDialog,
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
@@ -302,7 +301,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         builder.setNeutralButton("Fecha finalización:", new DialogInterface.OnClickListener() {
             //TODO
             //no se si esto esta bien
-            private Context DatePickerDialog;
+            private Context datePickerDialog;
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 final Calendar c = Calendar.getInstance();
@@ -311,7 +310,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
                 ano = c.get(Calendar.YEAR);
                 //TODO
                 //En vez de DatePickerDialog en el ejemplo pone This
-                DatePickerDialog fechaFinDialog = new DatePickerDialog(DatePickerDialog, new DatePickerDialog.OnDateSetListener() {
+                DatePickerDialog fechaFinDialog = new DatePickerDialog(datePickerDialog, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
                         fechaFin = (dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);

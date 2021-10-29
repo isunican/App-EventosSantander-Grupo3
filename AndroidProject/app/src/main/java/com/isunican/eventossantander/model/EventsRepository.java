@@ -42,8 +42,8 @@ public class EventsRepository {
     https://stackoverflow.com/questions/30733718/how-to-use-espresso-idling-resource-for-network-calls
     https://developer.android.com/training/testing/espresso/idling-resource
      */
-    private final static String RESOURCE = "RESOURCE";
-    private final static CountingIdlingResource idlingResource = new CountingIdlingResource(RESOURCE);
+    private static final String RESOURCE = "RESOURCE";
+    private static final CountingIdlingResource idlingResource = new CountingIdlingResource(RESOURCE);
 
     public static void getEvents(Listener<List<Event>> listener) {
         // signal Espresso that Retrofit has started execution. Espresso will wait until the
