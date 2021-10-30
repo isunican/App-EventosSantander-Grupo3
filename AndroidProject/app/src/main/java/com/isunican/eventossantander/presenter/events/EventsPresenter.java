@@ -114,6 +114,11 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
     }
 
+    @Override
+    public void onFiltrarDate(int diaInicio, int mesInicio, int anhoInicio, int diaFin, int mesFin, int anhoFin) {
+        //TODO: realizar el filtrado de la lista en base a las fechas de inicio y fin proporcionadas por parametros
+    }
+
     public List<Event> getFilteredEvents() {
         return filteredEvents;
     }
