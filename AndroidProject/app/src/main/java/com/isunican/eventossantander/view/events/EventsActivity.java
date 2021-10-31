@@ -313,8 +313,8 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
 
         // Si habia fechas introducidas anteriormente se muestran
         if (diaInicioPrevio!=-1) {
-            textoFechaFin.setText(diaFinPrevio+"/"+mesFinPrevio+"/"+anhoFinPrevio);
-            textoFechaInicio.setText(diaInicioPrevio+"/"+mesInicioPrevio+"/"+anhoInicioPrevio);
+            textoFechaFin.setText(diaFinPrevio+"/"+(mesFinPrevio+1)+"/"+anhoFinPrevio);
+            textoFechaInicio.setText(diaInicioPrevio+"/"+(mesInicioPrevio+1)+"/"+anhoInicioPrevio);
         }
 
         builder.setView(view);

@@ -119,14 +119,12 @@ public class EventsPresenter implements IEventsContract.Presenter {
     @Override
     public void onFiltrarDate(int diaInicio, int mesInicio, int anhoInicio, int diaFin, int mesFin, int anhoFin) {
         //TODO: realizar el filtrado de la lista en base a las fechas de inicio y fin proporcionadas por parametros
-        fechaIni = (diaInicio + "/" + (mesInicio) + "/" + anhoInicio);
-        fechaFin = (diaFin + "/" + (mesFin) + "/" + anhoFin);
+        filteredEvents = new ArrayList<>();
+        fechaIni = (diaInicio + "/" + (mesInicio+1) + "/" + anhoInicio);
+        fechaFin = (diaFin + "/" + (mesFin+1) + "/" + anhoFin);
         if(filteredEventsCopy.isEmpty()) {
-            filteredEvents = new ArrayList<>();
             for (Event e : cachedEvents) {
-                if (cutDate(e.getFecha()).equals(fechaIni)) {
-                    filteredEvents.add(e);
-                } else if (cutDate(e.getFecha()).equals(fechaFin)) {
+                if (cutDate(e.getFecha()).compareTo(fechaIni)<=0 && cutDate(e.getFecha()).compareTo(fechaFin)>=0) {
                     filteredEvents.add(e);
                 }
             }
@@ -134,11 +132,8 @@ public class EventsPresenter implements IEventsContract.Presenter {
                 filteredEvents = cachedEvents;
             }
         }else{
-            filteredEvents = new ArrayList<>();
             for (Event e : filteredEventsCopy) {
-                if (cutDate(e.getFecha()).equals(fechaIni)) {
-                    filteredEvents.add(e);
-                } else if (cutDate(e.getFecha()).equals(fechaFin)) {
+                if (cutDate(e.getFecha()).compareTo(fechaIni)<=0 && cutDate(e.getFecha()).compareTo(fechaFin)>=0) {
                     filteredEvents.add(e);
                 }
             }
