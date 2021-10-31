@@ -118,29 +118,22 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
     @Override
     public void onFiltrarDate(int diaInicio, int mesInicio, int anhoInicio, int diaFin, int mesFin, int anhoFin) {
-        //TODO: realizar el filtrado de la lista en base a las fechas de inicio y fin proporcionadas por parametros
         filteredEvents = new ArrayList<>();
-        fechaIni = (diaInicio + "/" + (mesInicio+1) + "/" + anhoInicio);
-        fechaFin = (diaFin + "/" + (mesFin+1) + "/" + anhoFin);
-        if(filteredEventsCopy.isEmpty()) {
+
             for (Event e : cachedEvents) {
-                if (cutDate(e.getFecha()).compareTo(fechaIni)<=0 && cutDate(e.getFecha()).compareTo(fechaFin)>=0) {
+
+                if (dateCompare(e.getFecha(), diaInicio, mesInicio, anhoInicio, true) &&
+                        dateCompare(e.getFecha(), diaFin, mesFin, anhoFin, false)) {
                     filteredEvents.add(e);
+                    //Log.d("CatchedEvents","Se ha anhadido el evento"+e.getNombre());
                 }
+                //Log.d("CatchedEvents","Comprobando eventos compatibles");
             }
             if (filteredEvents.isEmpty()) {
                 filteredEvents = cachedEvents;
+                //Log.d("CatchedEvents","La lista estava vacía");
             }
-        }else{
-            for (Event e : filteredEventsCopy) {
-                if (cutDate(e.getFecha()).compareTo(fechaIni)<=0 && cutDate(e.getFecha()).compareTo(fechaFin)>=0) {
-                    filteredEvents.add(e);
-                }
-            }
-            if (filteredEvents.isEmpty()) {
-                filteredEvents = filteredEventsCopy;
-            }
-        }
+
         view.onEventsLoaded(filteredEvents);
         view.onLoadSuccess(filteredEvents.size());
         filteredEventsCopy = filteredEvents;
@@ -153,9 +146,56 @@ public class EventsPresenter implements IEventsContract.Presenter {
     public List<Event> getCachedEvents() {
         return cachedEvents;
     }
-    private String cutDate(String fecha) {
-        String[] date1 = fecha.split(" ");
+
+    /**
+     *
+     * @param fechaEvento fecha del evento que se desea comparar en formato String
+     * @param dia dia con el que se desea comparar la fecha del evento
+     * @param mes mes con el que se desea comparar la fecha del evento
+     * @param anho anho con el que se desea comparar la fecha del evento
+     * @param eventoMayor true si el evento es mas reciente o igual que las fechas
+     *                    proporcionadas y false en caso contrario
+     * @return true si el evento es mas reciente o no en funcion de lo indicado en el paramentro eventoMayor
+     */
+    private boolean dateCompare(String fechaEvento, int dia, int mes, int anho, boolean eventoMayor) {
+
+        String[] date1 = fechaEvento.split(" ");
         String[] dateDefinitive = date1[1].split(",");
-        return dateDefinitive[0];
+        String[] dateSeparada = dateDefinitive[0].split("/");
+
+        int diaEvento = Integer.parseInt(dateSeparada[0]);
+        int mesEvento = Integer.parseInt(dateSeparada[1]);
+        int anhoEvento = Integer.parseInt(dateSeparada[2]);
+
+        //Log.d("comparaFecha1","dia:"+diaEvento+" / mes:"+mesEvento+" / año:"+anhoEvento);
+        //Log.d("comparaFecha2","dia:"+dia+" / mes:"+mes+" / año:"+anho);
+
+        if (eventoMayor) {
+            if (anho < anhoEvento) {
+                return true;
+            } else if (anho == anhoEvento) {
+                if((mes++) < mesEvento) {
+                    return true;
+                }else if((mes++) == mesEvento) {
+                    if (dia <= diaEvento) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } else {
+            if (anho > anhoEvento) {
+                return true;
+            } else if (anho == anhoEvento) {
+                if((mes++) > mesEvento) {
+                    return true;
+                }else if((mes++) == mesEvento) {
+                    if (dia >= diaEvento) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
     }
 }

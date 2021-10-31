@@ -440,7 +440,9 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
      */
     private boolean onCheckDateOrder() {
 
-        if (anhoInicio <= anhoFin) {
+        if (anhoInicio < anhoFin) {
+            return true;
+        } else if (anhoInicio == anhoFin) {
             if(mesInicio < mesFin) {
                 return true;
             }else if(mesInicio == mesFin) {
