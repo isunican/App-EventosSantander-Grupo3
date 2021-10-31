@@ -21,6 +21,8 @@ public class EventsPresenter implements IEventsContract.Presenter {
     private List<Event> cachedEventsOriginal;
     private List<Event> filteredEvents;
     private List<Event> filteredEventsCopy;
+    private String fechaIni;
+    private String fechaFin;
 
     public EventsPresenter(IEventsContract.View view) {
         this.view = view;
@@ -117,6 +119,36 @@ public class EventsPresenter implements IEventsContract.Presenter {
     @Override
     public void onFiltrarDate(int diaInicio, int mesInicio, int anhoInicio, int diaFin, int mesFin, int anhoFin) {
         //TODO: realizar el filtrado de la lista en base a las fechas de inicio y fin proporcionadas por parametros
+        fechaIni = (diaInicio + "/" + (mesInicio) + "/" + anhoInicio);
+        fechaFin = (diaFin + "/" + (mesFin) + "/" + anhoFin);
+        if(filteredEventsCopy.isEmpty()) {
+            filteredEvents = new ArrayList<>();
+            for (Event e : cachedEvents) {
+                if (cutDate(e.getFecha()).equals(fechaIni)) {
+                    filteredEvents.add(e);
+                } else if (cutDate(e.getFecha()).equals(fechaFin)) {
+                    filteredEvents.add(e);
+                }
+            }
+            if (filteredEvents.isEmpty()) {
+                filteredEvents = cachedEvents;
+            }
+        }else{
+            filteredEvents = new ArrayList<>();
+            for (Event e : filteredEventsCopy) {
+                if (cutDate(e.getFecha()).equals(fechaIni)) {
+                    filteredEvents.add(e);
+                } else if (cutDate(e.getFecha()).equals(fechaFin)) {
+                    filteredEvents.add(e);
+                }
+            }
+            if (filteredEvents.isEmpty()) {
+                filteredEvents = filteredEventsCopy;
+            }
+        }
+        view.onEventsLoaded(filteredEvents);
+        view.onLoadSuccess(filteredEvents.size());
+        filteredEventsCopy = filteredEvents;
     }
 
     public List<Event> getFilteredEvents() {
@@ -125,5 +157,10 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
     public List<Event> getCachedEvents() {
         return cachedEvents;
+    }
+    private String cutDate(String fecha) {
+        String[] date1 = fecha.split(" ");
+        String[] dateDefinitive = date1[1].split(",");
+        return dateDefinitive[0];
     }
 }

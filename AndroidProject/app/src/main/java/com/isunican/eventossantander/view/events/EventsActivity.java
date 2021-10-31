@@ -405,7 +405,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
                 diaInicio = dia;
                 mesInicio = mes;
                 anhoInicio = anho;
-                textoFechaInicio.setText(diaInicio+"/"+mesInicio+"/"+anhoInicio);
+                textoFechaInicio.setText(diaInicio+"/"+(mesInicio+1)+"/"+anhoInicio);
             }
         }
         ,diaInicio,mesInicio,anhoInicio);
@@ -427,7 +427,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
                 diaFin = dia;
                 mesFin = mes;
                 anhoFin = anho;
-                textoFechaFin.setText(diaFin+"/"+mesFin+"/"+anhoFin);
+                textoFechaFin.setText(diaFin+"/"+(mesFin+1)+"/"+anhoFin);
             }
         }
                 ,diaFin,mesFin,anhoFin);
@@ -441,7 +441,9 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     private boolean onCheckDateOrder() {
 
         if (anhoInicio <= anhoFin) {
-            if(mesInicio <= mesFin) {
+            if(mesInicio < mesFin) {
+                return true;
+            }else if(mesInicio == mesFin) {
                 if (diaInicio <= diaFin) {
                     return true;
                 }
