@@ -39,6 +39,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
                 cachedEvents = data;
                 cachedEventsOriginal = cachedEvents;
                 filteredEventsCopy = new ArrayList<>();
+                filteredEventsCopyDate = new ArrayList<>();
             }
 
             @Override
@@ -97,7 +98,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
     @Override
     public void onFiltrarClicked(List<String> checkboxSeleccionados) {
         filteredEvents = new ArrayList<>();
-        if(filteredEventsCopy.isEmpty()) {
+        if(filteredEventsCopyDate.isEmpty()) {
             for (Event e : cachedEvents) {
                 for (String tipo : checkboxSeleccionados) {
                     if (e.getCategoria().equals(tipo)) {
