@@ -21,6 +21,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
     private List<Event> cachedEventsOriginal;
     private List<Event> filteredEvents;
     private List<Event> filteredEventsCopy;
+    private List<Event> filteredEventsCopyDate;
     private String fechaIni;
     private String fechaFin;
 
@@ -96,15 +97,28 @@ public class EventsPresenter implements IEventsContract.Presenter {
     @Override
     public void onFiltrarClicked(List<String> checkboxSeleccionados) {
         filteredEvents = new ArrayList<>();
-        for (Event e : cachedEvents){
-            for (String tipo : checkboxSeleccionados){
-                if (e.getCategoria().equals(tipo)){
-                    filteredEvents.add(e);
+        if(filteredEventsCopy.isEmpty()) {
+            for (Event e : cachedEvents) {
+                for (String tipo : checkboxSeleccionados) {
+                    if (e.getCategoria().equals(tipo)) {
+                        filteredEvents.add(e);
+                    }
                 }
             }
-        }
-        if (filteredEvents.isEmpty()){
-            filteredEvents = cachedEvents;
+            if (filteredEvents.isEmpty()) {
+                filteredEvents = cachedEvents;
+            }
+        }else{
+            for (Event e : filteredEventsCopyDate) {
+                for (String tipo : checkboxSeleccionados) {
+                    if (e.getCategoria().equals(tipo)) {
+                        filteredEvents.add(e);
+                    }
+                }
+            }
+            if (filteredEvents.isEmpty()) {
+                filteredEvents = filteredEventsCopy;
+            }
         }
         view.onEventsLoaded(filteredEvents);
         view.onLoadSuccess(filteredEvents.size());
@@ -120,6 +134,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
     public void onFiltrarDate(int diaInicio, int mesInicio, int anhoInicio, int diaFin, int mesFin, int anhoFin) {
         filteredEvents = new ArrayList<>();
 
+        if(filteredEventsCopy.isEmpty()) {
             for (Event e : cachedEvents) {
 
                 if (dateCompare(e.getFecha(), diaInicio, mesInicio, anhoInicio, true) &&
@@ -133,10 +148,27 @@ public class EventsPresenter implements IEventsContract.Presenter {
                 filteredEvents = cachedEvents;
                 //Log.d("CatchedEvents","La lista estava vacía");
             }
+        }else{
+            for (Event e : filteredEventsCopy) {
+
+                if (dateCompare(e.getFecha(), diaInicio, mesInicio, anhoInicio, true) &&
+                        dateCompare(e.getFecha(), diaFin, mesFin, anhoFin, false)) {
+                    filteredEvents.add(e);
+                    //Log.d("CatchedEvents","Se ha anhadido el evento"+e.getNombre());
+                }
+                //Log.d("CatchedEvents","Comprobando eventos compatibles");
+            }
+            if (filteredEvents.isEmpty()) {
+                filteredEvents = filteredEventsCopy;
+                //Log.d("CatchedEvents","La lista estava vacía");
+            }
+        }
+
 
         view.onEventsLoaded(filteredEvents);
         view.onLoadSuccess(filteredEvents.size());
         filteredEventsCopy = filteredEvents;
+        filteredEventsCopyDate=filteredEvents;
     }
 
     public List<Event> getFilteredEvents() {
@@ -158,7 +190,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
      * @return true si el evento es mas reciente o no en funcion de lo indicado en el paramentro eventoMayor
      */
     private boolean dateCompare(String fechaEvento, int dia, int mes, int anho, boolean eventoMayor) {
-
+        mes++;
         String[] date1 = fechaEvento.split(" ");
         String[] dateDefinitive = date1[1].split(",");
         String[] dateSeparada = dateDefinitive[0].split("/");
@@ -174,9 +206,9 @@ public class EventsPresenter implements IEventsContract.Presenter {
             if (anho < anhoEvento) {
                 return true;
             } else if (anho == anhoEvento) {
-                if((mes++) < mesEvento) {
+                if((mes) < mesEvento) {
                     return true;
-                }else if((mes++) == mesEvento) {
+                }else if((mes) == mesEvento) {
                     if (dia <= diaEvento) {
                         return true;
                     }
@@ -187,9 +219,9 @@ public class EventsPresenter implements IEventsContract.Presenter {
             if (anho > anhoEvento) {
                 return true;
             } else if (anho == anhoEvento) {
-                if((mes++) > mesEvento) {
+                if((mes) > mesEvento) {
                     return true;
-                }else if((mes++) == mesEvento) {
+                }else if((mes) == mesEvento) {
                     if (dia >= diaEvento) {
                         return true;
                     }
