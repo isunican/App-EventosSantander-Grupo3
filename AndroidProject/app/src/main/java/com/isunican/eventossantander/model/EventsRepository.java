@@ -21,7 +21,7 @@ public class EventsRepository {
     /**
      * The data source URL can be modified. This is useful for tests.
      */
-    private static EventsAPIService.Source source = EventsAPIService.Source.AYTO;
+    private static EventsAPIService.Source source = EventsAPIService.Source.UNICAN;
 
     /*
     Problem: in some UI Tests, the tests fails because Espresso does not wait until the data
@@ -42,8 +42,8 @@ public class EventsRepository {
     https://stackoverflow.com/questions/30733718/how-to-use-espresso-idling-resource-for-network-calls
     https://developer.android.com/training/testing/espresso/idling-resource
      */
-    private final static String RESOURCE = "RESOURCE";
-    private final static CountingIdlingResource idlingResource = new CountingIdlingResource(RESOURCE);
+    private static final String RESOURCE = "RESOURCE";
+    private static final CountingIdlingResource idlingResource = new CountingIdlingResource(RESOURCE);
 
     public static void getEvents(Listener<List<Event>> listener) {
         // signal Espresso that Retrofit has started execution. Espresso will wait until the

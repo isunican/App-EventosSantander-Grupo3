@@ -30,7 +30,6 @@ public class EventsAPIService {
                 .baseUrl(source.getURL())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        EventsAPI eventosService = retrofit.create(EventsAPI.class);
-        return eventosService;
+        return retrofit.create(EventsAPI.class);
     }
 }
