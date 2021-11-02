@@ -17,6 +17,8 @@ public interface IEventsContract {
         void onOrdenarCategoriaClicked(int tipoOrdenacion);
 
         void onFiltrarClicked(List<String> checkboxSeleccionados);
+
+        void onFiltrarDate(int diaInicio, int mesInicio, int anhoInicio, int diaFin, int mesFin, int anhoFin);
     }
 
     public interface View {
