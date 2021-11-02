@@ -3,16 +3,22 @@ package com.isunican.eventossantander.view.events;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.isunican.eventossantander.R;
@@ -22,6 +28,7 @@ import com.isunican.eventossantander.view.eventsdetail.EventsDetailActivity;
 import com.isunican.eventossantander.view.info.InfoActivity;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class EventsActivity extends AppCompatActivity implements IEventsContract.View, View.OnClickListener {
@@ -36,10 +43,24 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     private int posi;
     private int posChecked;
 
+    private static final String APLICAR = "Aplicar";
+    private static final String CANCELAR = "Cancelar";
+
 
     private List<String> tipostotales;
     private List<String> tiposSeleccionados;
     private List<String> tiposSeleccionadosPrevio;
+
+    // Variables para filtrar por fecha
+    private int diaInicio, mesInicio, anhoInicio;
+    private int diaFin, mesFin, anhoFin;
+    private int diaInicioPrevio, mesInicioPrevio, anhoInicioPrevio;
+    private int diaFinPrevio, mesFinPrevio, anhoFinPrevio;
+    private TextView textoFechaInicio, textoFechaFin;
+
+    // Variables para guardar las fechas seleccionadas
+    private String fechaIni;
+    private String fechaFin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +84,10 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
 
         presenter = new EventsPresenter(this);
         tiposSeleccionadosPrevio= new ArrayList<>();
+
+        // Se inicializan las variables defiltrar entre dos fechas
+        diaInicioPrevio = -1; mesInicioPrevio = -1; anhoInicioPrevio = -1;
+        diaFinPrevio = -1; mesFinPrevio = -1; anhoFinPrevio = -1;
     }
 
 
@@ -120,8 +145,15 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_refresh:
+                // Se reinician las variables del filtro de fecha
+                diaInicioPrevio = -1; mesInicioPrevio = -1; anhoInicioPrevio = -1;
+                diaFinPrevio = -1; mesFinPrevio = -1; anhoFinPrevio = -1;
+
                 tiposSeleccionadosPrevio.clear();
                 presenter.onReloadClicked();
+                return true;
+            case R.id.menu_filter_date:
+                onDateFilterAlertDialog();
                 return true;
             case R.id.menu_info:
                 presenter.onInfoClicked();
@@ -191,13 +223,13 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         });
 
         //Creamos el boton de aplicar
-        builder.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(APLICAR, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 presenter.onFiltrarClicked(tiposSeleccionados);
             }
         });
-        builder.setNegativeButton("Cancelar",  new DialogInterface.OnClickListener(){
+        builder.setNegativeButton(CANCELAR,  new DialogInterface.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 //si se cancela no se hace nada
@@ -223,16 +255,15 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
             }
         });
                 // Set the action buttons
-        builder.setPositiveButton("Aplicar", (dialog, id) -> {
+        builder.setPositiveButton(APLICAR, (dialog, id) -> {
             // User clicked OK, so save the selectedItems results somewhere
             // or return them to the component that opened the dialog
             presenter.onOrdenarCategoriaClicked(posi);
             selectedItemsFinales = selectedItems;
         });
-        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(CANCELAR, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        //selectedItems.clear();
 
                     }
                 });
@@ -251,5 +282,175 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         tipostotales.add("Online");
         tipostotales.add("Otros");
 
+    }
+
+    /**
+     * Crea un alertDialog personalizado que muestra la posibilidad de introducir 2 fechas
+     * de inicio y final para filtrar la lista de eventos acorde a dichas fechas
+     * En el caso de que no se introduzcan ambas fechas o que la de fin sea anterior a la de inicio
+     * se le notifica al usuario y no se realiza ningun cambio
+     */
+    private void onDateFilterAlertDialog() {
+
+        // Cuando se abre el alert dialog se inicializan a -1 por si se han quedado guardados
+        // con algun valor no deseado
+        diaInicio = diaInicioPrevio;
+        mesInicio = mesInicioPrevio;
+        anhoInicio = anhoInicioPrevio;
+        diaFin = diaFinPrevio;
+        mesFin = mesFinPrevio;
+        anhoFin = anhoFinPrevio;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View view = LayoutInflater.from(this).inflate(
+                R.layout.alert_dialog_filtrar_fecha,
+                (ConstraintLayout) findViewById(R.id.layout_dialog_container)
+        );
+
+        // Texto de fecha de inicio y de final a mostrar en el AlertDialog de filtrar por fecha
+        textoFechaInicio = (TextView) view.findViewById(R.id.filtrar_fecha_inicio_texto);
+        textoFechaFin = (TextView) view.findViewById(R.id.filtrar_fecha_fin_texto);
+
+        // Si habia fechas introducidas anteriormente se muestran
+        if (diaInicioPrevio!=-1) {
+            textoFechaFin.setText(diaFinPrevio+"/"+(mesFinPrevio+1)+"/"+anhoFinPrevio);
+            textoFechaInicio.setText(diaInicioPrevio+"/"+(mesInicioPrevio+1)+"/"+anhoInicioPrevio);
+        }
+
+        builder.setView(view);
+        final AlertDialog adff = builder.create();
+
+        // Caso en el que se pulse la fecha de inicio (mediante la pulsacion del titulo)
+        view.findViewById(R.id.filtrar_fecha_inicio_titulo).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onSelectStartDate();
+            }
+        });
+        // Caso en el que se pulse la fecha de inicio (mediante la pulsacion del texto)
+        view.findViewById(R.id.filtrar_fecha_inicio_texto).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onSelectStartDate();
+            }
+        });
+
+        // Caso en el que se pulse la fecha de fin (mediante la pulsacion del titulo)
+        view.findViewById(R.id.filtrar_fecha_fin_titulo).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onSelectFinishDate();
+            }
+        });
+        // Caso en el que se pulse la fecha de fin (mediante la pulsacion del texto)
+        view.findViewById(R.id.filtrar_fecha_fin_texto).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onSelectFinishDate();
+            }
+        });
+
+        // Caso en el que se pulsa el boton de cancelar
+        view.findViewById(R.id.filtrar_fecha_cancelar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                adff.dismiss();
+            }
+        });
+        // Caso en el que se pulsa el boton de aceptar
+        view.findViewById(R.id.filtrar_fecha_aceptar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                // Si falta una fecha muestra un mensaje de error
+                if (diaFin==-1 || diaInicio==-1) {
+                    Toast.makeText(getBaseContext(), "Ambas fechas deben estar seleccionadas", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Si la fecha de inicio es posterior ala de fin se notifica al usuario
+                    if (onCheckDateOrder() == false) {
+                        Toast.makeText(getBaseContext(), "Fecha de fin debe ser posterior a fecha de inicio", Toast.LENGTH_SHORT).show();
+                    } else {
+                        diaInicioPrevio = diaInicio;
+                        mesInicioPrevio = mesInicio;
+                        anhoInicioPrevio = anhoInicio;
+                        diaFinPrevio = diaFin;
+                        mesFinPrevio = mesFin;
+                        anhoFinPrevio = anhoFin;
+                        presenter.onFiltrarDate(diaInicio, mesInicio, anhoInicio, diaFin, mesFin, anhoFin);
+                        // Se cierra el Alert Dialog
+                        adff.dismiss();
+                        }
+                }
+            }
+        });
+
+        if (adff.getWindow() != null) {
+            adff.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        adff.show();
+    }
+
+    /**
+     * Selecciona una fecha mediante el standar de Android para la fecha de inicio
+     */
+    private void onSelectStartDate() {
+        final Calendar c = Calendar.getInstance();
+        diaInicio= c.get(Calendar.DAY_OF_MONTH);
+        mesInicio= c.get(Calendar.MONTH);
+        anhoInicio= c.get(Calendar.YEAR);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int anho, int mes, int dia) {
+                diaInicio = dia;
+                mesInicio = mes;
+                anhoInicio = anho;
+                textoFechaInicio.setText(diaInicio+"/"+(mesInicio+1)+"/"+anhoInicio);
+            }
+        }
+        ,diaInicio,mesInicio,anhoInicio);
+        datePickerDialog.show();
+    }
+
+    /**
+     * Selecciona una fecha mediante el standar de Android para la fecha de fin
+     */
+    private void onSelectFinishDate() {
+        final Calendar c = Calendar.getInstance();
+        diaFin= c.get(Calendar.DAY_OF_MONTH);
+        mesFin= c.get(Calendar.MONTH);
+        anhoFin= c.get(Calendar.YEAR);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int anho, int mes, int dia) {
+                diaFin = dia;
+                mesFin = mes;
+                anhoFin = anho;
+                textoFechaFin.setText(diaFin+"/"+(mesFin+1)+"/"+anhoFin);
+            }
+        }
+                ,diaFin,mesFin,anhoFin);
+        datePickerDialog.show();
+    }
+
+    /**
+     * Comprueba que la fecha de fin es menor que la fecha de inicio
+     * @return true si es verdad, false en caso contrario
+     */
+    private boolean onCheckDateOrder() {
+
+        if (anhoInicio < anhoFin) {
+            return true;
+        } else if (anhoInicio == anhoFin) {
+            if(mesInicio < mesFin) {
+                return true;
+            }else if(mesInicio == mesFin) {
+                if (diaInicio <= diaFin) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

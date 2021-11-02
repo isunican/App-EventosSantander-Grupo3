@@ -21,6 +21,9 @@ public class EventsPresenter implements IEventsContract.Presenter {
     private List<Event> cachedEventsOriginal;
     private List<Event> filteredEvents;
     private List<Event> filteredEventsCopy;
+    private List<Event> filteredEventsCopyDate;
+    private String fechaIni;
+    private String fechaFin;
 
     public EventsPresenter(IEventsContract.View view) {
         this.view = view;
@@ -36,6 +39,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
                 cachedEvents = data;
                 cachedEventsOriginal = cachedEvents;
                 filteredEventsCopy = new ArrayList<>();
+                filteredEventsCopyDate = new ArrayList<>();
             }
 
             @Override
@@ -94,15 +98,28 @@ public class EventsPresenter implements IEventsContract.Presenter {
     @Override
     public void onFiltrarClicked(List<String> checkboxSeleccionados) {
         filteredEvents = new ArrayList<>();
-        for (Event e : cachedEvents){
-            for (String tipo : checkboxSeleccionados){
-                if (e.getCategoria().equals(tipo)){
-                    filteredEvents.add(e);
+        if(filteredEventsCopyDate.isEmpty()) {
+            for (Event e : cachedEvents) {
+                for (String tipo : checkboxSeleccionados) {
+                    if (e.getCategoria().equals(tipo)) {
+                        filteredEvents.add(e);
+                    }
                 }
             }
-        }
-        if (filteredEvents.isEmpty()){
-            filteredEvents = cachedEvents;
+            if (filteredEvents.isEmpty()) {
+                filteredEvents = cachedEvents;
+            }
+        }else{
+            for (Event e : filteredEventsCopyDate) {
+                for (String tipo : checkboxSeleccionados) {
+                    if (e.getCategoria().equals(tipo)) {
+                        filteredEvents.add(e);
+                    }
+                }
+            }
+            if (filteredEvents.isEmpty()) {
+                filteredEvents = filteredEventsCopy;
+            }
         }
         view.onEventsLoaded(filteredEvents);
         view.onLoadSuccess(filteredEvents.size());
@@ -114,11 +131,104 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
     }
 
+    @Override
+    public void onFiltrarDate(int diaInicio, int mesInicio, int anhoInicio, int diaFin, int mesFin, int anhoFin) {
+        filteredEvents = new ArrayList<>();
+
+        if(filteredEventsCopy.isEmpty()) {
+            for (Event e : cachedEvents) {
+
+                if (dateCompare(e.getFecha(), diaInicio, mesInicio, anhoInicio, true) &&
+                        dateCompare(e.getFecha(), diaFin, mesFin, anhoFin, false)) {
+                    filteredEvents.add(e);
+                    //Log.d("CatchedEvents","Se ha anhadido el evento"+e.getNombre());
+                }
+                //Log.d("CatchedEvents","Comprobando eventos compatibles");
+            }
+            if (filteredEvents.isEmpty()) {
+                filteredEvents = cachedEvents;
+                //Log.d("CatchedEvents","La lista estava vacía");
+            }
+        }else{
+            for (Event e : filteredEventsCopy) {
+
+                if (dateCompare(e.getFecha(), diaInicio, mesInicio, anhoInicio, true) &&
+                        dateCompare(e.getFecha(), diaFin, mesFin, anhoFin, false)) {
+                    filteredEvents.add(e);
+                    //Log.d("CatchedEvents","Se ha anhadido el evento"+e.getNombre());
+                }
+                //Log.d("CatchedEvents","Comprobando eventos compatibles");
+            }
+            if (filteredEvents.isEmpty()) {
+                filteredEvents = filteredEventsCopy;
+                //Log.d("CatchedEvents","La lista estava vacía");
+            }
+        }
+
+
+        view.onEventsLoaded(filteredEvents);
+        view.onLoadSuccess(filteredEvents.size());
+        filteredEventsCopy = filteredEvents;
+        filteredEventsCopyDate=filteredEvents;
+    }
+
     public List<Event> getFilteredEvents() {
         return filteredEvents;
     }
 
     public List<Event> getCachedEvents() {
         return cachedEvents;
+    }
+
+    /**
+     *
+     * @param fechaEvento fecha del evento que se desea comparar en formato String
+     * @param dia dia con el que se desea comparar la fecha del evento
+     * @param mes mes con el que se desea comparar la fecha del evento
+     * @param anho anho con el que se desea comparar la fecha del evento
+     * @param eventoMayor true si el evento es mas reciente o igual que las fechas
+     *                    proporcionadas y false en caso contrario
+     * @return true si el evento es mas reciente o no en funcion de lo indicado en el paramentro eventoMayor
+     */
+    private boolean dateCompare(String fechaEvento, int dia, int mes, int anho, boolean eventoMayor) {
+        mes++;
+        String[] date1 = fechaEvento.split(" ");
+        String[] dateDefinitive = date1[1].split(",");
+        String[] dateSeparada = dateDefinitive[0].split("/");
+
+        int diaEvento = Integer.parseInt(dateSeparada[0]);
+        int mesEvento = Integer.parseInt(dateSeparada[1]);
+        int anhoEvento = Integer.parseInt(dateSeparada[2]);
+
+        //Log.d("comparaFecha1","dia:"+diaEvento+" / mes:"+mesEvento+" / año:"+anhoEvento);
+        //Log.d("comparaFecha2","dia:"+dia+" / mes:"+mes+" / año:"+anho);
+
+        if (eventoMayor) {
+            if (anho < anhoEvento) {
+                return true;
+            } else if (anho == anhoEvento) {
+                if((mes) < mesEvento) {
+                    return true;
+                }else if((mes) == mesEvento) {
+                    if (dia <= diaEvento) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } else {
+            if (anho > anhoEvento) {
+                return true;
+            } else if (anho == anhoEvento) {
+                if((mes) > mesEvento) {
+                    return true;
+                }else if((mes) == mesEvento) {
+                    if (dia >= diaEvento) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
     }
 }
