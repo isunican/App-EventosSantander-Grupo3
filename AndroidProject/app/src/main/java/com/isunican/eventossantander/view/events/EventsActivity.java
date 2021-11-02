@@ -52,11 +52,24 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     private List<String> tiposSeleccionadosPrevio;
 
     // Variables para filtrar por fecha
-    private int diaInicio, mesInicio, anhoInicio;
-    private int diaFin, mesFin, anhoFin;
-    private int diaInicioPrevio, mesInicioPrevio, anhoInicioPrevio;
-    private int diaFinPrevio, mesFinPrevio, anhoFinPrevio;
-    private TextView textoFechaInicio, textoFechaFin;
+    private int diaInicio;
+    private int mesInicio;
+    private int anhoInicio;
+
+    private int diaFin;
+    private int mesFin;
+    private int anhoFin;
+
+    private int diaInicioPrevio;
+    private int mesInicioPrevio;
+    private int anhoInicioPrevio;
+
+    private int diaFinPrevio;
+    private int mesFinPrevio;
+    private int anhoFinPrevio;
+
+    private TextView textoFechaInicio;
+    private TextView textoFechaFin;
 
     // Variables para guardar las fechas seleccionadas
     private String fechaIni;
