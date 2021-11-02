@@ -1,6 +1,7 @@
 package com.isunican.eventossantander.view.events;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -9,6 +10,7 @@ import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,6 +29,7 @@ import com.isunican.eventossantander.presenter.events.EventsPresenter;
 import com.isunican.eventossantander.view.eventsdetail.EventsDetailActivity;
 import com.isunican.eventossantander.view.info.InfoActivity;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -59,8 +62,8 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     private TextView textoFechaInicio, textoFechaFin;
 
     // Variables para guardar las fechas seleccionadas
-    private String fechaIni;
-    private String fechaFin;
+    private LocalDate fechaIni;
+    private LocalDate fechaFin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -358,12 +361,15 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
             }
         });
         // Caso en el que se pulsa el boton de aceptar
-        view.findViewById(R.id.filtrar_fecha_aceptar).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.filtrar_fecha_aceptar);
+        view.setOnClickListener(new View.OnClickListener() {
+
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
 
                 // Si falta una fecha muestra un mensaje de error
-                if (diaFin==-1 || diaInicio==-1) {
+                if (diaFin == -1 || diaInicio == -1) {
                     Toast.makeText(getBaseContext(), "Ambas fechas deben estar seleccionadas", Toast.LENGTH_SHORT).show();
                 } else {
                     // Si la fecha de inicio es posterior ala de fin se notifica al usuario
@@ -376,10 +382,12 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
                         diaFinPrevio = diaFin;
                         mesFinPrevio = mesFin;
                         anhoFinPrevio = anhoFin;
-                        presenter.onFiltrarDate(diaInicio, mesInicio, anhoInicio, diaFin, mesFin, anhoFin);
+                        fechaIni = LocalDate.of(anhoInicio, mesInicio, diaInicio);
+                        fechaFin = LocalDate.of(anhoFin, mesFin, diaFin);
+                        presenter.onFiltrarDate(fechaIni,fechaFin);
                         // Se cierra el Alert Dialog
                         adff.dismiss();
-                        }
+                    }
                 }
             }
         });

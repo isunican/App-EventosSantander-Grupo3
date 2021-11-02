@@ -1,12 +1,17 @@
 package com.isunican.eventossantander.presenter.events;
 
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
 import com.isunican.eventossantander.model.Event;
 import com.isunican.eventossantander.model.EventsRepository;
 import com.isunican.eventossantander.model.comparators.EventsComparatorCategoria;
 import com.isunican.eventossantander.view.Listener;
 import com.isunican.eventossantander.view.events.IEventsContract;
 
+import java.time.LocalDate;
 import java.util.Collections;
 
 import java.util.ArrayList;
@@ -131,15 +136,17 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
-    public void onFiltrarDate(int diaInicio, int mesInicio, int anhoInicio, int diaFin, int mesFin, int anhoFin) {
+    public void onFiltrarDate(LocalDate fechaIni, LocalDate fechaFin) {
         filteredEvents = new ArrayList<>();
+
 
         if(filteredEventsCopy.isEmpty()) {
             for (Event e : cachedEvents) {
 
-                if (dateCompare(e.getFecha(), diaInicio, mesInicio, anhoInicio, true) &&
-                        dateCompare(e.getFecha(), diaFin, mesFin, anhoFin, false)) {
+                if (dateCompare(e.getFecha(), fechaIni, true) &&
+                        dateCompare(e.getFecha(),fechaFin, false)) {
                     filteredEvents.add(e);
                     //Log.d("CatchedEvents","Se ha anhadido el evento"+e.getNombre());
                 }
@@ -152,8 +159,8 @@ public class EventsPresenter implements IEventsContract.Presenter {
         }else{
             for (Event e : filteredEventsCopy) {
 
-                if (dateCompare(e.getFecha(), diaInicio, mesInicio, anhoInicio, true) &&
-                        dateCompare(e.getFecha(), diaFin, mesFin, anhoFin, false)) {
+                if (dateCompare(e.getFecha(), fechaIni, true) &&
+                        dateCompare(e.getFecha(), fechaFin, false)) {
                     filteredEvents.add(e);
                     //Log.d("CatchedEvents","Se ha anhadido el evento"+e.getNombre());
                 }
@@ -183,14 +190,16 @@ public class EventsPresenter implements IEventsContract.Presenter {
     /**
      *
      * @param fechaEvento fecha del evento que se desea comparar en formato String
-     * @param dia dia con el que se desea comparar la fecha del evento
-     * @param mes mes con el que se desea comparar la fecha del evento
-     * @param anho anho con el que se desea comparar la fecha del evento
+     * @param fecha fecha a comprobar
      * @param eventoMayor true si el evento es mas reciente o igual que las fechas
      *                    proporcionadas y false en caso contrario
      * @return true si el evento es mas reciente o no en funcion de lo indicado en el paramentro eventoMayor
      */
-    private boolean dateCompare(String fechaEvento, int dia, int mes, int anho, boolean eventoMayor) {
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private boolean dateCompare(String fechaEvento, LocalDate fecha, boolean eventoMayor) {
+        int dia = fecha.getDayOfMonth();
+        int mes = fecha.getMonthValue();
+        int anho = fecha.getYear();
         mes++;
         String[] date1 = fechaEvento.split(" ");
         String[] dateDefinitive = date1[1].split(",");

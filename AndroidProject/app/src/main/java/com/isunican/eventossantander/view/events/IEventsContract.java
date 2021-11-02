@@ -2,6 +2,7 @@ package com.isunican.eventossantander.view.events;
 
 import com.isunican.eventossantander.model.Event;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface IEventsContract {
@@ -18,7 +19,7 @@ public interface IEventsContract {
 
         void onFiltrarClicked(List<String> checkboxSeleccionados);
 
-        void onFiltrarDate(int diaInicio, int mesInicio, int anhoInicio, int diaFin, int mesFin, int anhoFin);
+        void onFiltrarDate(LocalDate fechaIni, LocalDate fechaFin);
     }
 
     public interface View {
