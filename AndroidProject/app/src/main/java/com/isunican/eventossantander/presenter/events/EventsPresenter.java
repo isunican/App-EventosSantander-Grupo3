@@ -23,12 +23,9 @@ public class EventsPresenter implements IEventsContract.Presenter {
     private final IEventsContract.View view;
     private List<Event> cachedEvents;
     private List<Event> cachedEventsOrdenados;
-    private List<Event> cachedEventsOriginal;
     private List<Event> filteredEvents;
     private List<Event> filteredEventsCopy;
     private List<Event> filteredEventsCopyDate;
-    private String fechaIni;
-    private String fechaFin;
 
     public EventsPresenter(IEventsContract.View view) {
         this.view = view;
@@ -42,7 +39,6 @@ public class EventsPresenter implements IEventsContract.Presenter {
                 view.onEventsLoaded(data);
                 view.onLoadSuccess(data.size());
                 cachedEvents = data;
-                cachedEventsOriginal = cachedEvents;
                 filteredEventsCopy = new ArrayList<>();
                 filteredEventsCopyDate = new ArrayList<>();
             }
@@ -148,13 +144,10 @@ public class EventsPresenter implements IEventsContract.Presenter {
                 if (dateCompare(e.getFecha(), fechaIni, true) &&
                         dateCompare(e.getFecha(),fechaFin, false)) {
                     filteredEvents.add(e);
-                    //Log.d("CatchedEvents","Se ha anhadido el evento"+e.getNombre());
                 }
-                //Log.d("CatchedEvents","Comprobando eventos compatibles");
             }
             if (filteredEvents.isEmpty()) {
                 filteredEvents = cachedEvents;
-                //Log.d("CatchedEvents","La lista estava vacía");
             }
         }else{
             for (Event e : filteredEventsCopy) {
@@ -162,13 +155,10 @@ public class EventsPresenter implements IEventsContract.Presenter {
                 if (dateCompare(e.getFecha(), fechaIni, true) &&
                         dateCompare(e.getFecha(), fechaFin, false)) {
                     filteredEvents.add(e);
-                    //Log.d("CatchedEvents","Se ha anhadido el evento"+e.getNombre());
                 }
-                //Log.d("CatchedEvents","Comprobando eventos compatibles");
             }
             if (filteredEvents.isEmpty()) {
                 filteredEvents = filteredEventsCopy;
-                //Log.d("CatchedEvents","La lista estava vacía");
             }
         }
 
@@ -209,19 +199,14 @@ public class EventsPresenter implements IEventsContract.Presenter {
         int mesEvento = Integer.parseInt(dateSeparada[1]);
         int anhoEvento = Integer.parseInt(dateSeparada[2]);
 
-        //Log.d("comparaFecha1","dia:"+diaEvento+" / mes:"+mesEvento+" / año:"+anhoEvento);
-        //Log.d("comparaFecha2","dia:"+dia+" / mes:"+mes+" / año:"+anho);
-
         if (eventoMayor) {
             if (anho < anhoEvento) {
                 return true;
             } else if (anho == anhoEvento) {
                 if((mes) < mesEvento) {
                     return true;
-                }else if((mes) == mesEvento) {
-                    if (dia <= diaEvento) {
-                        return true;
-                    }
+                }else if((mes) == mesEvento && dia <= diaEvento) {
+                    return true;
                 }
             }
             return false;
@@ -231,10 +216,8 @@ public class EventsPresenter implements IEventsContract.Presenter {
             } else if (anho == anhoEvento) {
                 if((mes) > mesEvento) {
                     return true;
-                }else if((mes) == mesEvento) {
-                    if (dia >= diaEvento) {
-                        return true;
-                    }
+                }else if((mes) == mesEvento && dia >= diaEvento) {
+                    return true;
                 }
             }
             return false;
