@@ -1,12 +1,17 @@
 package com.isunican.eventossantander.presenter.events;
 
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
 import com.isunican.eventossantander.model.Event;
 import com.isunican.eventossantander.model.EventsRepository;
 import com.isunican.eventossantander.model.comparators.EventsComparatorCategoria;
 import com.isunican.eventossantander.view.Listener;
 import com.isunican.eventossantander.view.events.IEventsContract;
 
+import java.time.LocalDate;
 import java.util.Collections;
 
 import java.util.ArrayList;
@@ -18,9 +23,9 @@ public class EventsPresenter implements IEventsContract.Presenter {
     private final IEventsContract.View view;
     private List<Event> cachedEvents;
     private List<Event> cachedEventsOrdenados;
-    private List<Event> cachedEventsOriginal;
     private List<Event> filteredEvents;
     private List<Event> filteredEventsCopy;
+    private List<Event> filteredEventsCopyDate;
 
     public EventsPresenter(IEventsContract.View view) {
         this.view = view;
@@ -34,8 +39,8 @@ public class EventsPresenter implements IEventsContract.Presenter {
                 view.onEventsLoaded(data);
                 view.onLoadSuccess(data.size());
                 cachedEvents = data;
-                cachedEventsOriginal = cachedEvents;
                 filteredEventsCopy = new ArrayList<>();
+                filteredEventsCopyDate = new ArrayList<>();
             }
 
             @Override
@@ -94,15 +99,28 @@ public class EventsPresenter implements IEventsContract.Presenter {
     @Override
     public void onFiltrarClicked(List<String> checkboxSeleccionados) {
         filteredEvents = new ArrayList<>();
-        for (Event e : cachedEvents){
-            for (String tipo : checkboxSeleccionados){
-                if (e.getCategoria().equals(tipo)){
-                    filteredEvents.add(e);
+        if(filteredEventsCopyDate.isEmpty()) {
+            for (Event e : cachedEvents) {
+                for (String tipo : checkboxSeleccionados) {
+                    if (e.getCategoria().equals(tipo)) {
+                        filteredEvents.add(e);
+                    }
                 }
             }
-        }
-        if (filteredEvents.isEmpty()){
-            filteredEvents = cachedEvents;
+            if (filteredEvents.isEmpty()) {
+                filteredEvents = cachedEvents;
+            }
+        }else{
+            for (Event e : filteredEventsCopyDate) {
+                for (String tipo : checkboxSeleccionados) {
+                    if (e.getCategoria().equals(tipo)) {
+                        filteredEvents.add(e);
+                    }
+                }
+            }
+            if (filteredEvents.isEmpty()) {
+                filteredEvents = filteredEventsCopy;
+            }
         }
         view.onEventsLoaded(filteredEvents);
         view.onLoadSuccess(filteredEvents.size());
@@ -114,11 +132,95 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public void onFiltrarDate(LocalDate fechaIni, LocalDate fechaFin) {
+        filteredEvents = new ArrayList<>();
+
+
+        if(filteredEventsCopy.isEmpty()) {
+            for (Event e : cachedEvents) {
+
+                if (dateCompare(e.getFecha(), fechaIni, true) &&
+                        dateCompare(e.getFecha(),fechaFin, false)) {
+                    filteredEvents.add(e);
+                }
+            }
+            if (filteredEvents.isEmpty()) {
+                filteredEvents = cachedEvents;
+            }
+        }else{
+            for (Event e : filteredEventsCopy) {
+
+                if (dateCompare(e.getFecha(), fechaIni, true) &&
+                        dateCompare(e.getFecha(), fechaFin, false)) {
+                    filteredEvents.add(e);
+                }
+            }
+            if (filteredEvents.isEmpty()) {
+                filteredEvents = filteredEventsCopy;
+            }
+        }
+
+
+        view.onEventsLoaded(filteredEvents);
+        view.onLoadSuccess(filteredEvents.size());
+        filteredEventsCopy = filteredEvents;
+        filteredEventsCopyDate=filteredEvents;
+    }
+
     public List<Event> getFilteredEvents() {
         return filteredEvents;
     }
 
     public List<Event> getCachedEvents() {
         return cachedEvents;
+    }
+
+    /**
+     *
+     * @param fechaEvento fecha del evento que se desea comparar en formato String
+     * @param fecha fecha a comprobar
+     * @param eventoMayor true si el evento es mas reciente o igual que las fechas
+     *                    proporcionadas y false en caso contrario
+     * @return true si el evento es mas reciente o no en funcion de lo indicado en el paramentro eventoMayor
+     */
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private boolean dateCompare(String fechaEvento, LocalDate fecha, boolean eventoMayor) {
+        int dia = fecha.getDayOfMonth();
+        int mes = fecha.getMonthValue();
+        int anho = fecha.getYear();
+        mes++;
+        String[] date1 = fechaEvento.split(" ");
+        String[] dateDefinitive = date1[1].split(",");
+        String[] dateSeparada = dateDefinitive[0].split("/");
+
+        int diaEvento = Integer.parseInt(dateSeparada[0]);
+        int mesEvento = Integer.parseInt(dateSeparada[1]);
+        int anhoEvento = Integer.parseInt(dateSeparada[2]);
+
+        if (eventoMayor) {
+            if (anho < anhoEvento) {
+                return true;
+            } else if (anho == anhoEvento) {
+                if((mes) < mesEvento) {
+                    return true;
+                }else if((mes) == mesEvento && dia <= diaEvento) {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            if (anho > anhoEvento) {
+                return true;
+            } else if (anho == anhoEvento) {
+                if((mes) > mesEvento) {
+                    return true;
+                }else if((mes) == mesEvento && dia >= diaEvento) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }
