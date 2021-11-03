@@ -140,11 +140,12 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
         if(filteredEventsCopy.isEmpty()) {
             for (Event e : cachedEvents) {
-
-                if (dateCompare(e.getFecha(), fechaIni, true) &&
+                if (e.ge)
+                /*if (dateCompare(e.getFecha(), fechaIni, true) &&
                         dateCompare(e.getFecha(),fechaFin, false)) {
                     filteredEvents.add(e);
-                }
+                }*/
+                if ()
             }
             if (filteredEvents.isEmpty()) {
                 filteredEvents = cachedEvents;
@@ -152,10 +153,10 @@ public class EventsPresenter implements IEventsContract.Presenter {
         }else{
             for (Event e : filteredEventsCopy) {
 
-                if (dateCompare(e.getFecha(), fechaIni, true) &&
+                /*if (dateCompare(e.getFecha(), fechaIni, true) &&
                         dateCompare(e.getFecha(), fechaFin, false)) {
                     filteredEvents.add(e);
-                }
+                }*/
             }
             if (filteredEvents.isEmpty()) {
                 filteredEvents = filteredEventsCopy;
