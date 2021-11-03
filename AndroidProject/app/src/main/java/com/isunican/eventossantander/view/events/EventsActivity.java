@@ -389,8 +389,8 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
                         diaFinPrevio = diaFin;
                         mesFinPrevio = mesFin;
                         anhoFinPrevio = anhoFin;
-                        fechaIni = LocalDate.of(anhoInicio, mesInicio, diaInicio);
-                        fechaFin = LocalDate.of(anhoFin, mesFin, diaFin);
+                        fechaIni = LocalDate.of(anhoInicio, mesInicio+1, diaInicio);
+                        fechaFin = LocalDate.of(anhoFin, mesFin+1, diaFin);
                         presenter.onFiltrarDate(fechaIni,fechaFin);
                         // Se cierra el Alert Dialog
                         adff.dismiss();
