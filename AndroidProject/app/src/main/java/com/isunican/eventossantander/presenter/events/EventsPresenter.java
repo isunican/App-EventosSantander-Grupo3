@@ -150,10 +150,10 @@ public class EventsPresenter implements IEventsContract.Presenter {
                 int anhoEvento = Integer.parseInt(dateSeparada[2]);
                 fechaEvento= LocalDate.of(anhoEvento,mesEvento,diaEvento);
 
-                if (dateCompare(fechaEvento, fechaIni, true) &&
-                        dateCompare(fechaEvento,fechaFin, false)) {
+                if(fechaEvento.compareTo(fechaIni)>=0 && fechaEvento.compareTo(fechaFin)<=0){
                     filteredEvents.add(e);
                 }
+
             }
             if (filteredEvents.isEmpty()) {
                 filteredEvents = cachedEvents;
@@ -173,10 +173,11 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
                 fechaEvento= LocalDate.of(anhoEvento,mesEvento,diaEvento);
 
-                if (dateCompare(fechaEvento, fechaIni, true) &&
-                        dateCompare(fechaEvento, fechaFin, false)) {
+                if(fechaEvento.compareTo(fechaIni)>=0 && fechaEvento.compareTo(fechaFin)<=0){
                     filteredEvents.add(e);
                 }
+
+
             }
             if (filteredEvents.isEmpty()) {
                 filteredEvents = filteredEventsCopy;
@@ -200,45 +201,5 @@ public class EventsPresenter implements IEventsContract.Presenter {
         return cachedEvents;
     }
 
-    /**
-     *
-     * @param fechaEvento fecha del evento que se desea comparar en formato String
-     * @param fecha fecha a comprobar
-     * @param eventoMayor true si el evento es mas reciente o igual que las fechas
-     *                    proporcionadas y false en caso contrario
-     * @return true si el evento es mas reciente o no en funcion de lo indicado en el paramentro eventoMayor
-     */
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private boolean dateCompare(LocalDate fechaEvento, LocalDate fecha, boolean eventoMayor) {
-        int dia = fecha.getDayOfMonth();
-        int mes = fecha.getMonthValue();
-        int anho = fecha.getYear();
-        //mes++;
-        int diaEvento = fechaEvento.getDayOfMonth() ;
-        int mesEvento = fechaEvento.getMonthValue();
-        int anhoEvento = fechaEvento.getYear();
-        if (eventoMayor) {
-            if (anho < anhoEvento) {
-                return true;
-            } else if (anho == anhoEvento) {
-                if((mes) < mesEvento) {
-                    return true;
-                }else if((mes) == mesEvento && dia <= diaEvento) {
-                    return true;
-                }
-            }
-            return false;
-        } else {
-            if (anho > anhoEvento) {
-                return true;
-            } else if (anho == anhoEvento) {
-                if((mes) > mesEvento) {
-                    return true;
-                }else if((mes) == mesEvento && dia >= diaEvento) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
+
 }
