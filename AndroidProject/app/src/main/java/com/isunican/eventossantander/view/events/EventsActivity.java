@@ -125,6 +125,10 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         String text = String.format("Loaded %d events", elementsLoaded);
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
+    @Override
+    public void onLoadNoEventsInDate() {
+        Toast.makeText(this, "No hay eventos en esas fechas", Toast.LENGTH_SHORT).show();
+    }
 
     @Override
     public void openEventDetails(Event event) {

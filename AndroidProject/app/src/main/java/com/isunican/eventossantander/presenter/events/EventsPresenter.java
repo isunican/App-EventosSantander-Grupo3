@@ -26,6 +26,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
     private List<Event> filteredEvents;
     private List<Event> filteredEventsCopy;
     private List<Event> filteredEventsCopyDate;
+    private LocalDate fechaEvento;
 
     public EventsPresenter(IEventsContract.View view) {
         this.view = view;
@@ -140,31 +141,54 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
         if(filteredEventsCopy.isEmpty()) {
             for (Event e : cachedEvents) {
+                String[] date1 = e.getFecha().split(" ");
+                String[] dateDefinitive = date1[1].split(",");
+                String[] dateSeparada = dateDefinitive[0].split("/");
 
-                if (dateCompare(e.getFecha(), fechaIni, true) &&
-                        dateCompare(e.getFecha(),fechaFin, false)) {
+                int diaEvento = Integer.parseInt(dateSeparada[0]);
+                int mesEvento = Integer.parseInt(dateSeparada[1]);
+                int anhoEvento = Integer.parseInt(dateSeparada[2]);
+                fechaEvento= LocalDate.of(anhoEvento,mesEvento,diaEvento);
+
+                if(fechaEvento.compareTo(fechaIni)>=0 && fechaEvento.compareTo(fechaFin)<=0){
                     filteredEvents.add(e);
                 }
+
             }
             if (filteredEvents.isEmpty()) {
                 filteredEvents = cachedEvents;
+                view.onLoadNoEventsInDate();
+            }else {
+                view.onLoadSuccess(filteredEvents.size());
             }
         }else{
             for (Event e : filteredEventsCopy) {
+                String[] date1 = e.getFecha().split(" ");
+                String[] dateDefinitive = date1[1].split(",");
+                String[] dateSeparada = dateDefinitive[0].split("/");
 
-                if (dateCompare(e.getFecha(), fechaIni, true) &&
-                        dateCompare(e.getFecha(), fechaFin, false)) {
+                int diaEvento = Integer.parseInt(dateSeparada[0]);
+                int mesEvento = Integer.parseInt(dateSeparada[1]);
+                int anhoEvento = Integer.parseInt(dateSeparada[2]);
+
+                fechaEvento= LocalDate.of(anhoEvento,mesEvento,diaEvento);
+
+                if(fechaEvento.compareTo(fechaIni)>=0 && fechaEvento.compareTo(fechaFin)<=0){
                     filteredEvents.add(e);
                 }
+
+
             }
             if (filteredEvents.isEmpty()) {
                 filteredEvents = filteredEventsCopy;
+                view.onLoadNoEventsInDate();
+            }else{
+                view.onLoadSuccess(filteredEvents.size());
             }
         }
 
 
         view.onEventsLoaded(filteredEvents);
-        view.onLoadSuccess(filteredEvents.size());
         filteredEventsCopy = filteredEvents;
         filteredEventsCopyDate=filteredEvents;
     }
@@ -177,50 +201,5 @@ public class EventsPresenter implements IEventsContract.Presenter {
         return cachedEvents;
     }
 
-    /**
-     *
-     * @param fechaEvento fecha del evento que se desea comparar en formato String
-     * @param fecha fecha a comprobar
-     * @param eventoMayor true si el evento es mas reciente o igual que las fechas
-     *                    proporcionadas y false en caso contrario
-     * @return true si el evento es mas reciente o no en funcion de lo indicado en el paramentro eventoMayor
-     */
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private boolean dateCompare(String fechaEvento, LocalDate fecha, boolean eventoMayor) {
-        int dia = fecha.getDayOfMonth();
-        int mes = fecha.getMonthValue();
-        int anho = fecha.getYear();
-        //mes++;
-        String[] date1 = fechaEvento.split(" ");
-        String[] dateDefinitive = date1[1].split(",");
-        String[] dateSeparada = dateDefinitive[0].split("/");
 
-        int diaEvento = Integer.parseInt(dateSeparada[0]);
-        int mesEvento = Integer.parseInt(dateSeparada[1]);
-        int anhoEvento = Integer.parseInt(dateSeparada[2]);
-
-        if (eventoMayor) {
-            if (anho < anhoEvento) {
-                return true;
-            } else if (anho == anhoEvento) {
-                if((mes) < mesEvento) {
-                    return true;
-                }else if((mes) == mesEvento && dia <= diaEvento) {
-                    return true;
-                }
-            }
-            return false;
-        } else {
-            if (anho > anhoEvento) {
-                return true;
-            } else if (anho == anhoEvento) {
-                if((mes) > mesEvento) {
-                    return true;
-                }else if((mes) == mesEvento && dia >= diaEvento) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
 }
