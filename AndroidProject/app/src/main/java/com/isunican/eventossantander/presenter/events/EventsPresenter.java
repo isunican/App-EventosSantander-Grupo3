@@ -200,6 +200,5 @@ public class EventsPresenter implements IEventsContract.Presenter {
     public List<Event> getCachedEvents() {
         return cachedEvents;
     }
-
-
 }
+
