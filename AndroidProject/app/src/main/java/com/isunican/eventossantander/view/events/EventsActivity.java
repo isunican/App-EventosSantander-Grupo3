@@ -1,6 +1,7 @@
 package com.isunican.eventossantander.view.events;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -9,6 +10,7 @@ import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,6 +29,7 @@ import com.isunican.eventossantander.presenter.events.EventsPresenter;
 import com.isunican.eventossantander.view.eventsdetail.EventsDetailActivity;
 import com.isunican.eventossantander.view.info.InfoActivity;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -36,8 +39,6 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     private IEventsContract.Presenter presenter;
 
     // Declaramos campos para enlazar con widgets del layout
-    private  ArrayList<String> selectedItems;
-    private  ArrayList<String> selectedItemsFinales;
     private  boolean[] checked;
 
     private int posi;
@@ -52,15 +53,27 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     private List<String> tiposSeleccionadosPrevio;
 
     // Variables para filtrar por fecha
-    private int diaInicio, mesInicio, anhoInicio;
-    private int diaFin, mesFin, anhoFin;
-    private int diaInicioPrevio, mesInicioPrevio, anhoInicioPrevio;
-    private int diaFinPrevio, mesFinPrevio, anhoFinPrevio;
-    private TextView textoFechaInicio, textoFechaFin;
+    private int diaInicio;
+    private int mesInicio;
+    private int anhoInicio;
 
     // Variables para guardar las fechas seleccionadas
-    private String fechaIni;
-    private String fechaFin;
+    private LocalDate fechaIni;
+    private LocalDate fechaFin;
+    private int diaFin;
+    private int mesFin;
+    private int anhoFin;
+
+    private int diaInicioPrevio;
+    private int mesInicioPrevio;
+    private int anhoInicioPrevio;
+
+    private int diaFinPrevio;
+    private int mesFinPrevio;
+    private int anhoFinPrevio;
+
+    private TextView textoFechaInicio;
+    private TextView textoFechaFin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -189,20 +202,20 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         builder.setTitle("Filtrar");
 
         //Comprobamos los elementos seleccionados previamente
-            checked= new boolean[tipostotales.size()];
-            posChecked=0;
-            for(int i=0 ; i<checked.length;i++){
-                checked[i]=false;
-            }
-             for(String s : tipostotales){
-                for(String p : tiposSeleccionadosPrevio){
-                    if(s.equals(p)){
-                        checked[posChecked]=true;
-                        tiposSeleccionados.add(s);
-                    }
+        checked= new boolean[tipostotales.size()];
+        posChecked=0;
+        for(int i=0 ; i<checked.length;i++){
+            checked[i]=false;
+        }
+        for(String s : tipostotales){
+            for(String p : tiposSeleccionadosPrevio){
+                if(s.equals(p)){
+                    checked[posChecked]=true;
+                    tiposSeleccionados.add(s);
                 }
-                posChecked++;
             }
+            posChecked++;
+        }
 
 
         //Creamos los elementos de la seleccion de tipo multiple
@@ -241,8 +254,6 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
 
 
     public AlertDialog onFilterAlertDialogOrdenar(){
-        //Creamos una lista donde meter los eventos que cumplan el filtro
-        List eventosFiltrados = new ArrayList<Event>();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         String[] array = {"Ascendente(A-Z)", "Descendente(Z-A)"};
@@ -254,19 +265,18 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
                 posi = i;
             }
         });
-                // Set the action buttons
+        // Set the action buttons
         builder.setPositiveButton(APLICAR, (dialog, id) -> {
             // User clicked OK, so save the selectedItems results somewhere
             // or return them to the component that opened the dialog
             presenter.onOrdenarCategoriaClicked(posi);
-            selectedItemsFinales = selectedItems;
         });
         builder.setNegativeButton(CANCELAR, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
 
-                    }
-                });
+            }
+        });
         return builder.create();
     }
 
@@ -358,16 +368,19 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
             }
         });
         // Caso en el que se pulsa el boton de aceptar
-        view.findViewById(R.id.filtrar_fecha_aceptar).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.filtrar_fecha_aceptar);
+        view.setOnClickListener(new View.OnClickListener() {
+
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
 
                 // Si falta una fecha muestra un mensaje de error
-                if (diaFin==-1 || diaInicio==-1) {
+                if (diaFin == -1 || diaInicio == -1) {
                     Toast.makeText(getBaseContext(), "Ambas fechas deben estar seleccionadas", Toast.LENGTH_SHORT).show();
                 } else {
                     // Si la fecha de inicio es posterior ala de fin se notifica al usuario
-                    if (onCheckDateOrder() == false) {
+                    if (!onCheckDateOrder()) {
                         Toast.makeText(getBaseContext(), "Fecha de fin debe ser posterior a fecha de inicio", Toast.LENGTH_SHORT).show();
                     } else {
                         diaInicioPrevio = diaInicio;
@@ -376,10 +389,12 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
                         diaFinPrevio = diaFin;
                         mesFinPrevio = mesFin;
                         anhoFinPrevio = anhoFin;
-                        presenter.onFiltrarDate(diaInicio, mesInicio, anhoInicio, diaFin, mesFin, anhoFin);
+                        fechaIni = LocalDate.of(anhoInicio, mesInicio, diaInicio);
+                        fechaFin = LocalDate.of(anhoFin, mesFin, diaFin);
+                        presenter.onFiltrarDate(fechaIni,fechaFin);
                         // Se cierra el Alert Dialog
                         adff.dismiss();
-                        }
+                    }
                 }
             }
         });
@@ -408,7 +423,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
                 textoFechaInicio.setText(diaInicio+"/"+(mesInicio+1)+"/"+anhoInicio);
             }
         }
-        ,diaInicio,mesInicio,anhoInicio);
+                ,diaInicio,mesInicio,anhoInicio);
         datePickerDialog.show();
     }
 
@@ -445,10 +460,8 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         } else if (anhoInicio == anhoFin) {
             if(mesInicio < mesFin) {
                 return true;
-            }else if(mesInicio == mesFin) {
-                if (diaInicio <= diaFin) {
-                    return true;
-                }
+            }else if(mesInicio == mesFin && diaInicio <= diaFin) {
+                return true;
             }
         }
         return false;
