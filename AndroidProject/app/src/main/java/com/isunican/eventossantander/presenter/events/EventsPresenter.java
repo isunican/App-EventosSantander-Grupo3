@@ -26,7 +26,6 @@ public class EventsPresenter implements IEventsContract.Presenter {
     private List<Event> filteredEvents;
     private List<Event> filteredEventsCopy;
     private List<Event> filteredEventsCopyDate;
-    private LocalDate fechaEvento;
 
     public EventsPresenter(IEventsContract.View view) {
         this.view = view;
@@ -128,17 +127,15 @@ public class EventsPresenter implements IEventsContract.Presenter {
         filteredEventsCopy = filteredEvents;
     }
 
-        public List<Event> getCachedEventsOrdenados() {
+    public List<Event> getCachedEventsOrdenados() {
         return cachedEventsOrdenados;
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onFiltrarDate(LocalDate fechaIni, LocalDate fechaFin) {
+        LocalDate fechaEvento;
         filteredEvents = new ArrayList<>();
-
-
         if(filteredEventsCopy.isEmpty()) {
             for (Event e : cachedEvents) {
                 String[] date1 = e.getFecha().split(" ");
@@ -153,7 +150,6 @@ public class EventsPresenter implements IEventsContract.Presenter {
                 if(fechaEvento.compareTo(fechaIni)>=0 && fechaEvento.compareTo(fechaFin)<=0){
                     filteredEvents.add(e);
                 }
-
             }
             if (filteredEvents.isEmpty()) {
                 filteredEvents = cachedEvents;
@@ -176,8 +172,6 @@ public class EventsPresenter implements IEventsContract.Presenter {
                 if(fechaEvento.compareTo(fechaIni)>=0 && fechaEvento.compareTo(fechaFin)<=0){
                     filteredEvents.add(e);
                 }
-
-
             }
             if (filteredEvents.isEmpty()) {
                 filteredEvents = filteredEventsCopy;
@@ -186,8 +180,6 @@ public class EventsPresenter implements IEventsContract.Presenter {
                 view.onLoadSuccess(filteredEvents.size());
             }
         }
-
-
         view.onEventsLoaded(filteredEvents);
         filteredEventsCopy = filteredEvents;
         filteredEventsCopyDate=filteredEvents;
@@ -200,6 +192,4 @@ public class EventsPresenter implements IEventsContract.Presenter {
     public List<Event> getCachedEvents() {
         return cachedEvents;
     }
-
-
 }
