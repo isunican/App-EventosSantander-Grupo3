@@ -190,7 +190,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
         int dia = fecha.getDayOfMonth();
         int mes = fecha.getMonthValue();
         int anho = fecha.getYear();
-        mes++;
+        //mes++;
         String[] date1 = fechaEvento.split(" ");
         String[] dateDefinitive = date1[1].split(",");
         String[] dateSeparada = dateDefinitive[0].split("/");
