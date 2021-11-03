@@ -30,6 +30,8 @@ public interface IEventsContract {
 
         void onLoadSuccess(int elementsLoaded);
 
+        void onLoadNoEventsInDate();
+
         void openEventDetails(Event event);
 
         void openInfoView();
