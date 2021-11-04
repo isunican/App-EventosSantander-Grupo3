@@ -16,6 +16,7 @@ import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
 import com.isunican.eventossantander.R;
+import com.isunican.eventossantander.model.Event;
 import com.isunican.eventossantander.model.EventsRepository;
 import com.isunican.eventossantander.view.events.EventsActivity;
 
@@ -23,6 +24,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
+
+import java.util.List;
 
 /*
  * Clase de prueba de interfaz de usuario de la historia "Mantener estado de filtros"
@@ -118,8 +121,9 @@ public class MantenerEstadoDeFiltrosUITest {
         onView(withId(R.id.btn_filtrar)).perform(click()); // Se selecciona el botón de filtrar
         //TODO comprobar checbox
         onView(withText("Arquitectura")).perform(click());//Se deselecciona el tipo arquitectura
-        
-
+        List<Event> lista = (List<Event>) onData(anything()).inAdapterView(withId(R.id.eventsListView));
+        //Todo mirar el size de la lista
+        //onView(withId(R.id.checkbox)).check(matches(not(isChecked())));
         // Comprobamos que se muestran los eventos de todos los tipos
         evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
         evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Abierto el plazo de inscripción para el Concurso Internacional de Piano de Santander Paloma O'Shea")));
