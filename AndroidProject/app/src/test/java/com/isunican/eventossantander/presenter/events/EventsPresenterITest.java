@@ -347,4 +347,56 @@ public class EventsPresenterITest {
             assertTrue(true);
         }
     }
+
+    /*
+     * Test del método combinaFiltros()
+     * @author Juan Vélez Velasco y Adrián Garcia Cubas
+     */
+    @Test
+    public void onCombinaFiltros() {
+
+        sut = new EventsPresenter(mockView);
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ///////////////////
+        // IT.1A: Se comprueba que se ha combinado correctamente con las lista de fechas vacia.
+        ///////////////////
+        List<Event> listaFiltros = sut.getCachedEvents();
+        List<Event> listaFechas = null;
+
+        sut.combinaFiltros(listaFiltros, listaFechas);
+        List<Event> listaResultante = sut.getFilteredEvents();
+        if(listaResultante == listaFiltros) {
+            assertTrue(true);
+        } else fail("La lista resultante no es la correcta");
+
+        ///////////////////
+        // IT.2A: Se comprueba que se ha combinado correctamente con las lista de filtros vacia.
+        //        ///////////////////
+        listaFechas = sut.getCachedEvents();
+        listaFiltros = null;
+
+        sut.combinaFiltros(listaFiltros, listaFechas);
+        listaResultante = sut.getFilteredEvents();
+        if(listaResultante == listaFechas) {
+            assertTrue(true);
+        } else fail("La lista resultante no es la correcta");
+
+        ///////////////////
+        // IT.3A: Se comprueba que se ha combinado correctamente con ambas listas vacias.
+        /////////////////////
+        listaFechas = null;
+        listaFiltros = null;
+
+        sut.combinaFiltros(listaFiltros, listaFechas);
+        listaResultante = sut.getFilteredEvents();
+        /*if(listaResultante == listaConEventos) {
+            assertTrue(true);
+        } else fail("La lista resultante no es la correcta");*/
+        //TODO si ok o si noOk
+    }
 }
