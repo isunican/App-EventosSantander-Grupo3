@@ -53,6 +53,25 @@ public class EventsPresenterTest {
     public void setUp() {
 
         EventsRepository.setLocalSource();
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+
+    }
+
+
+    /*
+     * Test del método onFiltrarClickedTest
+     * @author Álvaro López Alonso
+     */
+    @Test
+    public void onFiltrarClickedTest() throws InterruptedException {
+
         sut = new EventsPresenter(mockView);
         try {
             Thread.sleep(3000);
@@ -64,6 +83,7 @@ public class EventsPresenterTest {
         listaConElemento = new ArrayList<String>();
         listaLlena = new ArrayList<String>();
         listaErronea = new ArrayList<String>();
+
         listaConElemento.add("Música");
         listaLlena.add("Arquitectura");
         listaLlena.add("Artes plásticas");
@@ -78,16 +98,6 @@ public class EventsPresenterTest {
         listaErronea.add("Marionetas");
 
         listaEventos = new ArrayList<Event>();
-
-    }
-
-
-    /*
-     * Test del método onFiltrarClickedTest
-     * @author Álvaro López Alonso
-     */
-    @Test
-    public void onFiltrarClickedTest() throws InterruptedException {
 
         // IT.1A: Se comprueba que si la lista de tipos de evento introducida contiene un
         // tipo de evento, los eventos filtrados corresponderán solo a los del tipo de evento seleccionado.
@@ -114,7 +124,6 @@ public class EventsPresenterTest {
         sut.onFiltrarClicked(listaErronea);
         assertEquals(sut.getFilteredEvents(),(sut.getCachedEvents()));
         assertEquals(345, sut.getFilteredEvents().size());
-
     }
 
     /*
