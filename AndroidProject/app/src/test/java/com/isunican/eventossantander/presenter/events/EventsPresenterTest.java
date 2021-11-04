@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -22,6 +23,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.os.Build;
@@ -224,4 +226,121 @@ public class EventsPresenterTest {
         }
         assertTrue(true);
     }
+
+    /*
+     * Test del método onFiltrarDate
+     * @author Juan Vélez Velasco
+     */
+    @Test
+    public void onFiltrarDateTest() {
+
+        sut = new EventsPresenter(mockView);
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        List<Event> listaOriginal = sut.getCachedEventsOrdenados(); //Guardo una copia de la lista
+
+        ///////////////////
+        // IT.1A: Se comprueba que se actualiza la lista filteredEvents conteniendo los eventos entre fechaInicio < fechaFin
+        ///////////////////
+        LocalDate dateIni = LocalDate.of(2021, 7, 1);
+        LocalDate dateFin = LocalDate.of(2021, 8, 2);
+        //Se introduce uan fecha válida
+        sut.onFiltrarDate(dateIni, dateFin);
+        List<Event> listaFiltrada = sut.getCachedEventsOrdenados();
+        if (listaFiltrada.size() == 16) { //TODO mirar cuanto es en realidad
+            assertTrue(true);
+        } else fail("El número de eventos no se corresponde al que debería ser en ese rango de fechas");
+
+        ///////////////////
+        // IT.1B: Se comprueba que se actualiza la lista filteredEvents conteniendo los eventos entre fechaInicio == fechaFin
+        ///////////////////
+
+        dateIni = LocalDate.of(2021, 7, 1);
+        dateFin = LocalDate.of(2021, 7, 2);
+        //Se introduce uan fecha válida
+        sut.onFiltrarDate(dateIni, dateFin);
+        listaFiltrada = sut.getCachedEventsOrdenados();
+        if (listaFiltrada.size() == 16) { //TODO mirar cuanto es en realidad
+            assertTrue(true);
+        } else fail("El número de eventos no se corresponde al que debería ser en ese rango de fechas");
+
+        ///////////////////
+        // IT.1C: Se comprueba que no se actualiza la lista filteredEvents porque fechaInicio > fechaFin
+        ///////////////////
+
+        dateIni = LocalDate.of(2022, 7, 1);
+        dateFin = LocalDate.of(2021, 7, 2);
+        //Se introduce uan fecha inválida
+        sut.onFiltrarDate(dateIni, dateFin);
+        listaFiltrada = sut.getCachedEventsOrdenados();
+        if (listaOriginal == listaFiltrada) { //TODO mirar cuanto es en realidad
+            assertTrue(true);
+        } else fail("La lista se ha actualizado y no debería");
+
+        ///////////////////
+        // IT.1D: Se comprueba que se tira una excepción al ser la fechaIni == null o fechaFin == null
+        ///////////////////
+
+        dateIni = LocalDate.of(2022, 7, 1);
+        dateFin = LocalDate.of(2021, 7, 2);
+        //Se introduce uan fecha inválida
+        try {
+            sut.onFiltrarDate(null, dateFin);
+            fail("No se ha lanzado la excepción NullPointerException");
+        } catch(NullPointerException e) {
+            assertTrue(true);
+        }
+
+        try {
+            sut.onFiltrarDate(dateIni, null);
+            fail("No se ha lanzado la excepción NullPointerException");
+        } catch(NullPointerException e) {
+            assertTrue(true);
+        }
+    }
+
+
+    /*
+     * Test del método onEventClicked
+     * @author Juan Vélez Velasco
+     */
+    @Test
+    public void onEventClickedTest() {
+
+        sut = new EventsPresenter(mockView);
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        List<Event> listaOriginal = sut.getCachedEventsOrdenados();
+
+        ///////////////////
+        // IT.2A: Se comprueba que se llama al método openEventDetails de la vista con el evento seleccionado
+        ///////////////////
+
+        sut.onEventClicked(0);
+        //verify(sut.) //TODO ver si se llama al método openEventDetails
+        ///////////////////
+        // IT.2B: Se comprueba al introducir un indice < 0 o > que el número de eventos se lanza la excepcion indexOutOfBounds
+        ///////////////////
+        try {
+            sut.onEventClicked(-1);
+            fail("No se ha cazado la excepcion");
+        } catch (IndexOutOfBoundsException e) {
+            assertTrue(true);
+        }
+
+        try {
+            sut.onEventClicked(listaOriginal.size()+1);
+            fail("No se ha cazado la excepcion");
+        } catch (IndexOutOfBoundsException e) {
+            assertTrue(true);
+        }
+
+    }
+
 }
