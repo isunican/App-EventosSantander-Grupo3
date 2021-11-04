@@ -33,15 +33,16 @@ public class EventsPresenter implements IEventsContract.Presenter {
         this.view = view;
         loadData();
 
-        eventosEnDeterminadosFiltros = new ArrayList<>();
-        eventosEnDeterminadasFechas = new ArrayList<>();
-        eventosEnFiltrosCombinados = new ArrayList<>();
     }
 
     private void loadData() {
         EventsRepository.getEvents(new Listener<List<Event>>() {
             @Override
             public void onSuccess(List<Event> data) {
+
+                eventosEnDeterminadosFiltros = new ArrayList<>();
+                eventosEnDeterminadasFechas = new ArrayList<>();
+                eventosEnFiltrosCombinados = new ArrayList<>();
                 cachedEvents = data;
                 ordenFiltrado = 2;
                 view.onEventsLoaded(data);
