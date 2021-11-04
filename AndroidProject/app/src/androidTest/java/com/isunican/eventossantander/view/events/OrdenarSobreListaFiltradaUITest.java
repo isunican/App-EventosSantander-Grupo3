@@ -1,9 +1,11 @@
 package com.isunican.eventossantander.view.events;
 
+
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
@@ -23,7 +25,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 /*
- * Clase de prueba de interfaz de usuario de la historia "Ordenar sobre lista filtrada"
+ * Clase de prueba de interfaz de usuario de la historia "Ordenar Sobre Lista Filtrada"
  * @author Adrián García Cubas
  */
 public class OrdenarSobreListaFiltradaUITest {
@@ -31,7 +33,6 @@ public class OrdenarSobreListaFiltradaUITest {
      * Load known events json
      * https://personales.unican.es/rivasjm/resources/agenda_cultural.json
      */
-
     @BeforeClass
     public static void setUp() {
         EventsRepository.setLocalSource();
@@ -51,19 +52,178 @@ public class OrdenarSobreListaFiltradaUITest {
     @Test
     public void ordenarSobreListaFiltrada(){
         /*
-         * UIT.1C: Se comprueba que tras ordenar sobre una lista previamente filtrada, se aplica la
-         * ordenación correctamente y se mantiene el filtro aplicado
+         * UIT.1C: Se comprueba que al ordenar ascendentemente sobre una lista previamente filtrada,
+         * se conservan los filtros.
          */
 
-        onView(withId(R.id.btn_filtrar)).perform(click()); // Se selecciona el botón de filtrar
-        onView(withText("Música")).perform(click()); // Se marca el checkbox de "Música"
-        onView(withText("APLICAR")).perform(click()); // Se selecciona el botón de aplicar
-        // Comprobamos que solo se muestran los eventos de tipo Música
-        evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
-        evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Abierto el plazo de inscripción para el Concurso Internacional de Piano de Santander Paloma O'Shea")));
-        evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(3);
-        evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("The Guitar Conference")));
-        evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(5);
-        evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Alain Jean-Marie Quintet")));
+        //Aplicamos los filtros previos
+        onView(ViewMatchers.withId(R.id.btn_filtrar)).perform(click());
+        onView(withText("Música")).perform(click());
+        onView(withText("Otros")).perform(click());
+        onView(withText("APLICAR")).perform(click());
+
+        //TODO: Comprobar el numero de elementos en el list view
+
+        DataInteraction event; // Objeto para referenciar el contenido dentro de los elementos del ListView
+
+        //Comprobamos la posicion de algunos eventos para comprobar despues si funciona la ordenacion
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Abierto el plazo de inscripción para el Concurso Internacional de Piano de Santander Paloma O'Shea")));
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(1);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Concierto de la Camerata Coral de la UC ")));
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(21);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Alberto Garrido en el ciclo \"En Contexto\"")));
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(97);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Pablo Solo en directo presentando \"Alondras\"")));
+
+        //Aplicamos la ordenacion ascendente
+        onView(ViewMatchers.withId(R.id.btn_ordenar)).perform(click());
+        onView(withText("Ascendente(A-Z)")).perform(click());
+        onView(withText("APLICAR")).perform(click());
+
+        //TODO: Comprobar el numero de elementos en el list view
+
+        //Comprobamos la posicion de los eventos anteriores par comprobar si funciona la ordenacion
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Abierto el plazo de inscripción para el Concurso Internacional de Piano de Santander Paloma O'Shea")));
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(1);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Concierto de la Camerata Coral de la UC ")));
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(21);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Omar Montes cierra el Magdalena Deluxe")));
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(97);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Museo del Agua: Historia sobre el abastecimiento de agua de Santander ")));
+
+        //----------------------------------------------------------------------------------------------------------------
+        onView((ViewMatchers.withId(R.id.menu_refresh))).perform(click()); // Recargamos la app para reiniciar los filtros
+        //----------------------------------------------------------------------------------------------------------------
+
+
+        /*
+         * UIT.1D: Se comprueba que al ordenar descendentemente sobre una lista previamente filtrada,
+         * se conservan los filtros.
+         */
+
+        //Aplicamos los filtros previos
+        onView(ViewMatchers.withId(R.id.btn_filtrar)).perform(click());
+        onView(withText("Música")).perform(click());
+        onView(withText("Otros")).perform(click());
+        onView(withText("APLICAR")).perform(click());
+
+        //TODO: Comprobar el numero de elementos en el list view
+
+        //Comprobamos la posicion de algunos eventos para comprobar despues si funciona la ordenacion
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Abierto el plazo de inscripción para el Concurso Internacional de Piano de Santander Paloma O'Shea")));
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(1);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Concierto de la Camerata Coral de la UC ")));
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(21);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Alberto Garrido en el ciclo \"En Contexto\"")));
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(97);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Pablo Solo en directo presentando \"Alondras\"")));
+
+        //Aplicamos la ordenacion ascendente
+        onView(ViewMatchers.withId(R.id.btn_ordenar)).perform(click());
+        onView(withText("Descendente(Z-A)")).perform(click());
+        onView(withText("APLICAR")).perform(click());
+
+        //TODO: Comprobar el numero de elementos en el list view
+
+        //Comprobamos la posicion de los eventos anteriores par comprobar si funciona la ordenacion
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Museo del Agua: Historia sobre el abastecimiento de agua de Santander ")));
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(1);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Encuentro de creadores")));
+        //Al haber solo 6 evento de tipo Otros, el numero 7 debe de ser el ultimo del caso anterior
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(6);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Pablo Solo en directo presentando \"Alondras\"")));
+        //El ultimo evento deberá de ser el primero del caso anterior
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(97);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Abierto el plazo de inscripción para el Concurso Internacional de Piano de Santander Paloma O'Shea")));
+
+        //----------------------------------------------------------------------------------------------------------------
+        onView((ViewMatchers.withId(R.id.menu_refresh))).perform(click()); // Recargamos la app para reiniciar los filtros
+        //----------------------------------------------------------------------------------------------------------------
+
+        /*
+         * UIT.1E: Se comprueba que al filtrar sobre una lista previamente ordenada ascendentemente,
+         * se conserva la ordenacion.
+         */
+
+        //Aplicamos los filtros previos
+        onView(ViewMatchers.withId(R.id.btn_ordenar)).perform(click());
+        onView(withText("Ascendente(A-Z)")).perform(click());
+        onView(withText("APLICAR")).perform(click());
+
+        //TODO: Comprobar el numero de elementos en el list view
+
+        //Comprobamos la posicion de algunos eventos para comprobar que no coinciden con los casos anteriores
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Palacio de la Magdalena. Visitas guiadas")));
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(1);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Visitas guiadas al Museo de Prehistoria y Arqueología - MUPAC")));
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(344);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Museo del Agua: Historia sobre el abastecimiento de agua de Santander ")));
+
+        //Aplicamos el filtro de tipo
+        onView(ViewMatchers.withId(R.id.btn_filtrar)).perform(click());
+        onView(withText("Música")).perform(click());
+        onView(withText("Otros")).perform(click());
+        onView(withText("APLICAR")).perform(click());
+
+        //TODO: Comprobar el numero de elementos en el list view
+
+        //Comprobamos la posicion de los eventos anteriores para comprobar si funciona la ordenacion ascendente
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Abierto el plazo de inscripción para el Concurso Internacional de Piano de Santander Paloma O'Shea")));
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(1);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Concierto de la Camerata Coral de la UC ")));
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(21);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Omar Montes cierra el Magdalena Deluxe")));
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(97);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Museo del Agua: Historia sobre el abastecimiento de agua de Santander ")));
+
+        //----------------------------------------------------------------------------------------------------------------
+        onView((ViewMatchers.withId(R.id.menu_refresh))).perform(click()); // Recargamos la app para reiniciar los filtros
+        //----------------------------------------------------------------------------------------------------------------
+
+        /*
+         * UIT.1F: Se comprueba que al filtrar sobre una lista previamente ordenada descendentemente,
+         * se conserva la ordenacion.
+         */
+
+        //Aplicamos los filtros previos
+        onView(ViewMatchers.withId(R.id.btn_ordenar)).perform(click());
+        onView(withText("Descendente(Z-A)")).perform(click());
+        onView(withText("APLICAR")).perform(click());
+
+        //TODO: Comprobar el numero de elementos en el list view
+
+        //Comprobamos la posicion de algunos eventos para comprobar que no coinciden con los casos anteriores
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Museo del Agua: Historia sobre el abastecimiento de agua de Santander ")));
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(1);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Encuentro de creadores")));
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(344);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Palacio de la Magdalena. Visitas guiadas")));
+
+        //Aplicamos el filtro de tipo
+        onView(ViewMatchers.withId(R.id.btn_filtrar)).perform(click());
+        onView(withText("Música")).perform(click());
+        onView(withText("Otros")).perform(click());
+        onView(withText("APLICAR")).perform(click());
+
+        //TODO: Comprobar el numero de elementos en el list view
+
+        //Comprobamos la posicion de los eventos anteriores para comprobar si funciona la ordenacion ascendente
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Museo del Agua: Historia sobre el abastecimiento de agua de Santander ")));
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(1);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Encuentro de creadores")));
+        //Al haber solo 6 evento de tipo Otros, el numero 7 debe de ser el ultimo del caso anterior
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(6);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Pablo Solo en directo presentando \"Alondras\"")));
+        //El ultimo evento deberá de ser el primero del caso anterior
+        event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(97);
+        event.onChildView(withId(R.id.item_event_title)).check(matches(withText("Abierto el plazo de inscripción para el Concurso Internacional de Piano de Santander Paloma O'Shea")));
     }
 }
