@@ -29,6 +29,25 @@ public class EventsPresenter implements IEventsContract.Presenter {
     private int ordenFiltrado;
     private LocalDate fechaEvento;
 
+    public List<Event> getEventosEnDeterminadasFechas() {
+        return eventosEnDeterminadasFechas;
+    }
+    public List<Event> getEventosEnDeterminadosFiltros() {
+        return eventosEnDeterminadosFiltros;
+    }
+
+    public void setEventosEnDeterminadosFiltros(List<Event> list) {
+         eventosEnDeterminadosFiltros = list;
+    }
+
+    public void setEventosEnDeterminadasFechas(List<Event> list) {
+        eventosEnDeterminadasFechas = list;
+    }
+
+    public void setFilteredEvents(List<Event> list){
+        filteredEvents = list;
+    }
+
     public EventsPresenter(IEventsContract.View view) {
         this.view = view;
         loadData();
@@ -177,6 +196,9 @@ public class EventsPresenter implements IEventsContract.Presenter {
     }
 
     public void combinaFiltros() {
+        if (eventosEnDeterminadasFechas == null || eventosEnDeterminadosFiltros == null) {
+            throw new NullPointerException();
+        }
 
         eventosEnFiltrosCombinados = new ArrayList<>();
 

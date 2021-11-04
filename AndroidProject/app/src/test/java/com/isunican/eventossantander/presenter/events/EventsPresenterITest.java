@@ -251,12 +251,8 @@ public class EventsPresenterITest {
         //Se introduce uan fecha válida
         sut.onFiltrarDate(dateIni, dateFin);
         List<Event> listaFiltrada = sut.getCachedEventsOrdenados();
-        if (listaFiltrada.size() == 134) {
-            assertTrue(true);
-        } else {
-            System.out.println(listaFiltrada.size());
-            fail("El número de eventos no se corresponde al que debería ser en ese rango de fechas");
-        }
+        assertEquals(listaFiltrada.size(), 134);
+
 
         ///////////////////
         // IT.1B: Se comprueba que se actualiza la lista filteredEvents conteniendo los eventos entre fechaInicio == fechaFin
@@ -267,10 +263,7 @@ public class EventsPresenterITest {
         //Se introduce uan fecha válida
         sut.onFiltrarDate(dateIni, dateFin);
         listaFiltrada = sut.getCachedEventsOrdenados();
-        if (listaFiltrada.size() == 16) {
-            assertTrue(true);
-        } else fail("El número de eventos no se corresponde al que debería ser en ese rango de fechas");
-
+        assertEquals(listaFiltrada.size(), 16);
         ///////////////////
         // IT.1C: Se comprueba que no se actualiza la lista filteredEvents porque fechaInicio > fechaFin
         ///////////////////
@@ -280,11 +273,8 @@ public class EventsPresenterITest {
         //Se introduce uan fecha inválida
         sut.onFiltrarDate(dateIni, dateFin);
         listaFiltrada = sut.getCachedEventsOrdenados();
-        if (listaFiltrada.size() == 345) {
-            assertTrue(true);
-        } else {
-            fail("La lista se ha actualizado y no debería");
-        }
+        assertEquals(listaFiltrada.size(), 345);
+
 
         ///////////////////
         // IT.1D: Se comprueba que se tira una excepción al ser la fechaIni == null o fechaFin == null
@@ -350,7 +340,7 @@ public class EventsPresenterITest {
 
     /*
      * Test del método combinaFiltros()
-     * @author Juan Vélez Velasco y Adrián Garcia Cubas
+     * @author Juan Vélez Velasco
      */
     @Test
     public void onCombinaFiltros() {
@@ -362,41 +352,70 @@ public class EventsPresenterITest {
             e.printStackTrace();
         }
 
-        ///////////////////
         // IT.1A: Se comprueba que se ha combinado correctamente con las lista de fechas vacia.
-        ///////////////////
-        List<Event> listaFiltros = sut.getCachedEvents();
-        List<Event> listaFechas = null;
+        List<Event> listaLlena  = sut.getCachedEvents();
+        List<Event> listaVacia = new ArrayList<>();
 
-        sut.combinaFiltros(listaFiltros, listaFechas);
+        sut.setEventosEnDeterminadosFiltros(listaLlena);
+        sut.setEventosEnDeterminadasFechas(listaVacia);
+
+        sut.combinaFiltros();
         List<Event> listaResultante = sut.getFilteredEvents();
-        if(listaResultante == listaFiltros) {
-            assertTrue(true);
-        } else fail("La lista resultante no es la correcta");
+        assertEquals(listaResultante.size(),listaLlena.size());
 
-        ///////////////////
+
         // IT.2A: Se comprueba que se ha combinado correctamente con las lista de filtros vacia.
-        //        ///////////////////
-        listaFechas = sut.getCachedEvents();
-        listaFiltros = null;
 
-        sut.combinaFiltros(listaFiltros, listaFechas);
+        sut.setEventosEnDeterminadosFiltros(listaVacia);
+        sut.setEventosEnDeterminadasFechas(listaLlena);
+
+        sut.combinaFiltros();
         listaResultante = sut.getFilteredEvents();
-        if(listaResultante == listaFechas) {
-            assertTrue(true);
-        } else fail("La lista resultante no es la correcta");
+        assertEquals(listaResultante.size(),listaLlena.size());
+
 
         ///////////////////
         // IT.3A: Se comprueba que se ha combinado correctamente con ambas listas vacias.
         /////////////////////
-        listaFechas = null;
-        listaFiltros = null;
 
-        sut.combinaFiltros(listaFiltros, listaFechas);
+        List<Event> l1 = listaLlena.subList(0,10);
+        List<Event> l2 = listaLlena.subList(5,10);
+        sut.setEventosEnDeterminadosFiltros(l1);
+        sut.setEventosEnDeterminadasFechas(l2);
+        sut.combinaFiltros();
         listaResultante = sut.getFilteredEvents();
-        /*if(listaResultante == listaConEventos) {
+        assertEquals(listaResultante.size(), 5);
+
+        //IT.1B: Con las dos listas vacias no se actualiza nada
+        List<Event> l3 = new ArrayList<>();
+        List<Event> l4 = new ArrayList<>();
+        sut.setEventosEnDeterminadosFiltros(l3);
+        sut.setEventosEnDeterminadasFechas(l4);
+        sut.combinaFiltros();
+        assertEquals(sut.getFilteredEvents().size(), 0);
+
+        //IT.2B: Lista filtros nula tira NullPointerException
+        List<Event> l5 = null;
+        List<Event> l6 = new ArrayList<>();
+        sut.setEventosEnDeterminadosFiltros(l5);
+        sut.setEventosEnDeterminadasFechas(l6);
+        try {
+            sut.combinaFiltros();
+            fail("No se lanza excepcion");
+        } catch (NullPointerException e) {
             assertTrue(true);
-        } else fail("La lista resultante no es la correcta");*/
-        //TODO si ok o si noOk
+        }
+
+        //IT.3B: Lista fechas nula tira NullPointerException
+        List<Event> l7 = new ArrayList<>();
+        List<Event> l8 = null;
+        sut.setEventosEnDeterminadosFiltros(l7);
+        sut.setEventosEnDeterminadasFechas(l8);
+        try {
+            sut.combinaFiltros();
+            fail("No se lanza excepcion");
+        } catch (NullPointerException e) {
+            assertTrue(true);
+        }
     }
 }
