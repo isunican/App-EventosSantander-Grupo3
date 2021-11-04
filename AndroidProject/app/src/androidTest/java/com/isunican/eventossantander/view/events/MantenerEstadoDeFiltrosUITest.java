@@ -105,6 +105,27 @@ public class MantenerEstadoDeFiltrosUITest {
         evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Maria Sybilla Merian y Alida Withoos: Mujeres, Arte y Ciencia en la Edad Moderna")));
 
 
-        //TODo ultimo test
+        /*
+         * UIT.1D: Se comprueba que tras marcar unos tipos, cerrar y volver abrir, se elimina un tipo de los seleccionados y se actualiza la lista.
+         */
+        onView(withId(R.id.menu_refresh)).perform(click());
+        onView(withId(R.id.btn_filtrar)).perform(click()); // Se selecciona el botón de filtrar
+        onView(withText("Online")).perform(click());
+        onView(withText("Artes plásticas")).perform(click());
+        onView(withText("Arquitectura")).perform(click());
+        onView(withText("Música")).perform(click());
+        onView(withText("APLICAR")).perform(click()); // Se selecciona el botón de aplicar
+        onView(withId(R.id.btn_filtrar)).perform(click()); // Se selecciona el botón de filtrar
+        //TODO comprobar checbox
+        onView(withText("Arquitectura")).perform(click());//Se deselecciona el tipo arquitectura
+        
+
+        // Comprobamos que se muestran los eventos de todos los tipos
+        evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
+        evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Abierto el plazo de inscripción para el Concurso Internacional de Piano de Santander Paloma O'Shea")));
+        evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(1);
+        evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Menéndez Pelayo y José Echegaray en la polémica de la Ciencia Española")));
+        evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(5);
+        evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Maria Sybilla Merian y Alida Withoos: Mujeres, Arte y Ciencia en la Edad Moderna")));
     }
 }
