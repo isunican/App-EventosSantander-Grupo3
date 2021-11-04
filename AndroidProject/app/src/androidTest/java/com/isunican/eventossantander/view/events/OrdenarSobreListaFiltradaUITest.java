@@ -5,10 +5,11 @@ import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
+
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import static com.isunican.eventossantander.view.matcher.Matchers.withListSize;
 import static org.hamcrest.Matchers.anything;
 
 import androidx.test.espresso.DataInteraction;
@@ -62,7 +63,7 @@ public class OrdenarSobreListaFiltradaUITest {
         onView(withText("Otros")).perform(click());
         onView(withText("APLICAR")).perform(click());
 
-        //TODO: Comprobar el numero de elementos en el list view
+        onView(withId(R.id.eventsListView)).check(matches(withListSize(98)));
 
         DataInteraction event; // Objeto para referenciar el contenido dentro de los elementos del ListView
 
@@ -81,7 +82,7 @@ public class OrdenarSobreListaFiltradaUITest {
         onView(withText("Ascendente(A-Z)")).perform(click());
         onView(withText("APLICAR")).perform(click());
 
-        //TODO: Comprobar el numero de elementos en el list view
+        onView(withId(R.id.eventsListView)).check(matches(withListSize(98)));
 
         //Comprobamos la posicion de los eventos anteriores par comprobar si funciona la ordenacion
         event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
@@ -109,7 +110,7 @@ public class OrdenarSobreListaFiltradaUITest {
         onView(withText("Otros")).perform(click());
         onView(withText("APLICAR")).perform(click());
 
-        //TODO: Comprobar el numero de elementos en el list view
+        onView(withId(R.id.eventsListView)).check(matches(withListSize(98)));
 
         //Comprobamos la posicion de algunos eventos para comprobar despues si funciona la ordenacion
         event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
@@ -126,7 +127,7 @@ public class OrdenarSobreListaFiltradaUITest {
         onView(withText("Descendente(Z-A)")).perform(click());
         onView(withText("APLICAR")).perform(click());
 
-        //TODO: Comprobar el numero de elementos en el list view
+        onView(withId(R.id.eventsListView)).check(matches(withListSize(98)));
 
         //Comprobamos la posicion de los eventos anteriores par comprobar si funciona la ordenacion
         event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
@@ -154,7 +155,7 @@ public class OrdenarSobreListaFiltradaUITest {
         onView(withText("Ascendente(A-Z)")).perform(click());
         onView(withText("APLICAR")).perform(click());
 
-        //TODO: Comprobar el numero de elementos en el list view
+        onView(withId(R.id.eventsListView)).check(matches(withListSize(345)));
 
         //Comprobamos la posicion de algunos eventos para comprobar que no coinciden con los casos anteriores
         event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
@@ -170,7 +171,7 @@ public class OrdenarSobreListaFiltradaUITest {
         onView(withText("Otros")).perform(click());
         onView(withText("APLICAR")).perform(click());
 
-        //TODO: Comprobar el numero de elementos en el list view
+        onView(withId(R.id.eventsListView)).check(matches(withListSize(98)));
 
         //Comprobamos la posicion de los eventos anteriores para comprobar si funciona la ordenacion ascendente
         event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
@@ -196,7 +197,7 @@ public class OrdenarSobreListaFiltradaUITest {
         onView(withText("Descendente(Z-A)")).perform(click());
         onView(withText("APLICAR")).perform(click());
 
-        //TODO: Comprobar el numero de elementos en el list view
+        onView(withId(R.id.eventsListView)).check(matches(withListSize(345)));
 
         //Comprobamos la posicion de algunos eventos para comprobar que no coinciden con los casos anteriores
         event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
@@ -212,7 +213,7 @@ public class OrdenarSobreListaFiltradaUITest {
         onView(withText("Otros")).perform(click());
         onView(withText("APLICAR")).perform(click());
 
-        //TODO: Comprobar el numero de elementos en el list view
+        onView(withId(R.id.eventsListView)).check(matches(withListSize(98)));
 
         //Comprobamos la posicion de los eventos anteriores para comprobar si funciona la ordenacion ascendente
         event = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
