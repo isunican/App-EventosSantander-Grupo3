@@ -1,3 +1,4 @@
+
 package com.isunican.eventossantander.view.events;
 
 import static androidx.test.espresso.Espresso.onData;
@@ -23,8 +24,8 @@ import com.isunican.eventossantander.model.EventsRepository;
 
 import org.hamcrest.Matcher;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -34,27 +35,34 @@ import org.junit.Test;
  */
 public class FiltrarEventosPorFechaUITest {
 
+    private View decorView;
+
     /**
      * Load known events json
      * https://personales.unican.es/rivasjm/resources/agenda_cultural.json
      */
+
     @BeforeClass
     public static void setUp() {
         EventsRepository.setLocalSource();
         IdlingRegistry.getInstance().register(EventsRepository.getIdlingResource());
-
-        activityRule.getScenario().onActivity(
-                activity -> decorView = activity.getWindow().getDecorView());
     }
+
     @AfterClass
     public static void clean() {
         EventsRepository.setOnlineSource();
         IdlingRegistry.getInstance().unregister(EventsRepository.getIdlingResource());
     }
-    @ClassRule
-    public static ActivityScenarioRule<EventsActivity> activityRule =
+
+    @Before
+    public void setUp2(){
+        activityRule.getScenario().onActivity(
+                activity -> decorView = activity.getWindow().getDecorView()
+        );
+    }
+    @Rule
+    public ActivityScenarioRule<EventsActivity> activityRule =
             new ActivityScenarioRule(EventsActivity.class);
-    private static View decorView;
 
     @Test
     public void filtrarEventosPorFecha() {
