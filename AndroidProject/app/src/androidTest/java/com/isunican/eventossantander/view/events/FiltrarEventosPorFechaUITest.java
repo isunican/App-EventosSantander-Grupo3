@@ -73,8 +73,8 @@ public class FiltrarEventosPorFechaUITest {
          * ambas fechas.
          */
         onView(withId(R.id.menu_filter_date)).perform(click()); // Se selecciona el botón de filtrar
-        onView(withId(R.id.filtrar_fecha_inicio_texto)).check(matches(withText("")));
-        onView(withId(R.id.filtrar_fecha_fin_texto)).check(matches(withText("")));
+        onView(withId(R.id.filtrar_fecha_inicio_texto)).check(matches(withText(" ")));
+        onView(withId(R.id.filtrar_fecha_fin_texto)).check(matches(withText(" ")));
         onView(withText("ACEPTAR")).perform(click());// Se selecciona el botón de aplicar
         onView(withText("Ambas fechas deben estar seleccionadas")).inRoot(RootMatchers.withDecorView((Matcher<View>) decorView)).check(matches(isDisplayed()));
         onView(withText("CANCELAR")).perform(click());// Se selecciona el botón de aplicar
@@ -86,8 +86,8 @@ public class FiltrarEventosPorFechaUITest {
 
         onView(withId(R.id.menu_filter_date)).perform(click()); // Se selecciona el botón de filtrar
         onView(withId(R.id.filtrar_fecha_inicio_texto)).perform(click());
-        onView(withId(R.id.filtrar_fecha_inicio_texto)).check(matches(withText("")));
-        onView(withId(R.id.filtrar_fecha_fin_texto)).check(matches(withText("")));
+        onView(withId(R.id.filtrar_fecha_inicio_texto)).check(matches(withText(" ")));
+        onView(withId(R.id.filtrar_fecha_fin_texto)).check(matches(withText(" ")));
         onView(withId(R.id.filtrar_fecha_inicio_texto)).perform(PickerActions.setDate(2017, 6, 30));
         //onView(withId(R.id.filtrar_fecha_inicio_texto)).check(matches(withText("2017, 6, 30")));
         onView(withText("ACEPTAR")).perform(click());// Se selecciona el botón de aplicar
@@ -102,8 +102,8 @@ public class FiltrarEventosPorFechaUITest {
 
         onView(withId(R.id.menu_filter_date)).perform(click()); // Se selecciona el botón de filtrar
         onView(withId(R.id.filtrar_fecha_inicio_texto)).perform(click());
-        onView(withId(R.id.filtrar_fecha_inicio_texto)).check(matches(withText("")));
-        onView(withId(R.id.filtrar_fecha_fin_texto)).check(matches(withText("")));
+        onView(withId(R.id.filtrar_fecha_inicio_texto)).check(matches(withText(" ")));
+        onView(withId(R.id.filtrar_fecha_fin_texto)).check(matches(withText(" ")));
         onView(withId(R.id.filtrar_fecha_fin_texto)).perform(PickerActions.setDate(1920, 6, 30));
         onView(withText("ACEPTAR")).perform(click());// Se selecciona el botón de aplicar
         onView(withText("Ambas fechas deben estar seleccionadas")).inRoot(RootMatchers.withDecorView((Matcher<View>) decorView)).check(matches(isDisplayed()));
