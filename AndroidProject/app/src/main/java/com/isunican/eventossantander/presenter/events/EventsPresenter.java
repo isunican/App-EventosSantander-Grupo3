@@ -59,6 +59,9 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
     @Override
     public void onEventClicked(int eventIndex) {
+        if (eventIndex >= cachedEvents.size() || eventIndex < 0) {
+            throw new IndexOutOfBoundsException();
+        }
         if (cachedEvents != null && eventIndex < cachedEvents.size()) {
             Event event = cachedEvents.get(eventIndex);
             view.openEventDetails(event);

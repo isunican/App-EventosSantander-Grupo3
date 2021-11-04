@@ -75,6 +75,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.test.espresso:espresso-idling-resource:3.4.0'
     implementation 'com.google.ar.sceneform:filament-android:1.17.1'
+    implementation 'androidx.test.espresso:espresso-contrib:3.4.0'
     testImplementation 'junit:junit:4.+'
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.1.0'
     testImplementation 'org.robolectric:robolectric:4.6'
