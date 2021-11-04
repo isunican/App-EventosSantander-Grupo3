@@ -83,7 +83,7 @@ public class FiltrarEventosPorFechaUITest {
          * UIT.1B: Se comprueba que tras introducir fecha de inicio pero no de fin,
          * se muestra un pop-up indicicando que se debe introducir ambas fechas.
          */
-/*
+
         onView(withId(R.id.menu_filter_date)).perform(click()); // Se selecciona el botón de filtrar
         onView(withId(R.id.filtrar_fecha_inicio_texto)).perform(click());
         onView(withId(R.id.filtrar_fecha_inicio_texto)).check(matches(withText("")));
@@ -99,7 +99,7 @@ public class FiltrarEventosPorFechaUITest {
          * UIT.1C: Se comprueba que tras introducir fecha de fin pero no de inicio,
          * se muestra un pop-up indicicando que se debe introducir ambas fechas.
          */
-/*
+
         onView(withId(R.id.menu_filter_date)).perform(click()); // Se selecciona el botón de filtrar
         onView(withId(R.id.filtrar_fecha_inicio_texto)).perform(click());
         onView(withId(R.id.filtrar_fecha_inicio_texto)).check(matches(withText("")));
@@ -113,7 +113,7 @@ public class FiltrarEventosPorFechaUITest {
     /*
      * UIT.1D: Se comprueba que tras introducir una fecha en la que no hay eventos se muestra toda la lista de eventos.
     */
-/*
+
         onView(withId(R.id.menu_filter_date)).perform(click()); // Se selecciona el botón de filtrar
         onView(withId(R.id.filtrar_fecha_inicio_texto)).perform(click());
         onView(withId(R.id.filtrar_fecha_inicio_texto)).check(matches(withText("")));
@@ -135,7 +135,7 @@ public class FiltrarEventosPorFechaUITest {
         /*
          * UIT.1E: Se comprueba que tras seleccionar una fecha válida se muestran los eventos que deben aparecer.
          */
-        /*
+
         onView(withId(R.id.menu_filter_date)).perform(click()); // Se selecciona el botón de filtrar
         onView(withId(R.id.filtrar_fecha_inicio_texto)).perform(click());
         onView(withId(R.id.filtrar_fecha_inicio_texto)).check(matches(withText("")));
@@ -153,7 +153,7 @@ public class FiltrarEventosPorFechaUITest {
         /*
          * UIT.1F: Se comprueba que tras seleccionar una fecha válida y luego se pulsa el boton de cancelar aparece la lista de eventos sin aplicar ningun filtro.
          */
-        /*
+
         onView(withId(R.id.menu_filter_date)).perform(click()); // Se selecciona el botón de filtrar
         onView(withId(R.id.filtrar_fecha_inicio_texto)).perform(click());
         onView(withId(R.id.filtrar_fecha_inicio_texto)).check(matches(withText("")));
@@ -167,7 +167,7 @@ public class FiltrarEventosPorFechaUITest {
         evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Menéndez Pelayo y José Echegaray en la polémica de la Ciencia Española")));
         evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(5);
         evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Maria Sybilla Merian y Alida Withoos: Mujeres, Arte y Ciencia en la Edad Moderna")));
-    */
+
     }
 
 }
