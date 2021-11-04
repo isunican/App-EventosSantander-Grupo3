@@ -1,2 +1,5 @@
-US423825-FiltrarEventosPorTipo: https://1drv.ms/v/s!AiKDfNsgnriMg74JaVKoXqZTNjZ5VA?e=ka3IIz
-US434997-OrdenarEventoPorTipo:  https://1drv.ms/v/s!ArX_q-9W1YnYgqQvHXAwflIxWELbVw
+US423825-FiltrarEventosPorTipo: 	https://1drv.ms/v/s!AiKDfNsgnriMg74JaVKoXqZTNjZ5VA?e=ka3IIz
+US434997-OrdenarEventoPorTipo:  	https://1drv.ms/v/s!ArX_q-9W1YnYgqQvHXAwflIxWELbVw
+US434997-OrdenarSobreListaFiltrada:	https://1drv.ms/v/s!Aju6n1CcW_5chvs3Dllu1_kwwb0kNw
+US437801-MantenerEstadoDeFiltros:	https://1drv.ms/v/s!Aju6n1CcW_5chvs2V4p49eejySLxtw
+US435132-FiltrarPorFecha:		https://1drv.ms/v/s!Aju6n1CcW_5chvs4YW1H6itNS6FAaA
