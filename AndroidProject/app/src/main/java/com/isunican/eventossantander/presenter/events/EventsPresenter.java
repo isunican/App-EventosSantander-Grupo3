@@ -22,27 +22,30 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
     private final IEventsContract.View view;
     private List<Event> cachedEvents;
-    private List<Event> cachedEventsOrdenados;
     private List<Event> filteredEvents;
-    private List<Event> filteredEventsCopy;
-    private List<Event> filteredEventsCopyDate;
+    private List<Event> eventosEnDeterminadasFechas;
+    private List<Event> eventosEnDeterminadosFiltros;
+    private List<Event> eventosEnFiltrosCombinados;
     private int ordenFiltrado;
+    private LocalDate fechaEvento;
 
     public EventsPresenter(IEventsContract.View view) {
         this.view = view;
         loadData();
+
+        eventosEnDeterminadosFiltros = new ArrayList<>();
+        eventosEnDeterminadasFechas = new ArrayList<>();
+        eventosEnFiltrosCombinados = new ArrayList<>();
     }
 
     private void loadData() {
         EventsRepository.getEvents(new Listener<List<Event>>() {
             @Override
             public void onSuccess(List<Event> data) {
+                cachedEvents = data;
+                ordenFiltrado = 2;
                 view.onEventsLoaded(data);
                 view.onLoadSuccess(data.size());
-                cachedEvents = data;
-                filteredEventsCopy = new ArrayList<>();
-                filteredEventsCopyDate = new ArrayList<>();
-                ordenFiltrado = 2;
             }
 
             @Override
@@ -78,158 +81,113 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
         if (tipoOrdenacion == 0) { //ascendente
             EventsComparatorCategoria ecc = new EventsComparatorCategoria();
-            if (filteredEventsCopy.isEmpty()) {
+            if (eventosEnFiltrosCombinados.isEmpty()) {
                 Collections.sort(cachedEvents,ecc);
-                cachedEventsOrdenados = cachedEvents;
+                eventosEnFiltrosCombinados = cachedEvents;
             } else {
-                Collections.sort(filteredEventsCopy,ecc);
-                cachedEventsOrdenados = filteredEventsCopy;
+                Collections.sort(eventosEnFiltrosCombinados,ecc);
             }
-            view.onEventsLoaded(cachedEventsOrdenados);
-        } else if(tipoOrdenacion == 1) { //descendente
+        } else if (tipoOrdenacion == 1) { //descendente
             EventsComparatorCategoria ecc = new EventsComparatorCategoria();
-            if (filteredEventsCopy.isEmpty()) {
+            if (eventosEnFiltrosCombinados.isEmpty()) {
                 java.util.Collections.sort(cachedEvents,ecc);
                 Collections.reverse(cachedEvents);
-                cachedEventsOrdenados = cachedEvents;
+                eventosEnFiltrosCombinados = cachedEvents;
             } else {
-                java.util.Collections.sort(filteredEventsCopy,ecc);
-                Collections.reverse(filteredEventsCopy);
-                cachedEventsOrdenados = filteredEventsCopy;
+                java.util.Collections.sort(eventosEnFiltrosCombinados, ecc);
+                Collections.reverse(eventosEnFiltrosCombinados);
             }
-            view.onEventsLoaded(cachedEventsOrdenados);
         }
+        view.onEventsLoaded(eventosEnFiltrosCombinados);
     }
 
     @Override
     public void onFiltrarClicked(List<String> checkboxSeleccionados) {
+
         filteredEvents = new ArrayList<>();
-        if(filteredEventsCopyDate.isEmpty()) {
-            for (Event e : cachedEvents) {
-                for (String tipo : checkboxSeleccionados) {
-                    if (e.getCategoria().equals(tipo)) {
-                        filteredEvents.add(e);
-                    }
+
+        for (Event e : cachedEvents) {
+            for (String tipo : checkboxSeleccionados) {
+                if (e.getCategoria().equals(tipo)) {
+                    filteredEvents.add(e);
                 }
-            }
-            if (filteredEvents.isEmpty()) {
-                filteredEvents = cachedEvents;
-            }
-        }else{
-            for (Event e : filteredEventsCopyDate) {
-                for (String tipo : checkboxSeleccionados) {
-                    if (e.getCategoria().equals(tipo)) {
-                        filteredEvents.add(e);
-                    }
-                }
-            }
-            if (filteredEvents.isEmpty()) {
-                filteredEvents = filteredEventsCopy;
             }
         }
-        if(ordenFiltrado == 2) {
+        if (filteredEvents.isEmpty()) {
+            eventosEnDeterminadosFiltros = cachedEvents;
+        } else {
+            eventosEnDeterminadosFiltros = filteredEvents;
+        }
+        combinaFiltros();
+
+        if(ordenFiltrado != 2) {
             onOrdenarCategoriaClicked(ordenFiltrado);
         }
 
-        view.onEventsLoaded(filteredEvents);
-        view.onLoadSuccess(filteredEvents.size());
-        filteredEventsCopy = filteredEvents;
-    }
-
-    public List<Event> getCachedEventsOrdenados() {
-        return cachedEventsOrdenados;
-
+        view.onEventsLoaded(eventosEnFiltrosCombinados);
+        view.onLoadSuccess(eventosEnFiltrosCombinados.size());
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onFiltrarDate(LocalDate fechaIni, LocalDate fechaFin) {
+
         filteredEvents = new ArrayList<>();
 
-
-        if(filteredEventsCopy.isEmpty()) {
             for (Event e : cachedEvents) {
+                String[] date1 = e.getFecha().split(" ");
+                String[] dateDefinitive = date1[1].split(",");
+                String[] dateSeparada = dateDefinitive[0].split("/");
 
-                if (dateCompare(e.getFecha(), fechaIni, true) &&
-                        dateCompare(e.getFecha(),fechaFin, false)) {
+                int diaEvento = Integer.parseInt(dateSeparada[0]);
+                int mesEvento = Integer.parseInt(dateSeparada[1]);
+                int anhoEvento = Integer.parseInt(dateSeparada[2]);
+                fechaEvento= LocalDate.of(anhoEvento,mesEvento,diaEvento);
+
+                if(fechaEvento.compareTo(fechaIni)>=0 && fechaEvento.compareTo(fechaFin)<=0){
                     filteredEvents.add(e);
                 }
             }
             if (filteredEvents.isEmpty()) {
-                filteredEvents = cachedEvents;
+                eventosEnDeterminadasFechas = cachedEvents;
+                combinaFiltros();
+                view.onLoadNoEventsInDate();
+            }else {
+                eventosEnDeterminadasFechas = filteredEvents;
+                combinaFiltros();
+                view.onLoadSuccess(eventosEnFiltrosCombinados.size());
             }
-        }else{
-            for (Event e : filteredEventsCopy) {
-
-                if (dateCompare(e.getFecha(), fechaIni, true) &&
-                        dateCompare(e.getFecha(), fechaFin, false)) {
-                    filteredEvents.add(e);
-                }
-            }
-            if (filteredEvents.isEmpty()) {
-                filteredEvents = filteredEventsCopy;
-            }
-        }
-
-
-        view.onEventsLoaded(filteredEvents);
-        view.onLoadSuccess(filteredEvents.size());
-        filteredEventsCopy = filteredEvents;
-        filteredEventsCopyDate=filteredEvents;
+        view.onEventsLoaded(eventosEnFiltrosCombinados);
     }
 
     public List<Event> getFilteredEvents() {
-        return filteredEvents;
+        return eventosEnFiltrosCombinados;
     }
 
     public List<Event> getCachedEvents() {
         return cachedEvents;
     }
 
-    /**
-     *
-     * @param fechaEvento fecha del evento que se desea comparar en formato String
-     * @param fecha fecha a comprobar
-     * @param eventoMayor true si el evento es mas reciente o igual que las fechas
-     *                    proporcionadas y false en caso contrario
-     * @return true si el evento es mas reciente o no en funcion de lo indicado en el paramentro eventoMayor
-     */
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private boolean dateCompare(String fechaEvento, LocalDate fecha, boolean eventoMayor) {
-        int dia = fecha.getDayOfMonth();
-        int mes = fecha.getMonthValue();
-        int anho = fecha.getYear();
-        //mes++;
-        String[] date1 = fechaEvento.split(" ");
-        String[] dateDefinitive = date1[1].split(",");
-        String[] dateSeparada = dateDefinitive[0].split("/");
+    public List<Event> getCachedEventsOrdenados() {
+        return eventosEnFiltrosCombinados;
+    }
 
-        int diaEvento = Integer.parseInt(dateSeparada[0]);
-        int mesEvento = Integer.parseInt(dateSeparada[1]);
-        int anhoEvento = Integer.parseInt(dateSeparada[2]);
+    private void combinaFiltros() {
 
-        if (eventoMayor) {
-            if (anho < anhoEvento) {
-                return true;
-            } else if (anho == anhoEvento) {
-                if((mes) < mesEvento) {
-                    return true;
-                }else if((mes) == mesEvento && dia <= diaEvento) {
-                    return true;
+        eventosEnFiltrosCombinados = new ArrayList<>();
+
+        if (eventosEnDeterminadosFiltros.isEmpty()) {
+            eventosEnFiltrosCombinados = eventosEnDeterminadasFechas;
+        } else if (eventosEnDeterminadasFechas.isEmpty()){
+            eventosEnFiltrosCombinados = eventosEnDeterminadosFiltros;
+        }
+
+        for(Event i : eventosEnDeterminadosFiltros) {
+            for(Event j : eventosEnDeterminadasFechas) {
+                if(i == j) {
+                    eventosEnFiltrosCombinados.add(j);
                 }
             }
-            return false;
-        } else {
-            if (anho > anhoEvento) {
-                return true;
-            } else if (anho == anhoEvento) {
-                if((mes) > mesEvento) {
-                    return true;
-                }else if((mes) == mesEvento && dia >= diaEvento) {
-                    return true;
-                }
-            }
-            return false;
         }
     }
 }

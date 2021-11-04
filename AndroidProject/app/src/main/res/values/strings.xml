@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Eventos Santander</string>
     <string name="menu_reload">Reload</string>
+    <string name="menu_filter_date">Filtrar Fecha</string>
     <string name="menu_info">Info</string>
     <string name="info_text">Aplicación creada para el Proyecto Integrado del curso 2021-2022</string>
     <string name="date">Fecha evento:</string>

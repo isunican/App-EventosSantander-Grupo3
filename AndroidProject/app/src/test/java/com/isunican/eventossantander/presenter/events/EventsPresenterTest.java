@@ -53,6 +53,25 @@ public class EventsPresenterTest {
     public void setUp() {
 
         EventsRepository.setLocalSource();
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+
+    }
+
+
+    /*
+     * Test del método onFiltrarClickedTest
+     * @author Álvaro López Alonso
+     */
+    @Test
+    public void onFiltrarClickedTest() throws InterruptedException {
+
         sut = new EventsPresenter(mockView);
         try {
             Thread.sleep(3000);
@@ -64,6 +83,7 @@ public class EventsPresenterTest {
         listaConElemento = new ArrayList<String>();
         listaLlena = new ArrayList<String>();
         listaErronea = new ArrayList<String>();
+
         listaConElemento.add("Música");
         listaLlena.add("Arquitectura");
         listaLlena.add("Artes plásticas");
@@ -79,20 +99,10 @@ public class EventsPresenterTest {
 
         listaEventos = new ArrayList<Event>();
 
-    }
-
-
-    /*
-     * Test del método onFiltrarClickedTest
-     * @author Álvaro López Alonso
-     */
-    @Test
-    public void onFiltrarClickedTest() throws InterruptedException {
-
         // IT.1A: Se comprueba que si la lista de tipos de evento introducida contiene un
         // tipo de evento, los eventos filtrados corresponderán solo a los del tipo de evento seleccionado.
         sut.onFiltrarClicked(listaConElemento);
-        assertEquals(sut.getFilteredEvents().size(), 92);
+        assertEquals(92, sut.getFilteredEvents().size());
         assertEquals(sut.getFilteredEvents().get(5).getCategoria(),("Música"));
         assertEquals(sut.getFilteredEvents().get(24).getCategoria(),("Música"));
         assertEquals(sut.getFilteredEvents().get(68).getCategoria(),("Música"));
@@ -101,20 +111,19 @@ public class EventsPresenterTest {
         // los eventos filtrados sean igual a los eventos cacheados.
         sut.onFiltrarClicked(listaVacia);
         assertEquals(sut.getFilteredEvents(),(sut.getCachedEvents()));
-        assertEquals(sut.getFilteredEvents().size(), 345);
+        assertEquals(345, sut.getFilteredEvents().size());
 
         // IT.1C: Se comprueba que si la lista de tipos de evento introducida contiene
         // todos los tipos de evento, los eventos filtrados sean todos los eventos
         // caheados menos aquellos que no tengan tipo.
         sut.onFiltrarClicked(listaLlena);
-        assertEquals(sut.getFilteredEvents().size(),310);
+        assertEquals(310, sut.getFilteredEvents().size());
 
         // IT.1D: Se comprueba que si la lista introducida contiene un tipo de evento
         // no existente, los eventos filtrados sean igual a los eventos cacheados.
         sut.onFiltrarClicked(listaErronea);
         assertEquals(sut.getFilteredEvents(),(sut.getCachedEvents()));
-        assertEquals(sut.getFilteredEvents().size(),345);
-
+        assertEquals(345, sut.getFilteredEvents().size());
     }
 
     /*
@@ -132,7 +141,7 @@ public class EventsPresenterTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        assertEquals(sut.getCachedEvents().size(),345);
+        assertEquals(345, sut.getCachedEvents().size());
         assertEquals(sut.getCachedEvents().get(0).getCategoria(),("Música"));
         assertEquals(sut.getCachedEvents().get(0).getNombre(),("Abierto el plazo de inscripción para el Concurso Internacional de Piano de Santander Paloma O'Shea"));
         assertEquals(sut.getCachedEvents().get(3).getCategoria(),("Artes plásticas"));
