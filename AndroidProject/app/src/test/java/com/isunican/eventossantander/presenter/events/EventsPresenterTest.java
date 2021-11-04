@@ -59,15 +59,12 @@ public class EventsPresenterTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-
-
     }
 
 
     /*
      * Test del método onFiltrarClickedTest
-     * @author Álvaro López Alonso
+     * @author Adrián García Cubas
      */
     @Test
     public void onFiltrarClickedTest() throws InterruptedException {
@@ -79,11 +76,14 @@ public class EventsPresenterTest {
             e.printStackTrace();
         }
 
+        //Inicilizamos las listas
         listaVacia = new ArrayList<String>();
         listaConElemento = new ArrayList<String>();
         listaLlena = new ArrayList<String>();
         listaErronea = new ArrayList<String>();
+        listaEventos = new ArrayList<Event>();
 
+        //Las rellenamos como correspondan
         listaConElemento.add("Música");
         listaLlena.add("Arquitectura");
         listaLlena.add("Artes plásticas");
@@ -97,33 +97,40 @@ public class EventsPresenterTest {
         listaLlena.add("Otros");
         listaErronea.add("Marionetas");
 
-        listaEventos = new ArrayList<Event>();
 
-        // IT.1A: Se comprueba que si la lista de tipos de evento introducida contiene un
-        // tipo de evento, los eventos filtrados corresponderán solo a los del tipo de evento seleccionado.
-        sut.onFiltrarClicked(listaConElemento);
-        assertEquals(92, sut.getFilteredEvents().size());
-        assertEquals(sut.getFilteredEvents().get(5).getCategoria(),("Música"));
-        assertEquals(sut.getFilteredEvents().get(24).getCategoria(),("Música"));
-        assertEquals(sut.getFilteredEvents().get(68).getCategoria(),("Música"));
-
-        // IT.1B: Se comprueba que si la lista de tipos de evento introducida está vacía,
-        // los eventos filtrados sean igual a los eventos cacheados.
+        // IT.1A: Se comprueba que si la lista de tipos de evento esta vacía, los eventos filtrados
+        // son igual a los eventos cacheados y no estarán ordenados.
         sut.onFiltrarClicked(listaVacia);
-        assertEquals(sut.getFilteredEvents(),(sut.getCachedEvents()));
         assertEquals(345, sut.getFilteredEvents().size());
+        assertEquals(sut.getFilteredEvents(),(sut.getCachedEvents()));
+
+
+        // IT.1B: Se comprueba que si la lista de tipos de evento introducida contiene el tipo musica,
+        // los eventos filtrados son de tipo música y estan ordenados de manera ascendente
+        sut.onOrdenarCategoriaClicked(0); //Ordenamos ascendentemente los eventos
+        sut.onFiltrarClicked(listaConElemento);
+        assertEquals(sut.getFilteredEvents().get(0).getCategoria(),"Música");
+        assertEquals(sut.getFilteredEvents().get(20).getCategoria(),"Música");
+        assertEquals(sut.getFilteredEvents().get(45).getCategoria(),"Música");
+        assertEquals(92, sut.getFilteredEvents().size()); //Comprobamos que solo hay eventos de tipo musica
 
         // IT.1C: Se comprueba que si la lista de tipos de evento introducida contiene
         // todos los tipos de evento, los eventos filtrados sean todos los eventos
-        // caheados menos aquellos que no tengan tipo.
+        // cacheados menos aquellos que no tengan tipo y ordenados de manera descendente.
+        sut.onOrdenarCategoriaClicked(1); //Ordenamos descendentemente los eventos
         sut.onFiltrarClicked(listaLlena);
-        assertEquals(310, sut.getFilteredEvents().size());
+        assertEquals(310, sut.getFilteredEvents().size());//Comprobamos que no estan los eventos sin tipo
+    //TODO: Comprobar que tipos de eventos hay para meter uno de cada
+        assertEquals(sut.getFilteredEvents().get(0).getCategoria(), "");
 
-        // IT.1D: Se comprueba que si la lista introducida contiene un tipo de evento
-        // no existente, los eventos filtrados sean igual a los eventos cacheados.
-        sut.onFiltrarClicked(listaErronea);
-        assertEquals(sut.getFilteredEvents(),(sut.getCachedEvents()));
-        assertEquals(345, sut.getFilteredEvents().size());
+        // IT.1D: Se comprueba que si la lista de tipos de evento esta vacia, estarán todos los
+        // eventos ordenados de manera ascendente
+        sut.onOrdenarCategoriaClicked(0); //Ordenamos ascendentemente los eventos
+        sut.onFiltrarClicked(listaVacia);
+        assertEquals(345, sut.getFilteredEvents().size()); //Comprobamos que estan todos los eventos
+    // TODO: Comprobar que tipos de eventos hay para meter uno de cada
+
+    // TODO: Casos de prueba no validos
     }
 
     /*
@@ -160,8 +167,12 @@ public class EventsPresenterTest {
 
     }
 
+    /*
+     * Test del método onFiltrarClickedTest
+     * @author Adrián García Cubas
+     */
     @Test
-    public void testOrdenar() {
+    public void onOrdenarCategoriaClickedTest() {
 
         sut = new EventsPresenter(mockView);
         try {
@@ -224,4 +235,5 @@ public class EventsPresenterTest {
         }
         assertTrue(true);
     }
+
 }
