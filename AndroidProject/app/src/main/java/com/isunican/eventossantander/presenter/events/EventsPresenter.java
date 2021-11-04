@@ -172,7 +172,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
         return eventosEnFiltrosCombinados;
     }
 
-    private void combinaFiltros() {
+    public void combinaFiltros() {
 
         eventosEnFiltrosCombinados = new ArrayList<>();
 
