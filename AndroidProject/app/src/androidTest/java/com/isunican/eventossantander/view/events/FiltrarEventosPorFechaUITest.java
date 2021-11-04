@@ -1,6 +1,5 @@
 package com.isunican.eventossantander.view.events;
 
-
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -15,13 +14,12 @@ import android.view.View;
 
 import androidx.test.espresso.DataInteraction;
 import androidx.test.espresso.IdlingRegistry;
+import androidx.test.espresso.contrib.PickerActions;
 import androidx.test.espresso.matcher.RootMatchers;
-import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
 import com.isunican.eventossantander.R;
 import com.isunican.eventossantander.model.EventsRepository;
-import com.isunican.eventossantander.view.events.EventsActivity;
 
 import org.hamcrest.Matcher;
 import org.junit.AfterClass;
@@ -53,7 +51,7 @@ public class FiltrarEventosPorFechaUITest {
         EventsRepository.setOnlineSource();
         IdlingRegistry.getInstance().unregister(EventsRepository.getIdlingResource());
     }
-    @Rule
+    @ClassRule
     public static ActivityScenarioRule<EventsActivity> activityRule =
             new ActivityScenarioRule(EventsActivity.class);
     private static View decorView;
@@ -72,39 +70,53 @@ public class FiltrarEventosPorFechaUITest {
         onView(withId(R.id.filtrar_fecha_fin_texto)).check(matches(withText("")));
         onView(withText("ACEPTAR")).perform(click());// Se selecciona el botón de aplicar
         onView(withText("Ambas fechas deben estar seleccionadas")).inRoot(RootMatchers.withDecorView((Matcher<View>) decorView)).check(matches(isDisplayed()));
+        onView(withText("CANCELAR")).perform(click());// Se selecciona el botón de aplicar
+
         /*
          * UIT.1B: Se comprueba que tras introducir fecha de inicio pero no de fin,
          * se muestra un pop-up indicicando que se debe introducir ambas fechas.
          */
-/*
-        onView(withId(R.id.btn_filtrar)).perform(click()); // Se selecciona el botón de filtrar
-        onView(withText("Música")).perform(click()); // Se marca el checkbox de "Música"
-        onView(withText("APLICAR")).perform(click()); // Se selecciona el botón de aplicar
-        // Comprobamos que solo se muestran los eventos de tipo Música
-        evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
-        evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Abierto el plazo de inscripción para el Concurso Internacional de Piano de Santander Paloma O'Shea")));
-        evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(3);
-        evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("The Guitar Conference")));
-        evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(5);
-        evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Alain Jean-Marie Quintet")));
+
+        onView(withId(R.id.menu_filter_date)).perform(click()); // Se selecciona el botón de filtrar
+        onView(withId(R.id.filtrar_fecha_inicio_texto)).perform(click());
+        onView(withId(R.id.filtrar_fecha_inicio_texto)).check(matches(withText("")));
+        onView(withId(R.id.filtrar_fecha_fin_texto)).check(matches(withText("")));
+        onView(withId(R.id.filtrar_fecha_inicio_texto)).perform(PickerActions.setDate(2017, 6, 30));
+        //onView(withId(R.id.filtrar_fecha_inicio_texto)).check(matches(withText("2017, 6, 30")));
+        onView(withText("ACEPTAR")).perform(click());// Se selecciona el botón de aplicar
+        onView(withText("Ambas fechas deben estar seleccionadas")).inRoot(RootMatchers.withDecorView((Matcher<View>) decorView)).check(matches(isDisplayed()));
+        onView(withText("CANCELAR")).perform(click()); // Se selecciona el botón de cancelar
+
 
         /*
-         * UIT.1C: Se comprueba que introducir un rango de fechas en en el que
-         * no hay eventos, se muestra toda la lista de eventos.
+         * UIT.1C: Se comprueba que tras introducir fecha de fin pero no de inicio,
+         * se muestra un pop-up indicicando que se debe introducir ambas fechas.
          */
-/*
-        onView(withId(R.id.btn_filtrar)).perform(click()); // Se selecciona el botón de filtrar
-        onView(withText("Arquitectura")).perform(click()); // Se marca el checkbox de "Arquitectura"
-        onView(withText("Artes plásticas")).perform(click()); // Se marca el checkbox de "Artes plásticas"
-        onView(withText("Cine/Audiovisual")).perform(click()); // Se marca el checkbox de "Cine/Audiovisual"
-        onView(withText("Edición/Literatura")).perform(click()); // Se marca el checkbox de "Edición/Literatura"
-        onView(withText("Formación/Talleres")).perform(click()); // Se marca el checkbox de "Formación/Talleres"
-        onView(withText("Fotografía")).perform(click()); // Se marca el checkbox de "Fotografía"
-        onView(withText("Infantil")).perform(click()); // Se marca el checkbox de "Infantil"
-        //onView(withText("Música")).perform(click()); // Se marca el checkbox de "Música"
-        onView(withText("Online")).perform(click()); // Se marca el checkbox de "Online"
-        onView(withText("Otros")).perform(click()); // Se marca el checkbox de "Otros"
-        onView(withText("APLICAR")).perform(click()); // Se selecciona el botón de aplicar
+
+        onView(withId(R.id.menu_filter_date)).perform(click()); // Se selecciona el botón de filtrar
+        onView(withId(R.id.filtrar_fecha_inicio_texto)).perform(click());
+        onView(withId(R.id.filtrar_fecha_inicio_texto)).check(matches(withText("")));
+        onView(withId(R.id.filtrar_fecha_fin_texto)).check(matches(withText("")));
+        onView(withId(R.id.filtrar_fecha_fin_texto)).perform(PickerActions.setDate(1920, 6, 30));
+        onView(withText("ACEPTAR")).perform(click());// Se selecciona el botón de aplicar
+        onView(withText("Ambas fechas deben estar seleccionadas")).inRoot(RootMatchers.withDecorView((Matcher<View>) decorView)).check(matches(isDisplayed()));
+        onView(withText("CANCELAR")).perform(click()); // Se selecciona el botón de cancelar
+
+
+    /*
+     * UIT.1D: Se comprueba que tras introducir una fecha en la que no hay eventos se muestra toda la lista de eventos.
+    */
+
+        onView(withId(R.id.menu_filter_date)).perform(click()); // Se selecciona el botón de filtrar
+        onView(withId(R.id.filtrar_fecha_inicio_texto)).perform(click());
+        onView(withId(R.id.filtrar_fecha_inicio_texto)).check(matches(withText("")));
+        onView(withId(R.id.filtrar_fecha_fin_texto)).check(matches(withText("")));
+        onView(withId(R.id.filtrar_fecha_inicio_texto)).perform(PickerActions.setDate(1920, 6, 30));
+        onView(withId(R.id.filtrar_fecha_fin_texto)).perform(PickerActions.setDate(1920, 6, 30));
+        //onView(withId(R.id.filtrar_fecha_inicio_texto)).check(matches(withText("2017, 6, 30")));
+        onView(withText("ACEPTAR")).perform(click());// Se selecciona el botón de aplicar
+        onView(withText("No hay eventos en en la fecha especificada")).inRoot(RootMatchers.withDecorView((Matcher<View>) decorView)).check(matches(isDisplayed()));
+        DataInteraction evento;
         // Comprobamos que se muestran los eventos de todos los tipos
         evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
         evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Abierto el plazo de inscripción para el Concurso Internacional de Piano de Santander Paloma O'Shea")));
@@ -113,17 +125,39 @@ public class FiltrarEventosPorFechaUITest {
         evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(5);
         evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Maria Sybilla Merian y Alida Withoos: Mujeres, Arte y Ciencia en la Edad Moderna")));
 
-    }
-    /*
-     * UIT.1D: Se comprueba que tras introducir una fecha válida se muestran los
-     * eventos que deberían mostrarse.
-    */
-
+        /*
+         * UIT.1E: Se comprueba que tras seleccionar una fecha válida se muestran los eventos que deben aparecer.
+         */
+        onView(withId(R.id.menu_filter_date)).perform(click()); // Se selecciona el botón de filtrar
+        onView(withId(R.id.filtrar_fecha_inicio_texto)).perform(click());
+        onView(withId(R.id.filtrar_fecha_inicio_texto)).check(matches(withText("")));
+        onView(withId(R.id.filtrar_fecha_fin_texto)).check(matches(withText("")));
+        onView(withId(R.id.filtrar_fecha_inicio_texto)).perform(PickerActions.setDate(2021, 8, 2));
+        onView(withId(R.id.filtrar_fecha_fin_texto)).perform(PickerActions.setDate(2021, 8, 3));
+        onView(withText("ACEPTAR")).perform(click());// Se selecciona el botón de aplicar
+        evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
+        evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Abierto el plazo de inscripción para el Concurso Internacional de Piano de Santander Paloma O'Shea")));
+        evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(1);
+        evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Menéndez Pelayo y José Echegaray en la polémica de la Ciencia Española")));
+        evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(5);
+        evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Maria Sybilla Merian y Alida Withoos: Mujeres, Arte y Ciencia en la Edad Moderna")));
 
         /*
-         * UIT.1E: Se comprueba que tras seleccionar fechas y después pulsar el botón de
-         * cancelar, se muestra la lista sin aplicar ningun filtro.
+         * UIT.1F: Se comprueba que tras seleccionar una fecha válida y luego se pulsa el boton de cancelar aparece la lista de eventos sin aplicar ningun filtro.
          */
+        onView(withId(R.id.menu_filter_date)).perform(click()); // Se selecciona el botón de filtrar
+        onView(withId(R.id.filtrar_fecha_inicio_texto)).perform(click());
+        onView(withId(R.id.filtrar_fecha_inicio_texto)).check(matches(withText("")));
+        onView(withId(R.id.filtrar_fecha_fin_texto)).check(matches(withText("")));
+        onView(withId(R.id.filtrar_fecha_inicio_texto)).perform(PickerActions.setDate(2021, 8, 2));
+        onView(withId(R.id.filtrar_fecha_fin_texto)).perform(PickerActions.setDate(2021, 8, 2));
+        onView(withText("CANCELAR")).perform(click());// Se selecciona el botón de cancelar
+        evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
+        evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Abierto el plazo de inscripción para el Concurso Internacional de Piano de Santander Paloma O'Shea")));
+        evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(1);
+        evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Menéndez Pelayo y José Echegaray en la polémica de la Ciencia Española")));
+        evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(5);
+        evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Maria Sybilla Merian y Alida Withoos: Mujeres, Arte y Ciencia en la Edad Moderna")));
     }
 }
 
