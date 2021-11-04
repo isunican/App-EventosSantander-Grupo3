@@ -29,19 +29,39 @@ public class EventsPresenter implements IEventsContract.Presenter {
     private int ordenFiltrado;
     private LocalDate fechaEvento;
 
+    public List<Event> getEventosEnDeterminadasFechas() {
+        return eventosEnDeterminadasFechas;
+    }
+    public List<Event> getEventosEnDeterminadosFiltros() {
+        return eventosEnDeterminadosFiltros;
+    }
+
+    public void setEventosEnDeterminadosFiltros(List<Event> list) {
+         eventosEnDeterminadosFiltros = list;
+    }
+
+    public void setEventosEnDeterminadasFechas(List<Event> list) {
+        eventosEnDeterminadasFechas = list;
+    }
+
+    public void setFilteredEvents(List<Event> list){
+        filteredEvents = list;
+    }
+
     public EventsPresenter(IEventsContract.View view) {
         this.view = view;
         loadData();
 
-        eventosEnDeterminadosFiltros = new ArrayList<>();
-        eventosEnDeterminadasFechas = new ArrayList<>();
-        eventosEnFiltrosCombinados = new ArrayList<>();
     }
 
     private void loadData() {
         EventsRepository.getEvents(new Listener<List<Event>>() {
             @Override
             public void onSuccess(List<Event> data) {
+
+                eventosEnDeterminadosFiltros = new ArrayList<>();
+                eventosEnDeterminadasFechas = new ArrayList<>();
+                eventosEnFiltrosCombinados = new ArrayList<>();
                 cachedEvents = data;
                 ordenFiltrado = 2;
                 view.onEventsLoaded(data);
@@ -58,6 +78,9 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
     @Override
     public void onEventClicked(int eventIndex) {
+        if (eventIndex >= cachedEvents.size() || eventIndex < 0) {
+            throw new IndexOutOfBoundsException();
+        }
         if (cachedEvents != null && eventIndex < cachedEvents.size()) {
             Event event = cachedEvents.get(eventIndex);
             view.openEventDetails(event);
@@ -134,29 +157,29 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
         filteredEvents = new ArrayList<>();
 
-            for (Event e : cachedEvents) {
-                String[] date1 = e.getFecha().split(" ");
-                String[] dateDefinitive = date1[1].split(",");
-                String[] dateSeparada = dateDefinitive[0].split("/");
+        for (Event e : cachedEvents) {
+            String[] date1 = e.getFecha().split(" ");
+            String[] dateDefinitive = date1[1].split(",");
+            String[] dateSeparada = dateDefinitive[0].split("/");
 
-                int diaEvento = Integer.parseInt(dateSeparada[0]);
-                int mesEvento = Integer.parseInt(dateSeparada[1]);
-                int anhoEvento = Integer.parseInt(dateSeparada[2]);
-                fechaEvento= LocalDate.of(anhoEvento,mesEvento,diaEvento);
+            int diaEvento = Integer.parseInt(dateSeparada[0]);
+            int mesEvento = Integer.parseInt(dateSeparada[1]);
+            int anhoEvento = Integer.parseInt(dateSeparada[2]);
+            fechaEvento= LocalDate.of(anhoEvento,mesEvento,diaEvento);
 
-                if(fechaEvento.compareTo(fechaIni)>=0 && fechaEvento.compareTo(fechaFin)<=0){
-                    filteredEvents.add(e);
-                }
+            if(fechaEvento.compareTo(fechaIni)>=0 && fechaEvento.compareTo(fechaFin)<=0){
+                filteredEvents.add(e);
             }
-            if (filteredEvents.isEmpty()) {
-                eventosEnDeterminadasFechas = cachedEvents;
-                combinaFiltros();
-                view.onLoadNoEventsInDate();
-            }else {
-                eventosEnDeterminadasFechas = filteredEvents;
-                combinaFiltros();
-                view.onLoadSuccess(eventosEnFiltrosCombinados.size());
-            }
+        }
+        if (filteredEvents.isEmpty()) {
+            eventosEnDeterminadasFechas = cachedEvents;
+            combinaFiltros();
+            view.onLoadNoEventsInDate();
+        }else {
+            eventosEnDeterminadasFechas = filteredEvents;
+            combinaFiltros();
+            view.onLoadSuccess(eventosEnFiltrosCombinados.size());
+        }
         view.onEventsLoaded(eventosEnFiltrosCombinados);
     }
 
@@ -173,6 +196,9 @@ public class EventsPresenter implements IEventsContract.Presenter {
     }
 
     public void combinaFiltros() {
+        if (eventosEnDeterminadasFechas == null || eventosEnDeterminadosFiltros == null) {
+            throw new NullPointerException();
+        }
 
         eventosEnFiltrosCombinados = new ArrayList<>();
 
