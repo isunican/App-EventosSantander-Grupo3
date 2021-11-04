@@ -29,6 +29,25 @@ public class EventsPresenter implements IEventsContract.Presenter {
     private int ordenFiltrado;
     private LocalDate fechaEvento;
 
+    public List<Event> getEventosEnDeterminadasFechas() {
+        return eventosEnDeterminadasFechas;
+    }
+    public List<Event> getEventosEnDeterminadosFiltros() {
+        return eventosEnDeterminadosFiltros;
+    }
+
+    public void setEventosEnDeterminadosFiltros(List<Event> list) {
+         eventosEnDeterminadosFiltros = list;
+    }
+
+    public void setEventosEnDeterminadasFechas(List<Event> list) {
+        eventosEnDeterminadasFechas = list;
+    }
+
+    public void setFilteredEvents(List<Event> list){
+        filteredEvents = list;
+    }
+
     public EventsPresenter(IEventsContract.View view) {
         this.view = view;
         loadData();
@@ -59,6 +78,9 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
     @Override
     public void onEventClicked(int eventIndex) {
+        if (eventIndex >= cachedEvents.size() || eventIndex < 0) {
+            throw new IndexOutOfBoundsException();
+        }
         if (cachedEvents != null && eventIndex < cachedEvents.size()) {
             Event event = cachedEvents.get(eventIndex);
             view.openEventDetails(event);
@@ -173,7 +195,10 @@ public class EventsPresenter implements IEventsContract.Presenter {
         return eventosEnFiltrosCombinados;
     }
 
-    private void combinaFiltros() {
+    public void combinaFiltros() {
+        if (eventosEnDeterminadasFechas == null || eventosEnDeterminadosFiltros == null) {
+            throw new NullPointerException();
+        }
 
         eventosEnFiltrosCombinados = new ArrayList<>();
 
