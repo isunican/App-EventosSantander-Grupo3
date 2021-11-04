@@ -9,9 +9,13 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -75,6 +79,10 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     private TextView textoFechaInicio;
     private TextView textoFechaFin;
 
+    private LocalDate fechaIniGuardada;
+    private LocalDate fechaFinGuardada;
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // es importante llamar siempre al método de la clase padre, para inicializar
@@ -98,11 +106,9 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         presenter = new EventsPresenter(this);
         tiposSeleccionadosPrevio= new ArrayList<>();
 
-        // Se inicializan las variables defiltrar entre dos fechas
-        diaInicioPrevio = -1; mesInicioPrevio = -1; anhoInicioPrevio = -1;
-        diaFinPrevio = -1; mesFinPrevio = -1; anhoFinPrevio = -1;
+        // Se intenta recargar las variables de filtrar entre dos fechas
+        onReloadFilteredDates();
     }
-
 
     @Override
     public void onEventsLoaded(List<Event> events) {
@@ -124,6 +130,11 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     public void onLoadSuccess(int elementsLoaded) {
         String text = String.format("Loaded %d events", elementsLoaded);
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onLoadNoEventsInDate() {
+        Toast.makeText(this, "No hay eventos en esas fechas", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -302,14 +313,14 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
      */
     private void onDateFilterAlertDialog() {
 
-        // Cuando se abre el alert dialog se inicializan a -1 por si se han quedado guardados
-        // con algun valor no deseado
         diaInicio = diaInicioPrevio;
         mesInicio = mesInicioPrevio;
         anhoInicio = anhoInicioPrevio;
         diaFin = diaFinPrevio;
         mesFin = mesFinPrevio;
         anhoFin = anhoFinPrevio;
+
+        SharedPreferences sharpref = getPreferences(this.MODE_PRIVATE);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = LayoutInflater.from(this).inflate(
@@ -389,9 +400,19 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
                         diaFinPrevio = diaFin;
                         mesFinPrevio = mesFin;
                         anhoFinPrevio = anhoFin;
-                        fechaIni = LocalDate.of(anhoInicio, mesInicio, diaInicio);
-                        fechaFin = LocalDate.of(anhoFin, mesFin, diaFin);
+                        fechaIni = LocalDate.of(anhoInicio, mesInicio+1, diaInicio);
+                        fechaFin = LocalDate.of(anhoFin, mesFin+1, diaFin);
                         presenter.onFiltrarDate(fechaIni,fechaFin);
+
+                        SharedPreferences.Editor editor = sharpref.edit();
+                        editor.putInt("diaInicioPrevioGuardado", diaInicioPrevio);
+                        editor.putInt("mesInicioPrevioGuardado", mesInicioPrevio);
+                        editor.putInt("anhoInicioPrevioGuardado", anhoInicioPrevio);
+                        editor.putInt("diaFinPrevioGuardado", diaFinPrevio);
+                        editor.putInt("mesFinPrevioGuardado", mesFinPrevio);
+                        editor.putInt("anhoFinPrevioGuardado", anhoFinPrevio);
+                        editor.commit();
+
                         // Se cierra el Alert Dialog
                         adff.dismiss();
                     }
@@ -465,5 +486,17 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
             }
         }
         return false;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void onReloadFilteredDates() {
+
+        SharedPreferences sharpref = getPreferences(this.MODE_PRIVATE);
+        diaInicioPrevio = sharpref.getInt("diaInicioPrevioGuardado", -1);
+        mesInicioPrevio = sharpref.getInt("mesInicioPrevioGuardado", -1);
+        anhoInicioPrevio = sharpref.getInt("anhoInicioPrevioGuardado", -1);
+        diaFinPrevio = sharpref.getInt("diaFinPrevioGuardado", -1);
+        mesFinPrevio = sharpref.getInt("mesFinPrevioGuardado", -1);
+        anhoFinPrevio = sharpref.getInt("anhoFinPrevioGuardado", -1);
     }
 }
