@@ -15,3 +15,4 @@ Además incluye un prototipo de aplicación con algunas funcionalidades básicas
 Diagrama de la arquitectura Model-View-Presenter del sistema.
 
 ![](Docs/Models/Arquitectura.png)
+
