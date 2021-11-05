@@ -7,6 +7,7 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import static com.isunican.eventossantander.view.matcher.Matchers.withListSize;
 import static org.hamcrest.Matchers.anything;
 
 import androidx.test.espresso.DataInteraction;
@@ -58,6 +59,7 @@ public class MantenerEstadoDeFiltrosUITest {
         onView(ViewMatchers.withId(R.id.btn_filtrar)).perform(click()); // Se selecciona el botón de filtrar
 
         onView(withText("APLICAR")).perform(click()); // Se selecciona el botón de aplicar
+        onView(withId(R.id.eventsListView)).check(matches(withListSize(345)));
 
         // Comprobamos que se muestra la lista de eventos original
         evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
@@ -77,6 +79,7 @@ public class MantenerEstadoDeFiltrosUITest {
         onView(withText("Música")).perform(click()); // Se marca el checkbox de "Música"
 
         onView(withText("APLICAR")).perform(click()); // Se selecciona el botón de aplicar
+        onView(withId(R.id.eventsListView)).check(matches(withListSize(92)));
 
         // Comprobamos que solo se muestran los eventos de tipo Música
         evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
@@ -96,6 +99,7 @@ public class MantenerEstadoDeFiltrosUITest {
         onView(withText("Artes plásticas")).perform(click()); // Se marca el checkbox de "Artes plásticas"
 
         onView(withText("APLICAR")).perform(click()); // Se selecciona el botón de aplicar
+        onView(withId(R.id.eventsListView)).check(matches(withListSize(176)));
 
         // Comprobamos que se muestran los eventos de todos los tipos
         evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
@@ -124,6 +128,7 @@ public class MantenerEstadoDeFiltrosUITest {
         onView(withText("Arquitectura")).perform(click());//Se deselecciona el tipo arquitectura
 
         onView(withText("APLICAR")).perform(click()); // Se selecciona el botón de aplicar
+        onView(withId(R.id.eventsListView)).check(matches(withListSize(176)));
 
         // Comprobamos que se muestran los eventos de todos los tipos
         evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);

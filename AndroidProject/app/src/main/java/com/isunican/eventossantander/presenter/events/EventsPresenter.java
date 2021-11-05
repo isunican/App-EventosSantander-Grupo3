@@ -27,8 +27,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
     private List<Event> eventosEnDeterminadosFiltros;
     private List<Event> eventosEnFiltrosCombinados;
     private int ordenFiltrado;
-    private LocalDate fechaEvento;
-
+    
     public List<Event> getEventosEnDeterminadasFechas() {
         return eventosEnDeterminadasFechas;
     }
@@ -51,7 +50,6 @@ public class EventsPresenter implements IEventsContract.Presenter {
     public EventsPresenter(IEventsContract.View view) {
         this.view = view;
         loadData();
-
     }
 
     private void loadData() {
@@ -81,7 +79,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
         if (eventIndex >= cachedEvents.size() || eventIndex < 0) {
             throw new IndexOutOfBoundsException();
         }
-        if (cachedEvents != null && eventIndex < cachedEvents.size()) {
+        if (eventIndex < cachedEvents.size()) {
             Event event = cachedEvents.get(eventIndex);
             view.openEventDetails(event);
         }
@@ -154,6 +152,8 @@ public class EventsPresenter implements IEventsContract.Presenter {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onFiltrarDate(LocalDate fechaIni, LocalDate fechaFin) {
+
+        LocalDate fechaEvento;
 
         filteredEvents = new ArrayList<>();
 
