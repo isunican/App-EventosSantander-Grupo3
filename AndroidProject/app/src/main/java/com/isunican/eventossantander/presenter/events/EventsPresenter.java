@@ -32,7 +32,6 @@ public class EventsPresenter implements IEventsContract.Presenter {
     public EventsPresenter(IEventsContract.View view) {
         this.view = view;
         loadData();
-
     }
 
     private void loadData() {
