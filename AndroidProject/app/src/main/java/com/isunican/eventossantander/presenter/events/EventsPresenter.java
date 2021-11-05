@@ -27,8 +27,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
     private List<Event> eventosEnDeterminadosFiltros;
     private List<Event> eventosEnFiltrosCombinados;
     private int ordenFiltrado;
-
-
+    
     public List<Event> getEventosEnDeterminadasFechas() {
         return eventosEnDeterminadasFechas;
     }
