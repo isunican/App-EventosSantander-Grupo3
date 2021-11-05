@@ -10,12 +10,13 @@ import org.junit.Test;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.Assert.*;
 
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
@@ -23,9 +24,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import android.os.Build;
 
@@ -290,7 +289,7 @@ public class EventsPresenterITest {
         //Se introduce uan fecha válida
         sut.onFiltrarDate(dateIni, dateFin);
         List<Event> listaFiltrada = sut.getCachedEventsOrdenados();
-        assertEquals(listaFiltrada.size(), 134);
+        assertEquals(134, listaFiltrada.size());
 
 
         ///////////////////
@@ -302,7 +301,7 @@ public class EventsPresenterITest {
         //Se introduce uan fecha válida
         sut.onFiltrarDate(dateIni, dateFin);
         listaFiltrada = sut.getCachedEventsOrdenados();
-        assertEquals(listaFiltrada.size(), 16);
+        assertEquals(16, listaFiltrada.size());
         ///////////////////
         // IT.1C: Se comprueba que no se actualiza la lista filteredEvents porque fechaInicio > fechaFin
         ///////////////////
@@ -312,7 +311,7 @@ public class EventsPresenterITest {
         //Se introduce uan fecha inválida
         sut.onFiltrarDate(dateIni, dateFin);
         listaFiltrada = sut.getCachedEventsOrdenados();
-        assertEquals(listaFiltrada.size(), 345);
+        assertEquals(345, listaFiltrada.size());
 
 
         ///////////////////
@@ -342,6 +341,8 @@ public class EventsPresenterITest {
      * Test del método onEventClicked
      * @author Juan Vélez Velasco
      */
+    @Captor
+    ArgumentCaptor<Event> captor;
     @Test
     public void onEventClickedTest() {
 
@@ -358,7 +359,8 @@ public class EventsPresenterITest {
         ///////////////////
 
         sut.onEventClicked(0);
-        verify(mockView).openEventDetails(any()); //TODO ver si se llama al método openEventDetails
+        verify(mockView).openEventDetails(captor.capture());
+        assertEquals(captor.getValue(), listaOriginal.get(0));
         ///////////////////
         // IT.2B: Se comprueba al introducir un indice < 0 o > que el número de eventos se lanza la excepcion indexOutOfBounds
         ///////////////////
@@ -423,7 +425,7 @@ public class EventsPresenterITest {
         sut.setEventosEnDeterminadasFechas(l2);
         sut.combinaFiltros();
         listaResultante = sut.getFilteredEvents();
-        assertEquals(listaResultante.size(), 5);
+        assertEquals(5, listaResultante.size());
 
         //IT.1B: Con las dos listas vacias no se actualiza nada
         List<Event> l3 = new ArrayList<>();
