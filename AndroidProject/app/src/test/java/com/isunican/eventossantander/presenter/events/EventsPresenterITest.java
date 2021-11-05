@@ -352,7 +352,7 @@ public class EventsPresenterITest {
             e.printStackTrace();
         }
 
-        // IT.1A: Se comprueba que se ha combinado correctamente con las lista de fechas vacia.
+        // IT.2A: Se comprueba que se ha combinado correctamente con las lista de fechas vacia.
         List<Event> listaLlena  = sut.getCachedEvents();
         List<Event> listaVacia = new ArrayList<>();
 
@@ -364,7 +364,7 @@ public class EventsPresenterITest {
         assertEquals(listaResultante.size(),listaLlena.size());
 
 
-        // IT.2A: Se comprueba que se ha combinado correctamente con las lista de filtros vacia.
+        // IT.3A: Se comprueba que se ha combinado correctamente con las lista de filtros vacia.
 
         sut.setEventosEnDeterminadosFiltros(listaVacia);
         sut.setEventosEnDeterminadasFechas(listaLlena);
@@ -375,7 +375,7 @@ public class EventsPresenterITest {
 
 
         ///////////////////
-        // IT.3A: Se comprueba que se ha combinado correctamente con ambas listas vacias.
+        // IT.4A: Se comprueba que se ha combinado correctamente con ambas listas vacias.
         /////////////////////
 
         List<Event> l1 = listaLlena.subList(0,10);
@@ -386,7 +386,7 @@ public class EventsPresenterITest {
         listaResultante = sut.getFilteredEvents();
         assertEquals(listaResultante.size(), 5);
 
-        //IT.1B: Con las dos listas vacias no se actualiza nada
+        //IT.1A: Con las dos listas vacias no se actualiza nada
         List<Event> l3 = new ArrayList<>();
         List<Event> l4 = new ArrayList<>();
         sut.setEventosEnDeterminadosFiltros(l3);
@@ -394,7 +394,7 @@ public class EventsPresenterITest {
         sut.combinaFiltros();
         assertEquals(sut.getFilteredEvents().size(), 0);
 
-        //IT.2B: Lista filtros nula tira NullPointerException
+        //IT.1B: Lista filtros nula tira NullPointerException
         List<Event> l5 = null;
         List<Event> l6 = new ArrayList<>();
         sut.setEventosEnDeterminadosFiltros(l5);
@@ -406,7 +406,7 @@ public class EventsPresenterITest {
             assertTrue(true);
         }
 
-        //IT.3B: Lista fechas nula tira NullPointerException
+        //IT.2B: Lista fechas nula tira NullPointerException
         List<Event> l7 = new ArrayList<>();
         List<Event> l8 = null;
         sut.setEventosEnDeterminadosFiltros(l7);
