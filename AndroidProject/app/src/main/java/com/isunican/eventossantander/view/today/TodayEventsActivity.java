@@ -182,7 +182,7 @@ public class TodayEventsActivity extends AppCompatActivity implements IEventsCon
                 presenter.onInfoClicked();
                 return true;
             case R.id.menu_volver:
-                return true; //todo hay que ponerlo bien
+                onBackPressed();
             default:
                 return super.onOptionsItemSelected(item);
         }
