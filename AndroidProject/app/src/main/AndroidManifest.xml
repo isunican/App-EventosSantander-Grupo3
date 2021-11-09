@@ -13,6 +13,9 @@
         android:theme="@style/Theme.EventosSantander"
         android:usesCleartextTraffic="false">
         <activity
+            android:name=".view.events.EventsTodayActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.info.InfoActivity"
             android:exported="false" />
         <activity
@@ -20,7 +23,7 @@
             android:exported="false" />
         <activity
             android:name=".view.events.EventsActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
