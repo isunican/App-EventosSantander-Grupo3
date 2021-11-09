@@ -125,6 +125,8 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     @Override
     public void onLoadError() {
         //Error de carga
+        String text = String.format("Error de carga de eventos");
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 
     @Override

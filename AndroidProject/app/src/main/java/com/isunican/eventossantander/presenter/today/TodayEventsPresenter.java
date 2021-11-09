@@ -248,9 +248,9 @@ public class TodayEventsPresenter implements ITodayEventsContract.Presenter {
             int diaEvento = Integer.parseInt(dateSeparada[0]);
             int mesEvento = Integer.parseInt(dateSeparada[1]);
             int anhoEvento = Integer.parseInt(dateSeparada[2]);
+
             LocalDate fechaEvento = LocalDate.of(anhoEvento, mesEvento, diaEvento);
-            //System.out.println("La fecha es:" + fechaEvento);
-            //System.out.println("La fecha de hoy es:" + LocalDate.now());
+
             if (fechaEvento.equals(LocalDate.now())) {
                 eventosHoy.add(e);
             }

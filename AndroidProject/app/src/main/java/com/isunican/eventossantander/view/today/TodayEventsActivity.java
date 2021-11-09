@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class TodayEventsActivity extends AppCompatActivity implements IEventsContract.View, View.OnClickListener, ITodayEventsContract.View {
+public class TodayEventsActivity extends AppCompatActivity implements ITodayEventsContract.View, View.OnClickListener {
 
     private ITodayEventsContract.Presenter presenter;
 
