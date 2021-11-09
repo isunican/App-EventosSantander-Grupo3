@@ -13,7 +13,7 @@
         android:theme="@style/Theme.EventosSantander"
         android:usesCleartextTraffic="false">
         <activity
-            android:name=".view.events.EventsTodayActivity"
+            android:name=".view.today.TodayEventsActivity"
             android:exported="false" />
         <activity
             android:name=".view.info.InfoActivity"

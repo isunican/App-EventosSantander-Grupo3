@@ -1,4 +1,4 @@
-package com.isunican.eventossantander.view.events;
+package com.isunican.eventossantander.view.today;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -27,18 +27,19 @@ import android.widget.Toast;
 import com.isunican.eventossantander.R;
 import com.isunican.eventossantander.model.Event;
 import com.isunican.eventossantander.presenter.events.EventsPresenter;
+import com.isunican.eventossantander.presenter.today.TodayEventsPresenter;
+import com.isunican.eventossantander.view.events.IEventsContract;
 import com.isunican.eventossantander.view.eventsdetail.EventsDetailActivity;
 import com.isunican.eventossantander.view.info.InfoActivity;
-import com.isunican.eventossantander.view.today.TodayEventsActivity;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class EventsActivity extends AppCompatActivity implements IEventsContract.View, View.OnClickListener {
+public class TodayEventsActivity extends AppCompatActivity implements IEventsContract.View, View.OnClickListener, ITodayEventsContract.View {
 
-    private IEventsContract.Presenter presenter;
+    private ITodayEventsContract.Presenter presenter;
 
     // Declaramos campos para enlazar con widgets del layout
     private  boolean[] checked;
@@ -87,7 +88,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         // correctamente
         super.onCreate(savedInstanceState);
         // instancia la interfaz definida en el Layout activity_main.xml
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_events_today);
 
         // Enlazamos con los widgets del layout
 
@@ -101,10 +102,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         Button btnFiltrar = findViewById(R.id.btn_filtrar);
         btnFiltrar.setOnClickListener(this);
 
-        Button btnHoy = findViewById(R.id.btn_rojo);
-        btnHoy.setOnClickListener(this);
-
-        presenter = new EventsPresenter(this);
+        presenter = new TodayEventsPresenter(this);
         tiposSeleccionadosPrevio= new ArrayList<>();
 
         // Se intenta recargar las variables de filtrar entre dos fechas
@@ -113,7 +111,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
 
     @Override
     public void onEventsLoaded(List<Event> events) {
-        EventArrayAdapter adapter = new EventArrayAdapter(EventsActivity.this, 0, events);
+        TodayEventArrayAdapter adapter = new TodayEventArrayAdapter(TodayEventsActivity.this, 0, events);
         ListView listView = findViewById(R.id.eventsListView);
         listView.setAdapter(adapter);
 
@@ -151,7 +149,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         startActivity(intent);
     }
 
-    public IEventsContract.Presenter getPresenter() {
+    public ITodayEventsContract.Presenter getPresenter() {
         return presenter;
     }
 
@@ -160,9 +158,9 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
      */
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu_hoy) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.menu, menu);
+        menuInflater.inflate(R.menu.menu_hoy, menu_hoy);
         return true;
     }
 
@@ -183,6 +181,8 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
             case R.id.menu_info:
                 presenter.onInfoClicked();
                 return true;
+            case R.id.menu_volver:
+                return true; //todo hay que ponerlo bien
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -195,9 +195,6 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         } else if (view.getId() == R.id.btn_ordenar) {
             AlertDialog ado = onFilterAlertDialogOrdenar();
             ado.show();
-        } else if (view.getId() == R.id.btn_rojo) {
-            Intent intent = new Intent(this, TodayEventsActivity.class);
-            startActivity(intent);
         }
     }
 
@@ -210,6 +207,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
 
         tiposSeleccionados = new ArrayList<>();
 
+        //Creamos una AlertDialog
         //Creamos una AlertDialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -502,5 +500,16 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         diaFinPrevio = sharpref.getInt("diaFinPrevioGuardado", -1);
         mesFinPrevio = sharpref.getInt("mesFinPrevioGuardado", -1);
         anhoFinPrevio = sharpref.getInt("anhoFinPrevioGuardado", -1);
+    }
+
+
+    /**
+     * Called when pointer capture is enabled or disabled for the current window.
+     *
+     * @param hasCapture True if the window has pointer capture.
+     */
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+
     }
 }
