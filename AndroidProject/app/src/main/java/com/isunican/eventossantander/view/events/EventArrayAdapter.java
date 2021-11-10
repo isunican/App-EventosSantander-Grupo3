@@ -1,6 +1,8 @@
 package com.isunican.eventossantander.view.events;
 
 import android.app.Activity;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +19,10 @@ import com.isunican.eventossantander.model.Event;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class EventArrayAdapter extends ArrayAdapter<Event> {
+public class EventArrayAdapter extends ArrayAdapter<Event> implements Parcelable {
 
     private final List<Event> events;
     private final EventsActivity activity;
@@ -80,4 +83,44 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
                 StringUtils.stripAccents(event.getCategoria()))
                 .toLowerCase();
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    /**
+     * Guarga los objetos en el Parcel
+     */
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeList(events);
+        out.write
+    }
+
+    public static final Parcelable.Creator<EventArrayAdapter> CREATOR
+            = new Parcelable.Creator<EventArrayAdapter>() {
+        public EventArrayAdapter createFromParcel(Parcel in) {
+            List<Event> eventsParcel = null;
+            in.readList(eventsParcel, ArrayList.class.getClassLoader());
+            return new EventArrayAdapter(EventsActivity.class, 0, eventsParcel);
+        }
+
+        public EventArrayAdapter[] newArray(int size) {
+            return new EventArrayAdapter[size];
+        }
+    };
+//
+//    /**
+//     * Devuelve los objetos desde el parcel
+//     * @param in
+//     * @param activity
+//     */
+//    private EventArrayAdapter(Parcel in ) {
+//
+//        events = in.readList(events, null);
+//        this.activity = activity;
+//
+//
+//    }
 }

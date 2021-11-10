@@ -14,6 +14,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,6 +29,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.isunican.eventossantander.R;
 import com.isunican.eventossantander.model.Event;
 import com.isunican.eventossantander.presenter.events.EventsPresenter;
@@ -51,6 +54,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     private static final String APLICAR = "Aplicar";
     private static final String CANCELAR = "Cancelar";
 
+    EventArrayAdapter adapter;
 
     private List<String> tipostotales;
     private List<String> tiposSeleccionados;
@@ -112,7 +116,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
 
     @Override
     public void onEventsLoaded(List<Event> events) {
-        EventArrayAdapter adapter = new EventArrayAdapter(EventsActivity.this, 0, events);
+        adapter = new EventArrayAdapter(EventsActivity.this, 0, events);
         ListView listView = findViewById(R.id.eventsListView);
         listView.setAdapter(adapter);
 
@@ -148,6 +152,52 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     public void openInfoView() {
         Intent intent = new Intent(this, InfoActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt("DIAINICIO",diaInicio);
+        outState.putInt("MESINICIO",mesInicio);
+        outState.putInt("ANHOINICIO",anhoInicio);
+
+        outState.putInt("DIAFIN",diaFin);
+        outState.putInt("MESFIN",mesFin);
+        outState.putInt("ANHOFIN",anhoFin);
+
+        outState.putInt("DIAINICIOPREVIO",diaInicioPrevio);
+        outState.putInt("MESINICIOPREVIO",mesInicioPrevio);
+        outState.putInt("ANHOINICIOPREVIO",anhoInicioPrevio);
+
+        outState.putInt("DIAFINPREVIO",diaFinPrevio);
+        outState.putInt("MESFINPREVIO",mesFinPrevio);
+        outState.putInt("ANHOFINPREVIO",anhoFinPrevio);
+
+        outState.putParcelable("ADAPTER", (Parcelable) adapter);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState){
+        super.onRestoreInstanceState(savedInstanceState);
+
+        diaInicio = savedInstanceState.getInt("DIAINICIO");
+        mesInicio = savedInstanceState.getInt("MESINICIO");
+        anhoInicio = savedInstanceState.getInt("ANHOINICIO",anhoInicio);
+
+        diaFin = savedInstanceState.getInt("DIAFIN");
+        mesFin = savedInstanceState.getInt("MESFIN");
+        anhoFin = savedInstanceState.getInt("ANHOFIN");
+
+        diaInicioPrevio = savedInstanceState.getInt("DIAINICIOPREVIO");
+        mesInicioPrevio = savedInstanceState.getInt("MESINICIOPREVIO");
+        anhoInicioPrevio = savedInstanceState.getInt("ANHOINICIOPREVIO");
+
+        diaFinPrevio = savedInstanceState.getInt("DIAFINPREVIO");
+        mesFinPrevio = savedInstanceState.getInt("MESFINPREVIO");
+        anhoFinPrevio = savedInstanceState.getInt("ANHOFINPREVIO");
+
+        adapter = (EventArrayAdapter) savedInstanceState.getParcelable("ADAPTER");
     }
 
     public IEventsContract.Presenter getPresenter() {
