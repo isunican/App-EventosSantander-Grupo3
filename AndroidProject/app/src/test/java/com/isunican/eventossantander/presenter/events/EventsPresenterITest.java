@@ -11,6 +11,7 @@ import org.junit.Test;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Phaser;
 
 import static org.junit.Assert.*;
 
@@ -41,6 +42,8 @@ public class EventsPresenterITest {
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
 
+    private static Phaser lock = EventsRepository.getAsyncCounter();
+
 
     // Objetos
     List<String> listaVacia;
@@ -52,12 +55,7 @@ public class EventsPresenterITest {
     public void setUp() {
 
         EventsRepository.setLocalSource();
-
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        lock.arriveAndAwaitAdvance();
     }
 
 
@@ -69,11 +67,7 @@ public class EventsPresenterITest {
     public void onFiltrarClickedTest() throws InterruptedException {
 
         sut = new EventsPresenter(mockView);
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        lock.arriveAndAwaitAdvance();
 
         //Inicilizamos las listas
         listaVacia = new ArrayList<String>();
@@ -161,11 +155,7 @@ public class EventsPresenterITest {
         // IT.2A: Se comprueba que cuando se puede acceder a la base de datos, se cargan
         // los eventos de dicha base de datos
         sut = new EventsPresenter(mockView);
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        lock.arriveAndAwaitAdvance();
         assertEquals(345, sut.getCachedEvents().size());
         assertEquals(sut.getCachedEvents().get(0).getCategoria(),("Música"));
         assertEquals(sut.getCachedEvents().get(0).getNombre(),("Abierto el plazo de inscripción para el Concurso Internacional de Piano de Santander Paloma O'Shea"));
@@ -176,11 +166,7 @@ public class EventsPresenterITest {
         // cargan los eventos
         EventsRepository.setFakeSource();
         sut = new EventsPresenter(mockView);
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        lock.arriveAndAwaitAdvance();
         assertEquals(null, sut.getCachedEvents());
 
     }
@@ -193,11 +179,7 @@ public class EventsPresenterITest {
     public void onOrdenarCategoriaClickedTest() {
 
         sut = new EventsPresenter(mockView);
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        lock.arriveAndAwaitAdvance();
 
         //Inicializamos las listas
         listaVacia = new ArrayList<String>();
@@ -274,11 +256,7 @@ public class EventsPresenterITest {
     public void onFiltrarDateTest() {
 
         sut = new EventsPresenter(mockView);
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        lock.arriveAndAwaitAdvance();
         List<Event> listaOriginal = sut.getCachedEventsOrdenados(); //Guardo una copia de la lista
 
         ///////////////////
@@ -347,11 +325,7 @@ public class EventsPresenterITest {
     public void onEventClickedTest() {
 
         sut = new EventsPresenter(mockView);
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        lock.arriveAndAwaitAdvance();
         List<Event> listaOriginal = sut.getCachedEvents();
 
         ///////////////////
@@ -387,11 +361,7 @@ public class EventsPresenterITest {
     public void onCombinaFiltros() {
 
         sut = new EventsPresenter(mockView);
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        lock.arriveAndAwaitAdvance();
 
         // IT.2A: Se comprueba que se ha combinado correctamente con las lista de fechas vacia.
         List<Event> listaLlena  = sut.getCachedEvents();
