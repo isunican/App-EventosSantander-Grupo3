@@ -1,11 +1,11 @@
-package com.isunican.eventossantander.view.events;
+package com.isunican.eventossantander.view.today;
 
 import com.isunican.eventossantander.model.Event;
 
 import java.time.LocalDate;
 import java.util.List;
 
-public interface IEventsContract {
+public interface ITodayEventsContract {
 
     public interface Presenter {
 
@@ -20,6 +20,8 @@ public interface IEventsContract {
         void onFiltrarClicked(List<String> checkboxSeleccionados);
 
         void onFiltrarDate(LocalDate fechaIni, LocalDate fechaFin);
+
+        List<Event>eventosHoy();
 
         List<Event> getCachedEventsOrdenados();
 

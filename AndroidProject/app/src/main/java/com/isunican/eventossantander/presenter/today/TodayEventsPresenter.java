@@ -1,10 +1,8 @@
-package com.isunican.eventossantander.presenter.events;
+package com.isunican.eventossantander.presenter.today;
 
 
 import android.annotation.SuppressLint;
 import android.os.Build;
-import android.os.Bundle;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -13,6 +11,7 @@ import com.isunican.eventossantander.model.EventsRepository;
 import com.isunican.eventossantander.model.comparators.EventsComparatorCategoria;
 import com.isunican.eventossantander.view.Listener;
 import com.isunican.eventossantander.view.events.IEventsContract;
+import com.isunican.eventossantander.view.today.ITodayEventsContract;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -25,36 +24,38 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-public class EventsPresenter implements IEventsContract.Presenter {
+public class TodayEventsPresenter implements ITodayEventsContract.Presenter {
 
-    private final IEventsContract.View view;
+    private final ITodayEventsContract.View view;
     private List<Event> cachedEvents;
     private List<Event> filteredEvents;
     private List<Event> eventosEnDeterminadasFechas;
     private List<Event> eventosEnDeterminadosFiltros;
     private List<Event> eventosEnFiltrosCombinados;
+    private List<Event> datosHoy;
     private int ordenFiltrado;
-    
+
     public List<Event> getEventosEnDeterminadasFechas() {
         return eventosEnDeterminadasFechas;
     }
+
     public List<Event> getEventosEnDeterminadosFiltros() {
         return eventosEnDeterminadosFiltros;
     }
 
     public void setEventosEnDeterminadosFiltros(List<Event> list) {
-         eventosEnDeterminadosFiltros = list;
+        eventosEnDeterminadosFiltros = list;
     }
 
     public void setEventosEnDeterminadasFechas(List<Event> list) {
         eventosEnDeterminadasFechas = list;
     }
 
-    public void setFilteredEvents(List<Event> list){
+    public void setFilteredEvents(List<Event> list) {
         filteredEvents = list;
     }
 
-    public EventsPresenter(IEventsContract.View view) {
+    public TodayEventsPresenter(ITodayEventsContract.View view) {
         this.view = view;
         loadData();
         eventosEnDeterminadosFiltros = new ArrayList<>();
@@ -64,19 +65,21 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
     private void loadData() {
         EventsRepository.getEvents(new Listener<List<Event>>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onSuccess(List<Event> data) {
 
+                datosHoy = new ArrayList<>();
 
                 cachedEvents = data;
                 ordenFiltrado = 2;
+                datosHoy = eventosHoy();
 
-                if(!eventosEnFiltrosCombinados.isEmpty()) {
-                    view.onEventsLoaded(eventosEnFiltrosCombinados);
-                    view.onLoadSuccess(eventosEnFiltrosCombinados.size());
+                if (datosHoy.isEmpty())  {
+                    view.onLoadNoEventsInDate();
                 } else {
-                    view.onEventsLoaded(data);
-                    view.onLoadSuccess(data.size());
+                    view.onEventsLoaded(datosHoy);
+                    view.onLoadSuccess(datosHoy.size());
                 }
             }
 
@@ -117,15 +120,15 @@ public class EventsPresenter implements IEventsContract.Presenter {
         if (tipoOrdenacion == 0) { //ascendente
             EventsComparatorCategoria ecc = new EventsComparatorCategoria();
             if (eventosEnFiltrosCombinados.isEmpty()) {
-                Collections.sort(cachedEvents,ecc);
+                Collections.sort(cachedEvents, ecc);
                 eventosEnFiltrosCombinados = cachedEvents;
             } else {
-                Collections.sort(eventosEnFiltrosCombinados,ecc);
+                Collections.sort(eventosEnFiltrosCombinados, ecc);
             }
         } else if (tipoOrdenacion == 1) { //descendente
             EventsComparatorCategoria ecc = new EventsComparatorCategoria();
             if (eventosEnFiltrosCombinados.isEmpty()) {
-                java.util.Collections.sort(cachedEvents,ecc);
+                java.util.Collections.sort(cachedEvents, ecc);
                 Collections.reverse(cachedEvents);
                 eventosEnFiltrosCombinados = cachedEvents;
             } else {
@@ -155,7 +158,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
         }
         combinaFiltros();
 
-        if(ordenFiltrado != 2) {
+        if (ordenFiltrado != 2) {
             onOrdenarCategoriaClicked(ordenFiltrado);
         }
 
@@ -179,9 +182,9 @@ public class EventsPresenter implements IEventsContract.Presenter {
             int diaEvento = Integer.parseInt(dateSeparada[0]);
             int mesEvento = Integer.parseInt(dateSeparada[1]);
             int anhoEvento = Integer.parseInt(dateSeparada[2]);
-            fechaEvento= LocalDate.of(anhoEvento,mesEvento,diaEvento);
+            fechaEvento = LocalDate.of(anhoEvento, mesEvento, diaEvento);
 
-            if(fechaEvento.compareTo(fechaIni)>=0 && fechaEvento.compareTo(fechaFin)<=0){
+            if (fechaEvento.compareTo(fechaIni) >= 0 && fechaEvento.compareTo(fechaFin) <= 0) {
                 filteredEvents.add(e);
             }
         }
@@ -189,7 +192,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
             eventosEnDeterminadasFechas = cachedEvents;
             combinaFiltros();
             view.onLoadNoEventsInDate();
-        }else {
+        } else {
             eventosEnDeterminadasFechas = filteredEvents;
             combinaFiltros();
             view.onLoadSuccess(eventosEnFiltrosCombinados.size());
@@ -225,32 +228,45 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
         if (eventosEnDeterminadosFiltros.isEmpty()) {
             eventosEnFiltrosCombinados = eventosEnDeterminadasFechas;
-        } else if (eventosEnDeterminadasFechas.isEmpty()){
+        } else if (eventosEnDeterminadasFechas.isEmpty()) {
             eventosEnFiltrosCombinados = eventosEnDeterminadosFiltros;
         }
 
-        for(Event i : eventosEnDeterminadosFiltros) {
-            for(Event j : eventosEnDeterminadasFechas) {
-                if(i == j) {
+        for (Event i : eventosEnDeterminadosFiltros) {
+            for (Event j : eventosEnDeterminadasFechas) {
+                if (i == j) {
                     eventosEnFiltrosCombinados.add(j);
                 }
             }
         }
     }
 
-    public static Date obtenerFechaActual(String zonaHoraria) {
-        String formato = "yyyy-MM-dd";
-        return obtenerFechaConFormato(formato, zonaHoraria);
-    }
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public List<Event> eventosHoy() {
+        List<Event> eventosHoy = new ArrayList<>();
+        for (Event e : cachedEvents) {
+            //TODO, esta hecho para los eventos totales, habria que cambiarlo si se quiere que sean los filtrados
+            String[] date1 = e.getFecha().split(" ");
+            String[] dateDefinitive = date1[1].split(",");
+            String[] dateSeparada = dateDefinitive[0].split("/");
 
-    @SuppressLint("SimpleDateFormat")
-    public static Date obtenerFechaConFormato(String formato, String zonaHoraria) {
-        Calendar calendar = Calendar.getInstance();
-        Date date = calendar.getTime();
-        SimpleDateFormat sdf;
-        sdf = new SimpleDateFormat(formato);
-        sdf.setTimeZone(TimeZone.getTimeZone(zonaHoraria));
-        //return sdf.format(date);
-        return date;
+            int diaEvento = Integer.parseInt(dateSeparada[0]);
+            int mesEvento = Integer.parseInt(dateSeparada[1]);
+            int anhoEvento = Integer.parseInt(dateSeparada[2]);
+
+            LocalDate fechaEvento = LocalDate.of(anhoEvento, mesEvento, diaEvento);
+
+            if (fechaEvento.equals(LocalDate.now())) {
+                eventosHoy.add(e);
+            }
+        }
+        return eventosHoy;
+
+        
     }
 }
+
+
+
+

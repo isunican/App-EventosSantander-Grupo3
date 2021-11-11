@@ -1,8 +1,6 @@
-package com.isunican.eventossantander.view.events;
+package com.isunican.eventossantander.view.today;
 
 import android.app.Activity;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,21 +11,19 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-
 import com.isunican.eventossantander.R;
 import com.isunican.eventossantander.model.Event;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class EventArrayAdapter extends ArrayAdapter<Event> {
+public class TodayEventArrayAdapter extends ArrayAdapter<Event> {
 
     private final List<Event> events;
-    private final EventsActivity activity;
+    private final TodayEventsActivity activity;
 
-    public EventArrayAdapter(@NonNull EventsActivity activity, int resource, @NonNull List<Event> objects) {
+    public TodayEventArrayAdapter(@NonNull TodayEventsActivity activity, int resource, @NonNull List<Event> objects) {
         super(activity, resource, objects);
         this.activity = activity;
         this.events = objects;
