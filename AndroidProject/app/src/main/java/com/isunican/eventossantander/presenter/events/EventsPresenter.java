@@ -8,6 +8,7 @@ import androidx.annotation.RequiresApi;
 import com.isunican.eventossantander.model.Event;
 import com.isunican.eventossantander.model.EventsRepository;
 import com.isunican.eventossantander.model.comparators.EventsComparatorCategoria;
+import com.isunican.eventossantander.model.comparators.EventsComparatorHora;
 import com.isunican.eventossantander.view.Listener;
 import com.isunican.eventossantander.view.events.IEventsContract;
 
@@ -95,6 +96,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
         view.openInfoView();
     }
 
+    /**
     @Override
     public void onOrdenarCategoriaClicked(int tipoOrdenacion) {
 
@@ -118,6 +120,60 @@ public class EventsPresenter implements IEventsContract.Presenter {
                 java.util.Collections.sort(eventosEnFiltrosCombinados, ecc);
                 Collections.reverse(eventosEnFiltrosCombinados);
             }
+        }
+        view.onEventsLoaded(eventosEnFiltrosCombinados);
+    }
+     */
+
+    @Override
+    public void onOrdenarCategoriaClicked(int tipoOrdenacion) {
+
+        ordenFiltrado = tipoOrdenacion;
+        EventsComparatorCategoria ecc;
+        EventsComparatorHora ech;
+
+        switch(ordenFiltrado){
+            case 0:
+                ecc = new EventsComparatorCategoria();
+                if (eventosEnFiltrosCombinados.isEmpty()) {
+                    Collections.sort(cachedEvents,ecc);
+                    eventosEnFiltrosCombinados = cachedEvents;
+                } else {
+                    Collections.sort(eventosEnFiltrosCombinados,ecc);
+                }
+                break;
+            case 1:
+                ecc = new EventsComparatorCategoria();
+                if (eventosEnFiltrosCombinados.isEmpty()) {
+                    java.util.Collections.sort(cachedEvents,ecc);
+                    Collections.reverse(cachedEvents);
+                    eventosEnFiltrosCombinados = cachedEvents;
+                } else {
+                    java.util.Collections.sort(eventosEnFiltrosCombinados, ecc);
+                    Collections.reverse(eventosEnFiltrosCombinados);
+                }
+                break;
+            case 2:
+                ech = new EventsComparatorHora();
+                if (eventosEnFiltrosCombinados.isEmpty()) {
+                    Collections.sort(cachedEvents,ech);
+                    eventosEnFiltrosCombinados = cachedEvents;
+                } else {
+                    Collections.sort(eventosEnFiltrosCombinados,ech);
+                }
+                break;
+            case 3:
+                ech = new EventsComparatorHora();
+                if (eventosEnFiltrosCombinados.isEmpty()) {
+                    java.util.Collections.sort(cachedEvents,ech);
+                    Collections.reverse(cachedEvents);
+                    eventosEnFiltrosCombinados = cachedEvents;
+                } else {
+                    java.util.Collections.sort(eventosEnFiltrosCombinados, ech);
+                    Collections.reverse(eventosEnFiltrosCombinados);
+                }
+                break;
+
         }
         view.onEventsLoaded(eventosEnFiltrosCombinados);
     }

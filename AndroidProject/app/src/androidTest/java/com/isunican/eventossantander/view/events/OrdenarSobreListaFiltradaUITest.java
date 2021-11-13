@@ -79,7 +79,7 @@ public class OrdenarSobreListaFiltradaUITest {
 
         //Aplicamos la ordenacion ascendente
         onView(ViewMatchers.withId(R.id.btn_ordenar)).perform(click());
-        onView(withText("Ascendente(A-Z)")).perform(click());
+        onView(withText("Ascendente (A-Z)")).perform(click());
         onView(withText("APLICAR")).perform(click());
 
         onView(withId(R.id.eventsListView)).check(matches(withListSize(98)));
@@ -124,7 +124,7 @@ public class OrdenarSobreListaFiltradaUITest {
 
         //Aplicamos la ordenacion ascendente
         onView(ViewMatchers.withId(R.id.btn_ordenar)).perform(click());
-        onView(withText("Descendente(Z-A)")).perform(click());
+        onView(withText("Descendente (Z-A)")).perform(click());
         onView(withText("APLICAR")).perform(click());
 
         onView(withId(R.id.eventsListView)).check(matches(withListSize(98)));
@@ -152,7 +152,7 @@ public class OrdenarSobreListaFiltradaUITest {
 
         //Aplicamos los filtros previos
         onView(ViewMatchers.withId(R.id.btn_ordenar)).perform(click());
-        onView(withText("Ascendente(A-Z)")).perform(click());
+        onView(withText("Ascendente (A-Z)")).perform(click());
         onView(withText("APLICAR")).perform(click());
 
         onView(withId(R.id.eventsListView)).check(matches(withListSize(345)));
@@ -194,7 +194,7 @@ public class OrdenarSobreListaFiltradaUITest {
 
         //Aplicamos los filtros previos
         onView(ViewMatchers.withId(R.id.btn_ordenar)).perform(click());
-        onView(withText("Descendente(Z-A)")).perform(click());
+        onView(withText("Descendente (Z-A)")).perform(click());
         onView(withText("APLICAR")).perform(click());
 
         onView(withId(R.id.eventsListView)).check(matches(withListSize(345)));
