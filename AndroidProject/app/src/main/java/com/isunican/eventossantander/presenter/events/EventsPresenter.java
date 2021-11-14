@@ -111,7 +111,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
      */
 
     @Override
-    public void onOrdenarCategoriaClicked(int tipoOrdenacion) {
+    public void onOrdenarClicked(int tipoOrdenacion) {
 
         ordenFiltrado = tipoOrdenacion;
         EventsComparatorCategoria ecc;
@@ -183,7 +183,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
         combinaFiltros();
 
         if(ordenFiltrado != 2) {
-            onOrdenarCategoriaClicked(ordenFiltrado);
+            onOrdenarClicked(ordenFiltrado);
         }
 
         view.onEventsLoaded(eventosEnFiltrosCombinados);

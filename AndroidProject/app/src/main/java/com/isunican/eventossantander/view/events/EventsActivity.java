@@ -262,7 +262,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         builder.setPositiveButton(APLICAR, (dialog, id) -> {
             // User clicked OK, so save the selectedItems results somewhere
             // or return them to the component that opened the dialog
-            presenter.onOrdenarCategoriaClicked(posi);
+            presenter.onOrdenarClicked(posi);
         });
         builder.setNegativeButton(CANCELAR, (dialog, id) -> {
 
@@ -363,7 +363,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
-                presenter.onOrdenarCategoriaClicked(posi);
+                presenter.onOrdenarClicked(posi);
                 // Se cierra el Alert Dialog
                 ad.dismiss();
             }
