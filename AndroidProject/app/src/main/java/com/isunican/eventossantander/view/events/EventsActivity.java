@@ -123,6 +123,8 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 
+    
+
     @Override
     public void onLoadSuccess(int elementsLoaded) {
         @SuppressLint("DefaultLocale") String text = String.format("Loaded %d events", elementsLoaded);
