@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -189,8 +190,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
             AlertDialog ad = onFilterAlertDialog();
             ad.show();
         } else if (view.getId() == R.id.btn_ordenar) {
-            AlertDialog ado = onFilterAlertDialogOrdenar();
-            ado.show();
+            onOrdenarAlertDialog();
         } else if (view.getId() == R.id.btn_rojo) {
             Intent intent = new Intent(this, TodayEventsActivity.class);
             startActivity(intent);
@@ -283,6 +283,95 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         tipostotales.add("Otros");
 
     }
+
+    /**
+     * Crea un alertDialog personalizado que permite seleccionar una ordenación de la lista
+     * de eventos ascendentemente y descendentemente por el tipo de evento o por la hora de comienzo.
+     */
+    public void onOrdenarAlertDialog() {
+        SharedPreferences sharpref = getPreferences(this.MODE_PRIVATE);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View view = LayoutInflater.from(this).inflate(
+                R.layout.alert_dialog_ordenar,
+                (ConstraintLayout) findViewById(R.id.layout_dialog_container)
+        );
+
+        TextView textTipo = (TextView) view.findViewById(R.id.ordenar_tipo_titulo);
+        TextView textHora = (TextView) view.findViewById(R.id.ordenar_hora_titulo);
+
+        RadioButton btnTipoAscendente = (RadioButton) view.findViewById(R.id.btn_ordenar_ascendente);
+        RadioButton btnTipoDescendente = (RadioButton) view.findViewById(R.id.btn_ordenar_descendente);
+        RadioButton btnHoraMasProxima = (RadioButton) view.findViewById(R.id.btn_mas_proximas_primero);
+        RadioButton btnHoraMenosProxima = (RadioButton) view.findViewById(R.id.btn_menos_proximas_primero);
+
+        builder.setView(view);
+        final AlertDialog ad = builder.create();
+
+        view.findViewById(R.id.btn_ordenar_ascendente).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                posi = 0;
+                btnTipoDescendente.setChecked(false);
+                btnHoraMasProxima.setChecked(false);
+                btnHoraMenosProxima.setChecked(false);
+            }
+        });
+
+        view.findViewById(R.id.btn_ordenar_descendente).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                posi = 1;
+                btnTipoAscendente.setChecked(false);
+                btnHoraMasProxima.setChecked(false);
+                btnHoraMenosProxima.setChecked(false);
+            }
+        });
+
+        view.findViewById(R.id.btn_mas_proximas_primero).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                posi = 2;
+                btnTipoAscendente.setChecked(false);
+                btnTipoDescendente.setChecked(false);
+                btnHoraMenosProxima.setChecked(false);
+            }
+        });
+
+        view.findViewById(R.id.btn_menos_proximas_primero).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                posi = 3;
+                btnTipoAscendente.setChecked(false);
+                btnTipoDescendente.setChecked(false);
+                btnHoraMasProxima.setChecked(false);
+            }
+        });
+
+        // Caso en el que se pulsa el boton de cancelar
+        view.findViewById(R.id.ordenar_cancelar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ad.dismiss();
+            }
+        });
+
+        // Caso en el que se pulsa el boton de aceptar
+        view.findViewById(R.id.ordenar_aplicar);
+        view.setOnClickListener(new View.OnClickListener() {
+
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onClick(View view) {
+                presenter.onOrdenarCategoriaClicked(posi);
+                // Se cierra el Alert Dialog
+                ad.dismiss();
+            }
+        });
+
+        ad.show();
+    }
+
 
     /**
      * Crea un alertDialog personalizado que muestra la posibilidad de introducir 2 fechas
