@@ -46,8 +46,6 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
     private static final String APLICAR = "Aplicar";
     private static final String CANCELAR = "Cancelar";
 
-
-    private List<String> tipostotales;
     private List<String> tiposSeleccionados;
     private List<String> tiposSeleccionadosPrevio;
 
@@ -101,7 +99,7 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
         btnFiltrar.setOnClickListener(this);
 
         presenter = new TodayEventsPresenter(this);
-        tiposSeleccionadosPrevio= new ArrayList<>();
+
 
         // Se intenta recargar las variables de filtrar entre dos fechas
         onReloadFilteredDates();
@@ -197,7 +195,7 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
 
     public AlertDialog onFilterAlertDialog(){
         //Creamos dos listas donde tenemos los tipos de evento, y los tipos marcados para filtrar
-        tipostotales = new ArrayList<>();
+        List<String> tipostotales = new ArrayList<>();
         anhadirTiposeventos(tipostotales);
         tipostotales.toArray(new String[0]);
 

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface IEventsContract {
 
-    public interface Presenter {
+    interface Presenter {
 
         void onEventClicked(int eventIndex);
 
@@ -22,7 +22,7 @@ public interface IEventsContract {
         void onFiltrarDate(LocalDate fechaIni, LocalDate fechaFin);
     }
 
-    public interface View {
+    interface View {
 
         void onEventsLoaded(List<Event> events);
 

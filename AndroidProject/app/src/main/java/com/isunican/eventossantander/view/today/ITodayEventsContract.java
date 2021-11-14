@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ITodayEventsContract {
 
-    public interface Presenter {
+     interface Presenter {
 
         void onEventClicked(int eventIndex);
 
@@ -24,7 +24,7 @@ public interface ITodayEventsContract {
         List<Event>eventosHoy();
     }
 
-    public interface View {
+    interface View {
 
         void onEventsLoaded(List<Event> events);
 

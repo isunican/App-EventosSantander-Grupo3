@@ -42,7 +42,7 @@ public class EventsPresenterITest {
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
 
-    private static Phaser lock = EventsRepository.getAsyncCounter();
+    private static final Phaser lock = EventsRepository.getAsyncCounter();
 
 
     // Objetos
@@ -64,16 +64,16 @@ public class EventsPresenterITest {
      * @author Adrián García Cubas
      */
     @Test
-    public void onFiltrarClickedTest() throws InterruptedException {
+    public void onFiltrarClickedTest() {
 
         sut = new EventsPresenter(mockView);
         lock.arriveAndAwaitAdvance();
 
         //Inicilizamos las listas
-        listaVacia = new ArrayList<String>();
-        listaConElemento = new ArrayList<String>();
-        listaLlena = new ArrayList<String>();
-        listaErronea = new ArrayList<String>();
+        listaVacia = new ArrayList<>();
+        listaConElemento = new ArrayList<>();
+        listaLlena = new ArrayList<>();
+        listaErronea = new ArrayList<>();
 
         //Las rellenamos como correspondan
         listaConElemento.add("Música");
@@ -167,7 +167,7 @@ public class EventsPresenterITest {
         EventsRepository.setFakeSource();
         sut = new EventsPresenter(mockView);
         lock.arriveAndAwaitAdvance();
-        assertEquals(null, sut.getCachedEvents());
+        assertNull(sut.getCachedEvents());
 
     }
 
@@ -182,8 +182,8 @@ public class EventsPresenterITest {
         lock.arriveAndAwaitAdvance();
 
         //Inicializamos las listas
-        listaVacia = new ArrayList<String>();
-        listaConElemento = new ArrayList<String>();
+        listaVacia = new ArrayList<>();
+        listaConElemento = new ArrayList<>();
 
         //Las rellenamos como correspondan
         listaConElemento.add("Música");
@@ -257,7 +257,6 @@ public class EventsPresenterITest {
 
         sut = new EventsPresenter(mockView);
         lock.arriveAndAwaitAdvance();
-        List<Event> listaOriginal = sut.getEventosEnFiltrosCombinados(); //Guardo una copia de la lista
 
         ///////////////////
         // IT.1A: Se comprueba que se actualiza la lista filteredEvents conteniendo los eventos entre fechaInicio < fechaFin
@@ -340,12 +339,6 @@ public class EventsPresenterITest {
         ///////////////////
         try {
             sut.onEventClicked(-1);
-            fail("No se ha cazado la excepcion");
-        } catch (IndexOutOfBoundsException e) {
-            assertTrue(true);
-        }
-
-        try {
             sut.onEventClicked(listaOriginal.size()+1);
             fail("No se ha cazado la excepcion");
         } catch (IndexOutOfBoundsException e) {
@@ -403,12 +396,11 @@ public class EventsPresenterITest {
         sut.setEventosEnDeterminadosFiltros(l3);
         sut.setEventosEnDeterminadasFechas(l4);
         sut.combinaFiltros();
-        assertEquals(sut.getEventosEnFiltrosCombinados().size(), 0);
+        assertEquals(0, sut.getEventosEnFiltrosCombinados().size());
 
         //IT.1B: Lista filtros nula tira NullPointerException
-        List<Event> l5 = null;
         List<Event> l6 = new ArrayList<>();
-        sut.setEventosEnDeterminadosFiltros(l5);
+        sut.setEventosEnDeterminadosFiltros(null);
         sut.setEventosEnDeterminadasFechas(l6);
         try {
             sut.combinaFiltros();
@@ -419,9 +411,8 @@ public class EventsPresenterITest {
 
         //IT.2B: Lista fechas nula tira NullPointerException
         List<Event> l7 = new ArrayList<>();
-        List<Event> l8 = null;
         sut.setEventosEnDeterminadosFiltros(l7);
-        sut.setEventosEnDeterminadasFechas(l8);
+        sut.setEventosEnDeterminadasFechas(null);
         try {
             sut.combinaFiltros();
             fail("No se lanza excepcion");
