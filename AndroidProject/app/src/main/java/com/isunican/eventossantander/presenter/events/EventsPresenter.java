@@ -67,7 +67,6 @@ public class EventsPresenter implements IEventsContract.Presenter {
         if (eventIndex >= cachedEvents.size() || eventIndex < 0) {
             throw new IndexOutOfBoundsException();
         }
-        cachedEvents.size();
         Event event = cachedEvents.get(eventIndex);
         view.openEventDetails(event);
     }
@@ -172,16 +171,12 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
 
 
-    public List<Event> getFilteredEvents() {
+    public List<Event> getEventosEnFiltrosCombinados() {
         return eventosEnFiltrosCombinados;
     }
 
     public List<Event> getCachedEvents() {
         return cachedEvents;
-    }
-
-    public List<Event> getCachedEventsOrdenados() {
-        return eventosEnFiltrosCombinados;
     }
 
     public void combinaFiltros() {
