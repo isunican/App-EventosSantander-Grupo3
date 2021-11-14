@@ -68,7 +68,6 @@ public class TodayEventsPresenter implements ITodayEventsContract.Presenter {
         if (eventIndex >= cachedEvents.size() || eventIndex < 0) {
             throw new IndexOutOfBoundsException();
         }
-        cachedEvents.size();
         Event event = cachedEvents.get(eventIndex);
         view.openEventDetails(event);
     }
