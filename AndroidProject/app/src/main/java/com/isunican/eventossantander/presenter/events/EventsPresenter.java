@@ -1,7 +1,6 @@
 package com.isunican.eventossantander.presenter.events;
 
 
-import android.annotation.SuppressLint;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
@@ -12,16 +11,10 @@ import com.isunican.eventossantander.model.comparators.EventsComparatorCategoria
 import com.isunican.eventossantander.view.Listener;
 import com.isunican.eventossantander.view.events.IEventsContract;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Calendar;
 import java.util.Collections;
-
 import java.util.ArrayList;
-
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 public class EventsPresenter implements IEventsContract.Presenter {
 
@@ -33,12 +26,6 @@ public class EventsPresenter implements IEventsContract.Presenter {
     private List<Event> eventosEnFiltrosCombinados;
     private int ordenFiltrado;
     
-    public List<Event> getEventosEnDeterminadasFechas() {
-        return eventosEnDeterminadasFechas;
-    }
-    public List<Event> getEventosEnDeterminadosFiltros() {
-        return eventosEnDeterminadosFiltros;
-    }
 
     public void setEventosEnDeterminadosFiltros(List<Event> list) {
          eventosEnDeterminadosFiltros = list;
@@ -48,17 +35,13 @@ public class EventsPresenter implements IEventsContract.Presenter {
         eventosEnDeterminadasFechas = list;
     }
 
-    public void setFilteredEvents(List<Event> list){
-        filteredEvents = list;
-    }
-
     public EventsPresenter(IEventsContract.View view) {
         this.view = view;
         loadData();
     }
 
     private void loadData() {
-        EventsRepository.getEvents(new Listener<List<Event>>() {
+        EventsRepository.getEvents(new Listener<>() {
             @Override
             public void onSuccess(List<Event> data) {
 
@@ -84,10 +67,9 @@ public class EventsPresenter implements IEventsContract.Presenter {
         if (eventIndex >= cachedEvents.size() || eventIndex < 0) {
             throw new IndexOutOfBoundsException();
         }
-        if (eventIndex < cachedEvents.size()) {
-            Event event = cachedEvents.get(eventIndex);
-            view.openEventDetails(event);
-        }
+        cachedEvents.size();
+        Event event = cachedEvents.get(eventIndex);
+        view.openEventDetails(event);
     }
 
     @Override
@@ -222,24 +204,5 @@ public class EventsPresenter implements IEventsContract.Presenter {
                 }
             }
         }
-    }
-
-
-
-
-    public static Date obtenerFechaActual(String zonaHoraria) {
-        String formato = "yyyy-MM-dd";
-        return obtenerFechaConFormato(formato, zonaHoraria);
-    }
-
-    @SuppressLint("SimpleDateFormat")
-    public static Date obtenerFechaConFormato(String formato, String zonaHoraria) {
-        Calendar calendar = Calendar.getInstance();
-        Date date = calendar.getTime();
-        SimpleDateFormat sdf;
-        sdf = new SimpleDateFormat(formato);
-        sdf.setTimeZone(TimeZone.getTimeZone(zonaHoraria));
-        //return sdf.format(date);
-        return date;
     }
 }
