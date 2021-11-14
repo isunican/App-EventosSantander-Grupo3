@@ -375,7 +375,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         });
 
         // Caso en el que se pulsa el boton de aceptar
-        view.findViewById(R.id.filtrar_fecha_aplicar);
+        view.findViewById(R.id.ordenar_aplicar);
         view.setOnClickListener(new View.OnClickListener() {
 
             @RequiresApi(api = Build.VERSION_CODES.O)
@@ -458,14 +458,14 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         });
 
         // Caso en el que se pulsa el boton de cancelar
-        view.findViewById(R.id.ordenar_cancelar).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.filtrar_fecha_cancelar).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 adff.dismiss();
             }
         });
         // Caso en el que se pulsa el boton de aceptar
-        view.findViewById(R.id.filtrar_fecha_aplicar);
+        view.findViewById(R.id.filtrar_fecha_aceptar);
         view.setOnClickListener(new View.OnClickListener() {
 
             @RequiresApi(api = Build.VERSION_CODES.O)
