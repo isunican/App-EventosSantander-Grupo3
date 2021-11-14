@@ -6,6 +6,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,14 +27,13 @@ import android.widget.Toast;
 
 import com.isunican.eventossantander.R;
 import com.isunican.eventossantander.model.Event;
-import com.isunican.eventossantander.presenter.events.EventsPresenter;
 import com.isunican.eventossantander.presenter.today.TodayEventsPresenter;
-import com.isunican.eventossantander.view.events.IEventsContract;
 import com.isunican.eventossantander.view.eventsdetail.EventsDetailActivity;
 import com.isunican.eventossantander.view.info.InfoActivity;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -41,11 +41,7 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
 
     private ITodayEventsContract.Presenter presenter;
 
-    // Declaramos campos para enlazar con widgets del layout
-    private  boolean[] checked;
-
     private int posi;
-    private int posChecked;
 
     private static final String APLICAR = "Aplicar";
     private static final String CANCELAR = "Cancelar";
@@ -78,8 +74,10 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
     private TextView textoFechaInicio;
     private TextView textoFechaFin;
 
-    private LocalDate fechaIniGuardada;
-    private LocalDate fechaFinGuardada;
+    private static void onClick(DialogInterface dialog, int id) {
+        // TODO document why this method is empty
+    }
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -115,9 +113,7 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
         ListView listView = findViewById(R.id.eventsListView);
         listView.setAdapter(adapter);
 
-        listView.setOnItemClickListener((parent, view, position, id) -> {
-            presenter.onEventClicked(position);
-        });
+        listView.setOnItemClickListener((parent, view, position, id) -> presenter.onEventClicked(position));
     }
 
     @Override
@@ -127,7 +123,7 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
 
     @Override
     public void onLoadSuccess(int elementsLoaded) {
-        String text = String.format("Loaded %d events", elementsLoaded);
+        @SuppressLint("DefaultLocale") String text = String.format("Loaded %d events", elementsLoaded);
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 
@@ -149,21 +145,20 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
         startActivity(intent);
     }
 
-    public ITodayEventsContract.Presenter getPresenter() {
-        return presenter;
-    }
 
     /*
     Menu Handling
      */
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu_hoy) {
+    public boolean onCreateOptionsMenu(Menu menuHoy) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.menu_hoy, menu_hoy);
+        menuInflater.inflate(R.menu.menu_hoy, menuHoy);
         return true;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -183,6 +178,7 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
                 return true;
             case R.id.menu_volver:
                 onBackPressed();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -203,7 +199,7 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
         //Creamos dos listas donde tenemos los tipos de evento, y los tipos marcados para filtrar
         tipostotales = new ArrayList<>();
         anhadirTiposeventos(tipostotales);
-        tipostotales.toArray(new String[tipostotales.size()]);
+        tipostotales.toArray(new String[0]);
 
         tiposSeleccionados = new ArrayList<>();
 
@@ -215,11 +211,10 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
         builder.setTitle("Filtrar");
 
         //Comprobamos los elementos seleccionados previamente
-        checked= new boolean[tipostotales.size()];
-        posChecked=0;
-        for(int i=0 ; i<checked.length;i++){
-            checked[i]=false;
-        }
+        // Declaramos campos para enlazar con widgets del layout
+        boolean[] checked = new boolean[tipostotales.size()];
+        int posChecked = 0;
+        Arrays.fill(checked, false);
         for(String s : tipostotales){
             for(String p : tiposSeleccionadosPrevio){
                 if(s.equals(p)){
@@ -232,34 +227,22 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
 
 
         //Creamos los elementos de la seleccion de tipo multiple
-        builder.setMultiChoiceItems(tipostotales.toArray(new String[tipostotales.size()]), checked, new DialogInterface.OnMultiChoiceClickListener(){
-            @Override
-            public void onClick(DialogInterface dialog, int which,
-                                boolean estaMarcado) {
-                if (estaMarcado) {
-                    // If the user checked the item, add it to the selected items
-                    tiposSeleccionados.add(tipostotales.get(which));
-                    tiposSeleccionadosPrevio=tiposSeleccionados;
-                } else if (tiposSeleccionados.contains(tipostotales.get(which))) {
-                    // Else, if the item is already in the array, remove it
-                    tiposSeleccionados.remove(tipostotales.get(which));
-                    tiposSeleccionadosPrevio=tiposSeleccionados;
-                }
+        builder.setMultiChoiceItems(tipostotales.toArray(new String[0]), checked, (dialog, which, estaMarcado) -> {
+            if (estaMarcado) {
+                // If the user checked the item, add it to the selected items
+                tiposSeleccionados.add(tipostotales.get(which));
+                tiposSeleccionadosPrevio=tiposSeleccionados;
+            } else if (tiposSeleccionados.contains(tipostotales.get(which))) {
+                // Else, if the item is already in the array, remove it
+                tiposSeleccionados.remove(tipostotales.get(which));
+                tiposSeleccionadosPrevio=tiposSeleccionados;
             }
         });
 
         //Creamos el boton de aplicar
-        builder.setPositiveButton(APLICAR, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                presenter.onFiltrarClicked(tiposSeleccionados);
-            }
-        });
-        builder.setNegativeButton(CANCELAR,  new DialogInterface.OnClickListener(){
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                //si se cancela no se hace nada
-            }
+        builder.setPositiveButton(APLICAR, (dialogInterface, i) -> presenter.onFiltrarClicked(tiposSeleccionados));
+        builder.setNegativeButton(CANCELAR, (dialogInterface, i) -> {
+            //si se cancela no se hace nada
         });
 
         return builder.create();
@@ -272,24 +255,14 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
         String[] array = {"Ascendente(A-Z)", "Descendente(Z-A)"};
         builder.setTitle("Ordenar");
 
-        builder.setSingleChoiceItems(array, 0, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                posi = i;
-            }
-        });
+        builder.setSingleChoiceItems(array, 0, (dialogInterface, i) -> posi = i);
         // Set the action buttons
         builder.setPositiveButton(APLICAR, (dialog, id) -> {
+            presenter.onOrdenarCategoriaClicked(posi);
             // User clicked OK, so save the selectedItems results somewhere
             // or return them to the component that opened the dialog
-            presenter.onOrdenarCategoriaClicked(posi);
         });
-        builder.setNegativeButton(CANCELAR, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-
-            }
-        });
+        builder.setNegativeButton(CANCELAR, TodayEventsActivity::onClick);
         return builder.create();
     }
 
@@ -313,6 +286,8 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
      * En el caso de que no se introduzcan ambas fechas o que la de fin sea anterior a la de inicio
      * se le notifica al usuario y no se realiza ningun cambio
      */
+    @SuppressLint("SetTextI18n")
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void onDateFilterAlertDialog() {
 
         diaInicio = diaInicioPrevio;
@@ -322,7 +297,7 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
         mesFin = mesFinPrevio;
         anhoFin = anhoFinPrevio;
 
-        SharedPreferences sharpref = getPreferences(this.MODE_PRIVATE);
+        SharedPreferences sharpref = getPreferences(MODE_PRIVATE);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = LayoutInflater.from(this).inflate(
@@ -344,80 +319,49 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
         final AlertDialog adff = builder.create();
 
         // Caso en el que se pulse la fecha de inicio (mediante la pulsacion del titulo)
-        view.findViewById(R.id.filtrar_fecha_inicio_titulo).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onSelectStartDate();
-            }
-        });
+        view.findViewById(R.id.filtrar_fecha_inicio_titulo).setOnClickListener(view16 -> onSelectStartDate());
         // Caso en el que se pulse la fecha de inicio (mediante la pulsacion del texto)
-        view.findViewById(R.id.filtrar_fecha_inicio_texto).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onSelectStartDate();
-            }
-        });
+        view.findViewById(R.id.filtrar_fecha_inicio_texto).setOnClickListener(view15 -> onSelectStartDate());
 
         // Caso en el que se pulse la fecha de fin (mediante la pulsacion del titulo)
-        view.findViewById(R.id.filtrar_fecha_fin_titulo).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onSelectFinishDate();
-            }
-        });
+        view.findViewById(R.id.filtrar_fecha_fin_titulo).setOnClickListener(view14 -> onSelectFinishDate());
         // Caso en el que se pulse la fecha de fin (mediante la pulsacion del texto)
-        view.findViewById(R.id.filtrar_fecha_fin_texto).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onSelectFinishDate();
-            }
-        });
+        view.findViewById(R.id.filtrar_fecha_fin_texto).setOnClickListener(view13 -> onSelectFinishDate());
 
-        // Caso en el que se pulsa el boton de cancelar
-        view.findViewById(R.id.filtrar_fecha_cancelar).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                adff.dismiss();
-            }
-        });
+        view.findViewById(R.id.filtrar_fecha_cancelar).setOnClickListener(view12 -> adff.dismiss());
         // Caso en el que se pulsa el boton de aceptar
         view.findViewById(R.id.filtrar_fecha_aceptar);
-        view.setOnClickListener(new View.OnClickListener() {
+        view.setOnClickListener(view1 -> {
 
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onClick(View view) {
-
-                // Si falta una fecha muestra un mensaje de error
-                if (diaFin == -1 || diaInicio == -1) {
-                    Toast.makeText(getBaseContext(), "Ambas fechas deben estar seleccionadas", Toast.LENGTH_SHORT).show();
+            // Si falta una fecha muestra un mensaje de error
+            if (diaFin == -1 || diaInicio == -1) {
+                Toast.makeText(getBaseContext(), "Ambas fechas deben estar seleccionadas", Toast.LENGTH_SHORT).show();
+            } else {
+                // Si la fecha de inicio es posterior ala de fin se notifica al usuario
+                if (!onCheckDateOrder()) {
+                    Toast.makeText(getBaseContext(), "Fecha de fin debe ser posterior a fecha de inicio", Toast.LENGTH_SHORT).show();
                 } else {
-                    // Si la fecha de inicio es posterior ala de fin se notifica al usuario
-                    if (!onCheckDateOrder()) {
-                        Toast.makeText(getBaseContext(), "Fecha de fin debe ser posterior a fecha de inicio", Toast.LENGTH_SHORT).show();
-                    } else {
-                        diaInicioPrevio = diaInicio;
-                        mesInicioPrevio = mesInicio;
-                        anhoInicioPrevio = anhoInicio;
-                        diaFinPrevio = diaFin;
-                        mesFinPrevio = mesFin;
-                        anhoFinPrevio = anhoFin;
-                        fechaIni = LocalDate.of(anhoInicio, mesInicio+1, diaInicio);
-                        fechaFin = LocalDate.of(anhoFin, mesFin+1, diaFin);
-                        presenter.onFiltrarDate(fechaIni,fechaFin);
+                    diaInicioPrevio = diaInicio;
+                    mesInicioPrevio = mesInicio;
+                    anhoInicioPrevio = anhoInicio;
+                    diaFinPrevio = diaFin;
+                    mesFinPrevio = mesFin;
+                    anhoFinPrevio = anhoFin;
+                    fechaIni = LocalDate.of(anhoInicio, mesInicio+1, diaInicio);
+                    fechaFin = LocalDate.of(anhoFin, mesFin+1, diaFin);
+                    presenter.onFiltrarDate(fechaIni,fechaFin);
 
-                        SharedPreferences.Editor editor = sharpref.edit();
-                        editor.putInt("diaInicioPrevioGuardado", diaInicioPrevio);
-                        editor.putInt("mesInicioPrevioGuardado", mesInicioPrevio);
-                        editor.putInt("anhoInicioPrevioGuardado", anhoInicioPrevio);
-                        editor.putInt("diaFinPrevioGuardado", diaFinPrevio);
-                        editor.putInt("mesFinPrevioGuardado", mesFinPrevio);
-                        editor.putInt("anhoFinPrevioGuardado", anhoFinPrevio);
-                        editor.commit();
+                    SharedPreferences.Editor editor = sharpref.edit();
+                    editor.putInt("diaInicioPrevioGuardado", diaInicioPrevio);
+                    editor.putInt("mesInicioPrevioGuardado", mesInicioPrevio);
+                    editor.putInt("anhoInicioPrevioGuardado", anhoInicioPrevio);
+                    editor.putInt("diaFinPrevioGuardado", diaFinPrevio);
+                    editor.putInt("mesFinPrevioGuardado", mesFinPrevio);
+                    editor.putInt("anhoFinPrevioGuardado", anhoFinPrevio);
+                    editor.apply();
 
-                        // Se cierra el Alert Dialog
-                        adff.dismiss();
-                    }
+                    // Se cierra el Alert Dialog
+                    adff.dismiss();
                 }
             }
         });
@@ -437,14 +381,11 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
         mesInicio= c.get(Calendar.MONTH);
         anhoInicio= c.get(Calendar.YEAR);
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker datePicker, int anho, int mes, int dia) {
-                diaInicio = dia;
-                mesInicio = mes;
-                anhoInicio = anho;
-                textoFechaInicio.setText(diaInicio+"/"+(mesInicio+1)+"/"+anhoInicio);
-            }
+        @SuppressLint("SetTextI18n") DatePickerDialog datePickerDialog = new DatePickerDialog(this, (datePicker, anho, mes, dia) -> {
+            diaInicio = dia;
+            mesInicio = mes;
+            anhoInicio = anho;
+            textoFechaInicio.setText(diaInicio+"/"+(mesInicio+1)+"/"+anhoInicio);
         }
                 ,diaInicio,mesInicio,anhoInicio);
         datePickerDialog.show();
@@ -459,15 +400,7 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
         mesFin= c.get(Calendar.MONTH);
         anhoFin= c.get(Calendar.YEAR);
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker datePicker, int anho, int mes, int dia) {
-                diaFin = dia;
-                mesFin = mes;
-                anhoFin = anho;
-                textoFechaFin.setText(diaFin+"/"+(mesFin+1)+"/"+anhoFin);
-            }
-        }
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, this::onDateSet
                 ,diaFin,mesFin,anhoFin);
         datePickerDialog.show();
     }
@@ -483,9 +416,7 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
         } else if (anhoInicio == anhoFin) {
             if(mesInicio < mesFin) {
                 return true;
-            }else if(mesInicio == mesFin && diaInicio <= diaFin) {
-                return true;
-            }
+            }else return mesInicio == mesFin && diaInicio <= diaFin;
         }
         return false;
     }
@@ -493,7 +424,7 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void onReloadFilteredDates() {
 
-        SharedPreferences sharpref = getPreferences(this.MODE_PRIVATE);
+        SharedPreferences sharpref = getPreferences(MODE_PRIVATE);
         diaInicioPrevio = sharpref.getInt("diaInicioPrevioGuardado", -1);
         mesInicioPrevio = sharpref.getInt("mesInicioPrevioGuardado", -1);
         anhoInicioPrevio = sharpref.getInt("anhoInicioPrevioGuardado", -1);
@@ -502,14 +433,11 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
         anhoFinPrevio = sharpref.getInt("anhoFinPrevioGuardado", -1);
     }
 
-
-    /**
-     * Called when pointer capture is enabled or disabled for the current window.
-     *
-     * @param hasCapture True if the window has pointer capture.
-     */
-    @Override
-    public void onPointerCaptureChanged(boolean hasCapture) {
-
+    @SuppressLint("SetTextI18n")
+    private void onDateSet(DatePicker datePicker, int anho, int mes, int dia) {
+        diaFin = dia;
+        mesFin = mes;
+        anhoFin = anho;
+        textoFechaFin.setText(diaFin + "/" + (mesFin + 1) + "/" + anhoFin);
     }
 }

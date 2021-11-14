@@ -11,10 +11,9 @@ package com.isunican.eventossantander.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.android.filament.Entity;
 import com.google.gson.annotations.SerializedName;
-
 public class Event implements Parcelable {
-
     @SerializedName(value = "dc:identifier") private int identificador;
     @SerializedName(value = "dc:name") private String nombre;
     @SerializedName(value = "ayto:alt-name") private String nombreAlternativo;
@@ -32,7 +31,6 @@ public class Event implements Parcelable {
      * Constructor, getters y setters
      */
     public Event(int identificador, String nombre, String nombreAlternativo, String categoria, String descripcion, String descripcionAlternativa, String fecha, double longitud, double latitud, String enlace, String enlaceAlternativo, String imagen){
-
         this.identificador = identificador;
         this.nombre = nombre;
         this.nombreAlternativo = nombreAlternativo;
