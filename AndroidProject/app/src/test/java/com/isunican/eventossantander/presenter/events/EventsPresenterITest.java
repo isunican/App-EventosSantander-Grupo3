@@ -257,7 +257,7 @@ public class EventsPresenterITest {
 
         sut = new EventsPresenter(mockView);
         lock.arriveAndAwaitAdvance();
-        List<Event> listaOriginal = sut.getCachedEventsOrdenados(); //Guardo una copia de la lista
+        List<Event> listaOriginal = sut.getEventosEnFiltrosCombinados(); //Guardo una copia de la lista
 
         ///////////////////
         // IT.1A: Se comprueba que se actualiza la lista filteredEvents conteniendo los eventos entre fechaInicio < fechaFin
@@ -266,7 +266,7 @@ public class EventsPresenterITest {
         LocalDate dateFin = LocalDate.of(2021, 8, 2);
         //Se introduce uan fecha válida
         sut.onFiltrarDate(dateIni, dateFin);
-        List<Event> listaFiltrada = sut.getCachedEventsOrdenados();
+        List<Event> listaFiltrada = sut.getEventosEnFiltrosCombinados();
         assertEquals(134, listaFiltrada.size());
 
 
@@ -278,7 +278,7 @@ public class EventsPresenterITest {
         dateFin = LocalDate.of(2021, 8, 2);
         //Se introduce uan fecha válida
         sut.onFiltrarDate(dateIni, dateFin);
-        listaFiltrada = sut.getCachedEventsOrdenados();
+        listaFiltrada = sut.getEventosEnFiltrosCombinados();
         assertEquals(16, listaFiltrada.size());
         ///////////////////
         // IT.1C: Se comprueba que no se actualiza la lista filteredEvents porque fechaInicio > fechaFin
@@ -288,7 +288,7 @@ public class EventsPresenterITest {
         dateFin = LocalDate.of(2021, 7, 1);
         //Se introduce uan fecha inválida
         sut.onFiltrarDate(dateIni, dateFin);
-        listaFiltrada = sut.getCachedEventsOrdenados();
+        listaFiltrada = sut.getEventosEnFiltrosCombinados();
         assertEquals(345, listaFiltrada.size());
 
 
