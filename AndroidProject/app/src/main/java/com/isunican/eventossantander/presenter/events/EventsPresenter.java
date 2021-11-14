@@ -1,6 +1,5 @@
 package com.isunican.eventossantander.presenter.events;
 
-
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;

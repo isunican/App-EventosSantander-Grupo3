@@ -48,7 +48,7 @@ public class OrdenarSobreListaFiltradaUITest {
 
     @Rule
     public ActivityScenarioRule<EventsActivity> activityRule =
-            new ActivityScenarioRule(EventsActivity.class);
+            new ActivityScenarioRule<>(EventsActivity.class);
 
     @Test
     public void ordenarSobreListaFiltrada(){
