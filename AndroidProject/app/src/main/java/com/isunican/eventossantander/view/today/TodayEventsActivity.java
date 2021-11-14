@@ -1,4 +1,4 @@
-package com.isunican.eventossantander.view.events;
+package com.isunican.eventossantander.view.today;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -8,7 +8,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
@@ -20,18 +20,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.isunican.eventossantander.R;
 import com.isunican.eventossantander.model.Event;
-import com.isunican.eventossantander.presenter.events.EventsPresenter;
+import com.isunican.eventossantander.presenter.today.TodayEventsPresenter;
 import com.isunican.eventossantander.view.eventsdetail.EventsDetailActivity;
 import com.isunican.eventossantander.view.info.InfoActivity;
-import com.isunican.eventossantander.view.today.TodayEventsActivity;
-
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -39,17 +37,15 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
-public class EventsActivity extends AppCompatActivity implements IEventsContract.View, View.OnClickListener {
+public class TodayEventsActivity extends AppCompatActivity implements ITodayEventsContract.View, View.OnClickListener {
 
-    private IEventsContract.Presenter presenter;
+    private ITodayEventsContract.Presenter presenter;
 
     private int posi;
 
     private static final String APLICAR = "Aplicar";
     private static final String CANCELAR = "Cancelar";
 
-
-    private List<String> tipostotales;
     private List<String> tiposSeleccionados;
     private List<String> tiposSeleccionadosPrevio;
 
@@ -76,6 +72,10 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     private TextView textoFechaInicio;
     private TextView textoFechaFin;
 
+    private static void onClick(DialogInterface dialog, int id) {
+        // TODO document why this method is empty
+    }
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -84,7 +84,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         // correctamente
         super.onCreate(savedInstanceState);
         // instancia la interfaz definida en el Layout activity_main.xml
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_events_today);
 
         // Enlazamos con los widgets del layout
 
@@ -98,11 +98,8 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         Button btnFiltrar = findViewById(R.id.btn_filtrar);
         btnFiltrar.setOnClickListener(this);
 
-        Button btnHoy = findViewById(R.id.btn_rojo);
-        btnHoy.setOnClickListener(this);
+        presenter = new TodayEventsPresenter(this);
 
-        presenter = new EventsPresenter(this);
-        tiposSeleccionadosPrevio= new ArrayList<>();
 
         // Se intenta recargar las variables de filtrar entre dos fechas
         onReloadFilteredDates();
@@ -110,7 +107,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
 
     @Override
     public void onEventsLoaded(List<Event> events) {
-        EventArrayAdapter adapter = new EventArrayAdapter(EventsActivity.this, 0, events);
+        TodayEventArrayAdapter adapter = new TodayEventArrayAdapter(TodayEventsActivity.this, 0, events);
         ListView listView = findViewById(R.id.eventsListView);
         listView.setAdapter(adapter);
 
@@ -120,11 +117,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     @Override
     public void onLoadError() {
         //Error de carga
-        String text = "Error de carga de eventos";
-        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
-
-    
 
     @Override
     public void onLoadSuccess(int elementsLoaded) {
@@ -156,12 +149,13 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
      */
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menuHoy) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.menu, menu);
+        menuInflater.inflate(R.menu.menu_hoy, menuHoy);
         return true;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -180,6 +174,9 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
             case R.id.menu_info:
                 presenter.onInfoClicked();
                 return true;
+            case R.id.menu_volver:
+                onBackPressed();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -190,22 +187,21 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
             AlertDialog ad = onFilterAlertDialog();
             ad.show();
         } else if (view.getId() == R.id.btn_ordenar) {
-            onOrdenarAlertDialog();
-        } else if (view.getId() == R.id.btn_rojo) {
-            Intent intent = new Intent(this, TodayEventsActivity.class);
-            startActivity(intent);
+            AlertDialog ado = onFilterAlertDialogOrdenar();
+            ado.show();
         }
     }
 
 
     public AlertDialog onFilterAlertDialog(){
         //Creamos dos listas donde tenemos los tipos de evento, y los tipos marcados para filtrar
-        tipostotales = new ArrayList<>();
+        List<String> tipostotales = new ArrayList<>();
         anhadirTiposeventos(tipostotales);
         tipostotales.toArray(new String[0]);
 
         tiposSeleccionados = new ArrayList<>();
 
+        //Creamos una AlertDialog
         //Creamos una AlertDialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -260,13 +256,11 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         builder.setSingleChoiceItems(array, 0, (dialogInterface, i) -> posi = i);
         // Set the action buttons
         builder.setPositiveButton(APLICAR, (dialog, id) -> {
+            presenter.onOrdenarCategoriaClicked(posi);
             // User clicked OK, so save the selectedItems results somewhere
             // or return them to the component that opened the dialog
-            presenter.onOrdenarCategoriaClicked(posi);
         });
-        builder.setNegativeButton(CANCELAR, (dialog, id) -> {
-
-        });
+        builder.setNegativeButton(CANCELAR, TodayEventsActivity::onClick);
         return builder.create();
     }
 
@@ -285,101 +279,13 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     }
 
     /**
-     * Crea un alertDialog personalizado que permite seleccionar una ordenación de la lista
-     * de eventos ascendentemente y descendentemente por el tipo de evento o por la hora de comienzo.
-     */
-    public void onOrdenarAlertDialog() {
-        SharedPreferences sharpref = getPreferences(this.MODE_PRIVATE);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View view = LayoutInflater.from(this).inflate(
-                R.layout.alert_dialog_ordenar,
-                (ConstraintLayout) findViewById(R.id.layout_dialog_container)
-        );
-
-        TextView textTipo = (TextView) view.findViewById(R.id.ordenar_tipo_titulo);
-        TextView textHora = (TextView) view.findViewById(R.id.ordenar_hora_titulo);
-
-        RadioButton btnTipoAscendente = (RadioButton) view.findViewById(R.id.btn_ordenar_ascendente);
-        RadioButton btnTipoDescendente = (RadioButton) view.findViewById(R.id.btn_ordenar_descendente);
-        RadioButton btnHoraMasProxima = (RadioButton) view.findViewById(R.id.btn_mas_proximas_primero);
-        RadioButton btnHoraMenosProxima = (RadioButton) view.findViewById(R.id.btn_menos_proximas_primero);
-
-        builder.setView(view);
-        final AlertDialog ad = builder.create();
-
-        view.findViewById(R.id.btn_ordenar_ascendente).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                posi = 0;
-                btnTipoDescendente.setChecked(false);
-                btnHoraMasProxima.setChecked(false);
-                btnHoraMenosProxima.setChecked(false);
-            }
-        });
-
-        view.findViewById(R.id.btn_ordenar_descendente).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                posi = 1;
-                btnTipoAscendente.setChecked(false);
-                btnHoraMasProxima.setChecked(false);
-                btnHoraMenosProxima.setChecked(false);
-            }
-        });
-
-        view.findViewById(R.id.btn_mas_proximas_primero).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                posi = 2;
-                btnTipoAscendente.setChecked(false);
-                btnTipoDescendente.setChecked(false);
-                btnHoraMenosProxima.setChecked(false);
-            }
-        });
-
-        view.findViewById(R.id.btn_menos_proximas_primero).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                posi = 3;
-                btnTipoAscendente.setChecked(false);
-                btnTipoDescendente.setChecked(false);
-                btnHoraMasProxima.setChecked(false);
-            }
-        });
-
-        // Caso en el que se pulsa el boton de cancelar
-        view.findViewById(R.id.ordenar_cancelar).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ad.dismiss();
-            }
-        });
-
-        // Caso en el que se pulsa el boton de aceptar
-        view.findViewById(R.id.ordenar_aplicar);
-        view.setOnClickListener(new View.OnClickListener() {
-
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onClick(View view) {
-                presenter.onOrdenarCategoriaClicked(posi);
-                // Se cierra el Alert Dialog
-                ad.dismiss();
-            }
-        });
-
-        ad.show();
-    }
-
-
-    /**
      * Crea un alertDialog personalizado que muestra la posibilidad de introducir 2 fechas
      * de inicio y final para filtrar la lista de eventos acorde a dichas fechas
      * En el caso de que no se introduzcan ambas fechas o que la de fin sea anterior a la de inicio
      * se le notifica al usuario y no se realiza ningun cambio
      */
     @SuppressLint("SetTextI18n")
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void onDateFilterAlertDialog() {
 
         diaInicio = diaInicioPrevio;
@@ -389,7 +295,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         mesFin = mesFinPrevio;
         anhoFin = anhoFinPrevio;
 
-        SharedPreferences sharpref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharpref = getPreferences(MODE_PRIVATE);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = LayoutInflater.from(this).inflate(
@@ -411,55 +317,49 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         final AlertDialog adff = builder.create();
 
         // Caso en el que se pulse la fecha de inicio (mediante la pulsacion del titulo)
-        view.findViewById(R.id.filtrar_fecha_inicio_titulo).setOnClickListener(view1 -> onSelectStartDate());
+        view.findViewById(R.id.filtrar_fecha_inicio_titulo).setOnClickListener(view16 -> onSelectStartDate());
         // Caso en el que se pulse la fecha de inicio (mediante la pulsacion del texto)
-        view.findViewById(R.id.filtrar_fecha_inicio_texto).setOnClickListener(view12 -> onSelectStartDate());
+        view.findViewById(R.id.filtrar_fecha_inicio_texto).setOnClickListener(view15 -> onSelectStartDate());
 
         // Caso en el que se pulse la fecha de fin (mediante la pulsacion del titulo)
-        view.findViewById(R.id.filtrar_fecha_fin_titulo).setOnClickListener(view13 -> onSelectFinishDate());
+        view.findViewById(R.id.filtrar_fecha_fin_titulo).setOnClickListener(view14 -> onSelectFinishDate());
         // Caso en el que se pulse la fecha de fin (mediante la pulsacion del texto)
-        view.findViewById(R.id.filtrar_fecha_fin_texto).setOnClickListener(view14 -> onSelectFinishDate());
+        view.findViewById(R.id.filtrar_fecha_fin_texto).setOnClickListener(view13 -> onSelectFinishDate());
 
-        // Caso en el que se pulsa el boton de cancelar
-        view.findViewById(R.id.filtrar_fecha_cancelar).setOnClickListener(view15 -> adff.dismiss());
+        view.findViewById(R.id.filtrar_fecha_cancelar).setOnClickListener(view12 -> adff.dismiss());
         // Caso en el que se pulsa el boton de aceptar
         view.findViewById(R.id.filtrar_fecha_aceptar);
-        view.setOnClickListener(new View.OnClickListener() {
+        view.setOnClickListener(view1 -> {
 
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onClick(View view) {
-
-                // Si falta una fecha muestra un mensaje de error
-                if (diaFin == -1 || diaInicio == -1) {
-                    Toast.makeText(getBaseContext(), "Ambas fechas deben estar seleccionadas", Toast.LENGTH_SHORT).show();
+            // Si falta una fecha muestra un mensaje de error
+            if (diaFin == -1 || diaInicio == -1) {
+                Toast.makeText(getBaseContext(), "Ambas fechas deben estar seleccionadas", Toast.LENGTH_SHORT).show();
+            } else {
+                // Si la fecha de inicio es posterior ala de fin se notifica al usuario
+                if (!onCheckDateOrder()) {
+                    Toast.makeText(getBaseContext(), "Fecha de fin debe ser posterior a fecha de inicio", Toast.LENGTH_SHORT).show();
                 } else {
-                    // Si la fecha de inicio es posterior ala de fin se notifica al usuario
-                    if (!onCheckDateOrder()) {
-                        Toast.makeText(getBaseContext(), "Fecha de fin debe ser posterior a fecha de inicio", Toast.LENGTH_SHORT).show();
-                    } else {
-                        diaInicioPrevio = diaInicio;
-                        mesInicioPrevio = mesInicio;
-                        anhoInicioPrevio = anhoInicio;
-                        diaFinPrevio = diaFin;
-                        mesFinPrevio = mesFin;
-                        anhoFinPrevio = anhoFin;
-                        fechaIni = LocalDate.of(anhoInicio, mesInicio+1, diaInicio);
-                        fechaFin = LocalDate.of(anhoFin, mesFin+1, diaFin);
-                        presenter.onFiltrarDate(fechaIni,fechaFin);
+                    diaInicioPrevio = diaInicio;
+                    mesInicioPrevio = mesInicio;
+                    anhoInicioPrevio = anhoInicio;
+                    diaFinPrevio = diaFin;
+                    mesFinPrevio = mesFin;
+                    anhoFinPrevio = anhoFin;
+                    fechaIni = LocalDate.of(anhoInicio, mesInicio+1, diaInicio);
+                    fechaFin = LocalDate.of(anhoFin, mesFin+1, diaFin);
+                    presenter.onFiltrarDate(fechaIni,fechaFin);
 
-                        SharedPreferences.Editor editor = sharpref.edit();
-                        editor.putInt("diaInicioPrevioGuardado", diaInicioPrevio);
-                        editor.putInt("mesInicioPrevioGuardado", mesInicioPrevio);
-                        editor.putInt("anhoInicioPrevioGuardado", anhoInicioPrevio);
-                        editor.putInt("diaFinPrevioGuardado", diaFinPrevio);
-                        editor.putInt("mesFinPrevioGuardado", mesFinPrevio);
-                        editor.putInt("anhoFinPrevioGuardado", anhoFinPrevio);
-                        editor.apply();
+                    SharedPreferences.Editor editor = sharpref.edit();
+                    editor.putInt("diaInicioPrevioGuardado", diaInicioPrevio);
+                    editor.putInt("mesInicioPrevioGuardado", mesInicioPrevio);
+                    editor.putInt("anhoInicioPrevioGuardado", anhoInicioPrevio);
+                    editor.putInt("diaFinPrevioGuardado", diaFinPrevio);
+                    editor.putInt("mesFinPrevioGuardado", mesFinPrevio);
+                    editor.putInt("anhoFinPrevioGuardado", anhoFinPrevio);
+                    editor.apply();
 
-                        // Se cierra el Alert Dialog
-                        adff.dismiss();
-                    }
+                    // Se cierra el Alert Dialog
+                    adff.dismiss();
                 }
             }
         });
@@ -498,12 +398,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         mesFin= c.get(Calendar.MONTH);
         anhoFin= c.get(Calendar.YEAR);
 
-        @SuppressLint("SetTextI18n") DatePickerDialog datePickerDialog = new DatePickerDialog(this, (datePicker, anho, mes, dia) -> {
-            diaFin = dia;
-            mesFin = mes;
-            anhoFin = anho;
-            textoFechaFin.setText(diaFin+"/"+(mesFin+1)+"/"+anhoFin);
-        }
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, this::onDateSet
                 ,diaFin,mesFin,anhoFin);
         datePickerDialog.show();
     }
@@ -519,9 +414,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         } else if (anhoInicio == anhoFin) {
             if(mesInicio < mesFin) {
                 return true;
-            }else if(mesInicio == mesFin && diaInicio <= diaFin) {
-                return true;
-            }
+            }else return mesInicio == mesFin && diaInicio <= diaFin;
         }
         return false;
     }
@@ -529,14 +422,20 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void onReloadFilteredDates() {
 
-
-        SharedPreferences sharpref = getPreferences(Context.MODE_PRIVATE);
-
+        SharedPreferences sharpref = getPreferences(MODE_PRIVATE);
         diaInicioPrevio = sharpref.getInt("diaInicioPrevioGuardado", -1);
         mesInicioPrevio = sharpref.getInt("mesInicioPrevioGuardado", -1);
         anhoInicioPrevio = sharpref.getInt("anhoInicioPrevioGuardado", -1);
         diaFinPrevio = sharpref.getInt("diaFinPrevioGuardado", -1);
         mesFinPrevio = sharpref.getInt("mesFinPrevioGuardado", -1);
         anhoFinPrevio = sharpref.getInt("anhoFinPrevioGuardado", -1);
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void onDateSet(DatePicker datePicker, int anho, int mes, int dia) {
+        diaFin = dia;
+        mesFin = mes;
+        anhoFin = anho;
+        textoFechaFin.setText(diaFin + "/" + (mesFin + 1) + "/" + anhoFin);
     }
 }
