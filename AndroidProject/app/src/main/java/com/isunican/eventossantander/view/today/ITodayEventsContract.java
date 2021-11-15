@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ITodayEventsContract {
 
-    public interface Presenter {
+     interface Presenter {
 
         void onEventClicked(int eventIndex);
 
@@ -28,7 +28,7 @@ public interface ITodayEventsContract {
         void setCachedEventsOrdenados(List<Event> events);
     }
 
-    public interface View {
+    interface View {
 
         void onEventsLoaded(List<Event> events);
 

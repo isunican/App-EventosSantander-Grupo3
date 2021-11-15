@@ -1,6 +1,5 @@
 package com.isunican.eventossantander.presenter.events;
 
-
 import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,6 +10,7 @@ import androidx.annotation.RequiresApi;
 import com.isunican.eventossantander.model.Event;
 import com.isunican.eventossantander.model.EventsRepository;
 import com.isunican.eventossantander.model.comparators.EventsComparatorCategoria;
+import com.isunican.eventossantander.model.comparators.EventsComparatorHora;
 import com.isunican.eventossantander.view.Listener;
 import com.isunican.eventossantander.view.events.IEventsContract;
 
@@ -18,9 +18,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Collections;
-
 import java.util.ArrayList;
-
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -35,12 +33,6 @@ public class EventsPresenter implements IEventsContract.Presenter {
     private List<Event> eventosEnFiltrosCombinados;
     private int ordenFiltrado;
     
-    public List<Event> getEventosEnDeterminadasFechas() {
-        return eventosEnDeterminadasFechas;
-    }
-    public List<Event> getEventosEnDeterminadosFiltros() {
-        return eventosEnDeterminadosFiltros;
-    }
 
     public void setEventosEnDeterminadosFiltros(List<Event> list) {
          eventosEnDeterminadosFiltros = list;
@@ -48,10 +40,6 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
     public void setEventosEnDeterminadasFechas(List<Event> list) {
         eventosEnDeterminadasFechas = list;
-    }
-
-    public void setFilteredEvents(List<Event> list){
-        filteredEvents = list;
     }
 
     public EventsPresenter(IEventsContract.View view) {
@@ -63,7 +51,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
     }
 
     private void loadData() {
-        EventsRepository.getEvents(new Listener<List<Event>>() {
+        EventsRepository.getEvents(new Listener<>() {
             @Override
             public void onSuccess(List<Event> data) {
 
@@ -93,10 +81,8 @@ public class EventsPresenter implements IEventsContract.Presenter {
         if (eventIndex >= cachedEvents.size() || eventIndex < 0) {
             throw new IndexOutOfBoundsException();
         }
-        if (eventIndex < cachedEvents.size()) {
-            Event event = cachedEvents.get(eventIndex);
-            view.openEventDetails(event);
-        }
+        Event event = cachedEvents.get(eventIndex);
+        view.openEventDetails(event);
     }
 
     @Override
@@ -112,6 +98,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
         view.openInfoView();
     }
 
+    /**
     @Override
     public void onOrdenarCategoriaClicked(int tipoOrdenacion) {
 
@@ -138,6 +125,60 @@ public class EventsPresenter implements IEventsContract.Presenter {
         }
         view.onEventsLoaded(eventosEnFiltrosCombinados);
     }
+     */
+
+    @Override
+    public void onOrdenarClicked(int tipoOrdenacion) {
+
+        ordenFiltrado = tipoOrdenacion;
+        EventsComparatorCategoria ecc;
+        EventsComparatorHora ech;
+
+        switch(ordenFiltrado){
+            case 0:
+                ecc = new EventsComparatorCategoria();
+                if (eventosEnFiltrosCombinados.isEmpty()) {
+                    Collections.sort(cachedEvents,ecc);
+                    eventosEnFiltrosCombinados = cachedEvents;
+                } else {
+                    Collections.sort(eventosEnFiltrosCombinados,ecc);
+                }
+                break;
+            case 1:
+                ecc = new EventsComparatorCategoria();
+                if (eventosEnFiltrosCombinados.isEmpty()) {
+                    java.util.Collections.sort(cachedEvents,ecc);
+                    Collections.reverse(cachedEvents);
+                    eventosEnFiltrosCombinados = cachedEvents;
+                } else {
+                    java.util.Collections.sort(eventosEnFiltrosCombinados, ecc);
+                    Collections.reverse(eventosEnFiltrosCombinados);
+                }
+                break;
+            case 2:
+                ech = new EventsComparatorHora();
+                if (eventosEnFiltrosCombinados.isEmpty()) {
+                    Collections.sort(cachedEvents,ech);
+                    eventosEnFiltrosCombinados = cachedEvents;
+                } else {
+                    Collections.sort(eventosEnFiltrosCombinados,ech);
+                }
+                break;
+            case 3:
+                ech = new EventsComparatorHora();
+                if (eventosEnFiltrosCombinados.isEmpty()) {
+                    java.util.Collections.sort(cachedEvents,ech);
+                    Collections.reverse(cachedEvents);
+                    eventosEnFiltrosCombinados = cachedEvents;
+                } else {
+                    java.util.Collections.sort(eventosEnFiltrosCombinados, ech);
+                    Collections.reverse(eventosEnFiltrosCombinados);
+                }
+                break;
+
+        }
+        view.onEventsLoaded(eventosEnFiltrosCombinados);
+    }
 
     @Override
     public void onFiltrarClicked(List<String> checkboxSeleccionados) {
@@ -159,7 +200,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
         combinaFiltros();
 
         if(ordenFiltrado != 2) {
-            onOrdenarCategoriaClicked(ordenFiltrado);
+            onOrdenarClicked(ordenFiltrado);
         }
 
         view.onEventsLoaded(eventosEnFiltrosCombinados);
@@ -201,7 +242,11 @@ public class EventsPresenter implements IEventsContract.Presenter {
     }
 
 
-    public List<Event> getFilteredEvents() {
+//    public List<Event> getFilteredEvents() {
+//
+//    }
+
+    public List<Event> getEventosEnFiltrosCombinados() {
         return eventosEnFiltrosCombinados;
     }
 

@@ -1,7 +1,6 @@
 package com.isunican.eventossantander.presenter.today;
 
 
-import android.annotation.SuppressLint;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
@@ -10,19 +9,12 @@ import com.isunican.eventossantander.model.Event;
 import com.isunican.eventossantander.model.EventsRepository;
 import com.isunican.eventossantander.model.comparators.EventsComparatorCategoria;
 import com.isunican.eventossantander.view.Listener;
-import com.isunican.eventossantander.view.events.IEventsContract;
 import com.isunican.eventossantander.view.today.ITodayEventsContract;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Calendar;
 import java.util.Collections;
-
 import java.util.ArrayList;
-
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 public class TodayEventsPresenter implements ITodayEventsContract.Presenter {
 
@@ -35,26 +27,6 @@ public class TodayEventsPresenter implements ITodayEventsContract.Presenter {
     private List<Event> datosHoy;
     private int ordenFiltrado;
 
-    public List<Event> getEventosEnDeterminadasFechas() {
-        return eventosEnDeterminadasFechas;
-    }
-
-    public List<Event> getEventosEnDeterminadosFiltros() {
-        return eventosEnDeterminadosFiltros;
-    }
-
-    public void setEventosEnDeterminadosFiltros(List<Event> list) {
-        eventosEnDeterminadosFiltros = list;
-    }
-
-    public void setEventosEnDeterminadasFechas(List<Event> list) {
-        eventosEnDeterminadasFechas = list;
-    }
-
-    public void setFilteredEvents(List<Event> list) {
-        filteredEvents = list;
-    }
-
     public TodayEventsPresenter(ITodayEventsContract.View view) {
         this.view = view;
         loadData();
@@ -64,7 +36,7 @@ public class TodayEventsPresenter implements ITodayEventsContract.Presenter {
     }
 
     private void loadData() {
-        EventsRepository.getEvents(new Listener<List<Event>>() {
+        EventsRepository.getEvents(new Listener<>() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onSuccess(List<Event> data) {
@@ -75,7 +47,7 @@ public class TodayEventsPresenter implements ITodayEventsContract.Presenter {
                 ordenFiltrado = 2;
                 datosHoy = eventosHoy();
 
-                if (datosHoy.isEmpty())  {
+                if (datosHoy.isEmpty()) {
                     view.onLoadNoEventsInDate();
                 } else {
                     view.onEventsLoaded(datosHoy);
@@ -96,10 +68,8 @@ public class TodayEventsPresenter implements ITodayEventsContract.Presenter {
         if (eventIndex >= cachedEvents.size() || eventIndex < 0) {
             throw new IndexOutOfBoundsException();
         }
-        if (eventIndex < cachedEvents.size()) {
-            Event event = cachedEvents.get(eventIndex);
-            view.openEventDetails(event);
-        }
+        Event event = cachedEvents.get(eventIndex);
+        view.openEventDetails(event);
     }
 
     @Override
@@ -200,7 +170,6 @@ public class TodayEventsPresenter implements ITodayEventsContract.Presenter {
         view.onEventsLoaded(eventosEnFiltrosCombinados);
     }
 
-
     public List<Event> getFilteredEvents() {
         return eventosEnFiltrosCombinados;
     }
@@ -246,7 +215,6 @@ public class TodayEventsPresenter implements ITodayEventsContract.Presenter {
     public List<Event> eventosHoy() {
         List<Event> eventosHoy = new ArrayList<>();
         for (Event e : cachedEvents) {
-            //TODO, esta hecho para los eventos totales, habria que cambiarlo si se quiere que sean los filtrados
             String[] date1 = e.getFecha().split(" ");
             String[] dateDefinitive = date1[1].split(",");
             String[] dateSeparada = dateDefinitive[0].split("/");
