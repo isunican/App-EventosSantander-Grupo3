@@ -29,6 +29,7 @@ public class EventsRepository {
      */
     private static EventsAPIService.Source source = EventsAPIService.Source.AYTO;
 
+
     /*
     Problem: in some UI Tests, the tests fails because Espresso does not wait until the data
     is downloaded.
