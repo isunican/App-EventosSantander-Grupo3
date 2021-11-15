@@ -1,6 +1,7 @@
-package com.isunican.eventossantander.view.events;
+package com.isunican.eventossantander.view.today;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,20 +13,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-
 import com.isunican.eventossantander.R;
 import com.isunican.eventossantander.model.Event;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class EventArrayAdapter extends ArrayAdapter<Event> {
+public class TodayEventArrayAdapter extends ArrayAdapter<Event> {
 
     private final List<Event> events;
 
-    public EventArrayAdapter(@NonNull EventsActivity activity, int resource, @NonNull List<Event> objects) {
+    public TodayEventArrayAdapter(@NonNull TodayEventsActivity activity, int resource, @NonNull List<Event> objects) {
         super(activity, resource, objects);
         this.events = objects;
     }
@@ -37,7 +36,7 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
 
         // Create item view
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        @SuppressLint({"ViewHolder", "InflateParams"}) View view = inflater.inflate(R.layout.events_listview_item, null);
+        @SuppressLint("ViewHolder") View view = inflater.inflate(R.layout.events_listview_item, null);
 
         // Link subviews
         TextView titleTxt = view.findViewById(R.id.item_event_title);
