@@ -101,6 +101,9 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
     @Override
     public void onReloadClicked() {
+        eventosEnDeterminadosFiltros.clear();
+        eventosEnDeterminadasFechas.clear();
+        eventosEnFiltrosCombinados.clear();
         loadData();
     }
 
