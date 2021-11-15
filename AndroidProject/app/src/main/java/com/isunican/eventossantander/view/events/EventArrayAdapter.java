@@ -76,7 +76,7 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
 
     private static String getNormalizedCategory(Event event) {
         return StringUtils.deleteWhitespace(
-                StringUtils.stripAccents(event.getCategoria()))
+                StringUtils.stripAccents(StringUtils.remove(event.getCategoria(),"/")))
                 .toLowerCase();
     }
 }
