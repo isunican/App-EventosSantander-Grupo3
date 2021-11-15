@@ -20,6 +20,10 @@ public interface IEventsContract {
         void onFiltrarClicked(List<String> checkboxSeleccionados);
 
         void onFiltrarDate(LocalDate fechaIni, LocalDate fechaFin);
+
+        List<Event> getCachedEventsOrdenados();
+
+        void setCachedEventsOrdenados(List<Event> events);
     }
 
     interface View {

@@ -22,6 +22,10 @@ public interface ITodayEventsContract {
         void onFiltrarDate(LocalDate fechaIni, LocalDate fechaFin);
 
         List<Event>eventosHoy();
+
+        List<Event> getCachedEventsOrdenados();
+
+        void setCachedEventsOrdenados(List<Event> events);
     }
 
     interface View {

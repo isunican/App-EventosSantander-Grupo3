@@ -14,6 +14,11 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.os.SystemClock;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,6 +30,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.isunican.eventossantander.R;
 import com.isunican.eventossantander.model.Event;
 import com.isunican.eventossantander.presenter.events.EventsPresenter;
@@ -48,10 +54,11 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     private static final String APLICAR = "Aplicar";
     private static final String CANCELAR = "Cancelar";
 
+    private ArrayList<String> tipostotales;
+    private ArrayList<String> tiposSeleccionados;
+    private ArrayList<String> tiposSeleccionadosPrevio;
 
-    private List<String> tipostotales;
-    private List<String> tiposSeleccionados;
-    private List<String> tiposSeleccionadosPrevio;
+    private ArrayList<Event> eventosEnFiltrosCombinados;
 
     // Variables para filtrar por fecha
     private int diaInicio;
@@ -103,6 +110,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
 
         presenter = new EventsPresenter(this);
         tiposSeleccionadosPrevio= new ArrayList<>();
+        eventosEnFiltrosCombinados = new ArrayList<>();
 
         // Se intenta recargar las variables de filtrar entre dos fechas
         onReloadFilteredDates();
@@ -150,6 +158,65 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         startActivity(intent);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt("DIAINICIO",diaInicio);
+        outState.putInt("MESINICIO",mesInicio);
+        outState.putInt("ANHOINICIO",anhoInicio);
+
+        outState.putInt("DIAFIN",diaFin);
+        outState.putInt("MESFIN",mesFin);
+        outState.putInt("ANHOFIN",anhoFin);
+
+        outState.putInt("DIAINICIOPREVIO",diaInicioPrevio);
+        outState.putInt("MESINICIOPREVIO",mesInicioPrevio);
+        outState.putInt("ANHOINICIOPREVIO",anhoInicioPrevio);
+
+        outState.putInt("DIAFINPREVIO",diaFinPrevio);
+        outState.putInt("MESFINPREVIO",mesFinPrevio);
+        outState.putInt("ANHOFINPREVIO",anhoFinPrevio);
+
+        outState.putStringArrayList("TIPOSSLECCIONADOS", tiposSeleccionados);
+        outState.putStringArrayList("TIPOSSLECCIONADOSPREVIO", tiposSeleccionadosPrevio);
+
+        eventosEnFiltrosCombinados = (ArrayList<Event>) presenter.getCachedEventsOrdenados();
+        outState.putParcelableArrayList("FILTEREDEVENTS", eventosEnFiltrosCombinados);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState){
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // Guarda la informacion de los filtros por fecha
+        diaInicio = savedInstanceState.getInt("DIAINICIO");
+        mesInicio = savedInstanceState.getInt("MESINICIO");
+        anhoInicio = savedInstanceState.getInt("ANHOINICIO",anhoInicio);
+
+        diaFin = savedInstanceState.getInt("DIAFIN");
+        mesFin = savedInstanceState.getInt("MESFIN");
+        anhoFin = savedInstanceState.getInt("ANHOFIN");
+
+        diaInicioPrevio = savedInstanceState.getInt("DIAINICIOPREVIO");
+        mesInicioPrevio = savedInstanceState.getInt("MESINICIOPREVIO");
+        anhoInicioPrevio = savedInstanceState.getInt("ANHOINICIOPREVIO");
+
+        diaFinPrevio = savedInstanceState.getInt("DIAFINPREVIO");
+        mesFinPrevio = savedInstanceState.getInt("MESFINPREVIO");
+        anhoFinPrevio = savedInstanceState.getInt("ANHOFINPREVIO");
+
+        // Guarda la informacion de los filtros por tipo
+        tiposSeleccionados = savedInstanceState.getStringArrayList("TIPOSSLECCIONADOS");
+        tiposSeleccionadosPrevio = savedInstanceState.getStringArrayList("TIPOSSLECCIONADOSPREVIO");
+
+        eventosEnFiltrosCombinados = savedInstanceState.getParcelableArrayList("FILTEREDEVENTS");
+        presenter.setCachedEventsOrdenados(eventosEnFiltrosCombinados);
+    }
+
+    public IEventsContract.Presenter getPresenter() {
+        return presenter;
+    }
 
     /*
     Menu Handling

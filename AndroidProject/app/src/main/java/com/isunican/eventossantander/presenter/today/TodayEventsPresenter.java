@@ -30,6 +30,9 @@ public class TodayEventsPresenter implements ITodayEventsContract.Presenter {
     public TodayEventsPresenter(ITodayEventsContract.View view) {
         this.view = view;
         loadData();
+        eventosEnDeterminadosFiltros = new ArrayList<>();
+        eventosEnDeterminadasFechas = new ArrayList<>();
+        eventosEnFiltrosCombinados = new ArrayList<>();
     }
 
     private void loadData() {
@@ -38,9 +41,6 @@ public class TodayEventsPresenter implements ITodayEventsContract.Presenter {
             @Override
             public void onSuccess(List<Event> data) {
 
-                eventosEnDeterminadosFiltros = new ArrayList<>();
-                eventosEnDeterminadasFechas = new ArrayList<>();
-                eventosEnFiltrosCombinados = new ArrayList<>();
                 datosHoy = new ArrayList<>();
 
                 cachedEvents = data;
@@ -168,6 +168,24 @@ public class TodayEventsPresenter implements ITodayEventsContract.Presenter {
             view.onLoadSuccess(eventosEnFiltrosCombinados.size());
         }
         view.onEventsLoaded(eventosEnFiltrosCombinados);
+    }
+
+    public List<Event> getFilteredEvents() {
+        return eventosEnFiltrosCombinados;
+    }
+
+    public List<Event> getCachedEvents() {
+        return cachedEvents;
+    }
+
+    @Override
+    public List<Event> getCachedEventsOrdenados() {
+        return eventosEnFiltrosCombinados;
+    }
+
+    @Override
+    public void setCachedEventsOrdenados(List<Event> events) {
+        eventosEnFiltrosCombinados = events;
     }
 
     public void combinaFiltros() {
