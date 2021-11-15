@@ -174,7 +174,6 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         outState.putStringArrayList("TIPOSSLECCIONADOSPREVIO", tiposSeleccionadosPrevio);
 
         eventosEnFiltrosCombinados = (ArrayList<Event>) presenter.getCachedEventsOrdenados();
-        outState.putParcelableArrayList("FILTEREDEVENTS", eventosEnFiltrosCombinados);
     }
 
     @Override
