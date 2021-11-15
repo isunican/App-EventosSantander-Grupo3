@@ -8,6 +8,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -46,7 +47,6 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
     private static final String APLICAR = "Aplicar";
     private static final String CANCELAR = "Cancelar";
 
-    private ArrayList<String> tipostotales;
     private ArrayList<String> tiposSeleccionados;
     private ArrayList<String> tiposSeleccionadosPrevio;
 
@@ -76,7 +76,6 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
     private TextView textoFechaFin;
 
     private static void onClick(DialogInterface dialog, int id) {
-        // TODO document why this method is empty
     }
 
 
@@ -358,7 +357,7 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
         mesFin = mesFinPrevio;
         anhoFin = anhoFinPrevio;
 
-        SharedPreferences sharpref = getPreferences(MODE_PRIVATE);
+        SharedPreferences sharpref = getPreferences(Context.MODE_PRIVATE); // Sensitive
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = LayoutInflater.from(this).inflate(
@@ -485,7 +484,7 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void onReloadFilteredDates() {
 
-        SharedPreferences sharpref = getPreferences(MODE_PRIVATE);
+        SharedPreferences sharpref = getPreferences(Context.MODE_PRIVATE); // Sensitive
         diaInicioPrevio = sharpref.getInt("diaInicioPrevioGuardado", -1);
         mesInicioPrevio = sharpref.getInt("mesInicioPrevioGuardado", -1);
         anhoInicioPrevio = sharpref.getInt("anhoInicioPrevioGuardado", -1);

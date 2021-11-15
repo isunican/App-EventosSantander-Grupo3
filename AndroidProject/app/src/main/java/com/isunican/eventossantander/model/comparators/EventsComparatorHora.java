@@ -1,7 +1,5 @@
 package com.isunican.eventossantander.model.comparators;
 
-import android.util.Log;
-
 import com.isunican.eventossantander.model.Event;
 
 import java.util.Comparator;

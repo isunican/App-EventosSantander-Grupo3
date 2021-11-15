@@ -170,10 +170,6 @@ public class TodayEventsPresenter implements ITodayEventsContract.Presenter {
         view.onEventsLoaded(eventosEnFiltrosCombinados);
     }
 
-    public List<Event> getFilteredEvents() {
-        return eventosEnFiltrosCombinados;
-    }
-
     public List<Event> getCachedEvents() {
         return cachedEvents;
     }
