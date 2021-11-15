@@ -1,11 +1,5 @@
 package com.isunican.eventossantander.view.events;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
@@ -14,11 +8,6 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.os.SystemClock;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,14 +19,18 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.isunican.eventossantander.R;
 import com.isunican.eventossantander.model.Event;
 import com.isunican.eventossantander.presenter.events.EventsPresenter;
 import com.isunican.eventossantander.view.eventsdetail.EventsDetailActivity;
 import com.isunican.eventossantander.view.info.InfoActivity;
 import com.isunican.eventossantander.view.today.TodayEventsActivity;
-
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -49,7 +42,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
 
     private IEventsContract.Presenter presenter;
 
-    private int posi;
+    private int posi=0;
 
     private static final String APLICAR = "Aplicar";
     private static final String CANCELAR = "Cancelar";
@@ -435,8 +428,8 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
                 ad.dismiss();
             }
         });
-
         ad.show();
+        btnTipoAscendente.setChecked(true);
     }
 
 
