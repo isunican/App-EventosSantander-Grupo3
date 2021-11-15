@@ -2,8 +2,6 @@ package com.isunican.eventossantander.presenter.events;
 
 import android.annotation.SuppressLint;
 import android.os.Build;
-import android.os.Bundle;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -175,7 +173,8 @@ public class EventsPresenter implements IEventsContract.Presenter {
                     Collections.reverse(eventosEnFiltrosCombinados);
                 }
                 break;
-
+            default:
+                break;
         }
         view.onEventsLoaded(eventosEnFiltrosCombinados);
     }
@@ -241,15 +240,6 @@ public class EventsPresenter implements IEventsContract.Presenter {
         view.onEventsLoaded(eventosEnFiltrosCombinados);
     }
 
-
-//    public List<Event> getFilteredEvents() {
-//
-//    }
-
-    public List<Event> getEventosEnFiltrosCombinados() {
-        return eventosEnFiltrosCombinados;
-    }
-
     public List<Event> getCachedEvents() {
         return cachedEvents;
     }
@@ -298,7 +288,6 @@ public class EventsPresenter implements IEventsContract.Presenter {
         SimpleDateFormat sdf;
         sdf = new SimpleDateFormat(formato);
         sdf.setTimeZone(TimeZone.getTimeZone(zonaHoraria));
-        //return sdf.format(date);
         return date;
     }
 }
