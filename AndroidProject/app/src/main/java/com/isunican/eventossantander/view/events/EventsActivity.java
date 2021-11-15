@@ -47,7 +47,6 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     private static final String APLICAR = "Aplicar";
     private static final String CANCELAR = "Cancelar";
 
-    private ArrayList<String> tipostotales;
     private ArrayList<String> tiposSeleccionados;
     private ArrayList<String> tiposSeleccionadosPrevio;
 
@@ -260,7 +259,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
 
     public AlertDialog onFilterAlertDialog(){
         //Creamos dos listas donde tenemos los tipos de evento, y los tipos marcados para filtrar
-        tipostotales = new ArrayList<>();
+        ArrayList<String> tipostotales = new ArrayList<>();
         anhadirTiposeventos(tipostotales);
         tipostotales.toArray(new String[0]);
 
@@ -349,16 +348,13 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
      * de eventos ascendentemente y descendentemente por el tipo de evento o por la hora de comienzo.
      */
     public void onOrdenarAlertDialog() {
-        SharedPreferences sharpref = getPreferences(this.MODE_PRIVATE);
+        SharedPreferences sharpref = getPreferences(Context.MODE_PRIVATE); // Sensitive
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = LayoutInflater.from(this).inflate(
                 R.layout.alert_dialog_ordenar,
                 (ConstraintLayout) findViewById(R.id.layout_dialog_container)
         );
-
-        TextView textTipo = (TextView) view.findViewById(R.id.ordenar_tipo_titulo);
-        TextView textHora = (TextView) view.findViewById(R.id.ordenar_hora_titulo);
 
         RadioButton btnTipoAscendente = (RadioButton) view.findViewById(R.id.btn_ordenar_ascendente);
         RadioButton btnTipoDescendente = (RadioButton) view.findViewById(R.id.btn_ordenar_descendente);
@@ -449,7 +445,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         mesFin = mesFinPrevio;
         anhoFin = anhoFinPrevio;
 
-        SharedPreferences sharpref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharpref = getPreferences(Context.MODE_PRIVATE); // Sensitive
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = LayoutInflater.from(this).inflate(
@@ -590,7 +586,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     private void onReloadFilteredDates() {
 
 
-        SharedPreferences sharpref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharpref = getPreferences(Context.MODE_PRIVATE); // Sensitive
 
         diaInicioPrevio = sharpref.getInt("diaInicioPrevioGuardado", -1);
         mesInicioPrevio = sharpref.getInt("mesInicioPrevioGuardado", -1);
