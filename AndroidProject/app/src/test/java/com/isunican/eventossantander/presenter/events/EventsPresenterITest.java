@@ -1,5 +1,13 @@
 package com.isunican.eventossantander.presenter.events;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.verify;
+
+import android.os.Build;
+
 import com.isunican.eventossantander.model.Event;
 import com.isunican.eventossantander.model.EventsRepository;
 import com.isunican.eventossantander.view.events.IEventsContract;
@@ -7,14 +15,6 @@ import com.isunican.eventossantander.view.events.IEventsContract;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Phaser;
-
-import static org.junit.Assert.*;
-
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -24,10 +24,10 @@ import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.verify;
-
-import android.os.Build;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Phaser;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = {Build.VERSION_CODES.O_MR1})
@@ -58,7 +58,7 @@ public class EventsPresenterITest {
         lock.arriveAndAwaitAdvance();
     }
 
-
+    /**
     /*
      * Test del método onFiltrarClickedTest
      * @author Adrián García Cubas
@@ -247,6 +247,71 @@ public class EventsPresenterITest {
         assertEquals(sut.getEventosEnFiltrosCombinados(), sut.getCachedEvents());
 
     }
+
+    /*
+     * Test del método onOrdenarClicked
+     * @author David Moreno Pérez
+     */
+    @Test
+    public void onOrdenarClickedTest(){
+
+        sut = new EventsPresenter(mockView);
+        lock.arriveAndAwaitAdvance();
+
+        //Inicializamos las listas
+        listaVacia = new ArrayList<>();
+        listaConElemento = new ArrayList<>();
+
+        //Las rellenamos como correspondan
+        listaConElemento.add("Arquitectura");
+        listaConElemento.add("Otros");
+
+        // IT.1A: Se comprueba si la lista eventosEnFiltrosCombinados esta ordenada de manera
+        // que los eventos mas proximos a la fecha actual aparezcan primero
+        sut.onFiltrarClicked(listaConElemento);
+        sut.onOrdenarClicked(2);
+        assertEquals(15, sut.getEventosEnFiltrosCombinados().size()); //Comprobamos que estan todos los eventos
+        assertEquals("Domingo 01/08/2021, de 10:30 a 12:30h. ", sut.getEventosEnFiltrosCombinados().get(0).getFecha());
+        assertEquals("Miércoles 01/09/2021, a las 19:00h. ", sut.getEventosEnFiltrosCombinados().get(1).getFecha());
+        assertEquals("Lunes 02/08/2021, a las 0:00h. ", sut.getEventosEnFiltrosCombinados().get(2).getFecha());
+        assertEquals("Viernes 03/09/2021, de 16:30 a 18:30h. ", sut.getEventosEnFiltrosCombinados().get(3).getFecha());
+
+        // IT.1B: Se comprueba si la lista eventosEnFiltrosCombinados esta ordenada de manera
+        // que los eventos mas lejanos a la fecha actual aparezcan primero.
+        sut.onFiltrarClicked(listaConElemento);
+        sut.onOrdenarClicked(3);
+        assertEquals(15, sut.getEventosEnFiltrosCombinados().size()); //Comprobamos que estan todos los eventos
+        assertEquals("Sábado 31/07/2021, de 11:30 a 14:30h. ", sut.getEventosEnFiltrosCombinados().get(0).getFecha());
+        assertEquals("Sábado 31/07/2021, de 10:30 a 12:30h. ", sut.getEventosEnFiltrosCombinados().get(1).getFecha());
+        assertEquals("Sábado 21/08/2021, de 10:30 a 12:30h. ", sut.getEventosEnFiltrosCombinados().get(2).getFecha());
+        assertEquals("Viernes 20/08/2021, de 11:00 a 13:00h. ", sut.getEventosEnFiltrosCombinados().get(3).getFecha());
+
+        // IT.1C: Se comprueba si la lista eventosEnFiltrosCombinados(vacia) esta ordenada de manera
+        // que los eventos mas proximos a la fecha actual aparezcan primero
+        sut.onFiltrarClicked(listaVacia);
+        sut.onOrdenarClicked(2);
+        assertEquals(345, sut.getEventosEnFiltrosCombinados().size()); //Comprobamos que estan todos los eventos
+        assertEquals("Domingo 01/08/2021, de 10:30 a 12:30h. ", sut.getEventosEnFiltrosCombinados().get(0).getFecha());
+        assertEquals("Domingo 01/08/2021, a las 11:00h. ", sut.getEventosEnFiltrosCombinados().get(1).getFecha());
+        assertEquals("Domingo 01/08/2021, a las 12:00h. ", sut.getEventosEnFiltrosCombinados().get(2).getFecha());
+        assertEquals("Domingo 01/08/2021, de 15:00 a 01:00h. ", sut.getEventosEnFiltrosCombinados().get(3).getFecha());
+
+        // IT.1D: Se comprueba si la lista eventosEnFiltrosCombinados(vacia) esta ordenada de manera
+        // que los eventos mas proximos a la fecha actual aparezcan primero
+        sut.onFiltrarClicked(listaVacia);
+        sut.onOrdenarClicked(3);
+        assertEquals(345, sut.getEventosEnFiltrosCombinados().size()); //Comprobamos que estan todos los eventos
+        assertEquals("Martes 31/08/2021, a las 19:00h. ", sut.getEventosEnFiltrosCombinados().get(0).getFecha());
+        assertEquals("Martes 31/08/2021, a las 19:00h. ", sut.getEventosEnFiltrosCombinados().get(1).getFecha());
+        assertEquals("Martes 31/08/2021, a las 17:00h. ", sut.getEventosEnFiltrosCombinados().get(2).getFecha());
+        assertEquals("Sábado 31/07/2021, a las 23:00h. ", sut.getEventosEnFiltrosCombinados().get(3).getFecha());
+
+        // IT.2E: Se comprueba que si se le pasa un indice distino de 0 o 1 al metodo onOrdenarCategoriaCLicked
+        // no se actualiza nada, la lista se queda como si no se hubiese llamado al metodo
+        sut.onOrdenarClicked(-1);
+
+    }
+
 
     /*
      * Test del método onFiltrarDate
