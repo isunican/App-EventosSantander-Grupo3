@@ -97,7 +97,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         Button btnFiltrar = findViewById(R.id.btn_filtrar);
         btnFiltrar.setOnClickListener(this);
 
-        Button btnHoy = findViewById(R.id.btn_rojo);
+        TextView btnHoy = findViewById(R.id.btn_rojo);
         btnHoy.setOnClickListener(this);
 
         presenter = new EventsPresenter(this);
