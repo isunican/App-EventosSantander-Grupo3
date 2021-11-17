@@ -76,10 +76,6 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
     private TextView textoFechaInicio;
     private TextView textoFechaFin;
 
-    private static void onClick(DialogInterface dialog, int id) {
-    }
-
-
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -310,8 +306,6 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
 
 
     public void onOrdenarAlertDialog() {
-        SharedPreferences sharpref = getPreferences(Context.MODE_PRIVATE); // Sensitive
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = LayoutInflater.from(this).inflate(
                 R.layout.alert_dialog_ordenar,
