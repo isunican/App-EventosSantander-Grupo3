@@ -56,11 +56,11 @@ public class OrdenarPorHoraDeComienzoUITest {
          * aparecen primero los eventos más cercanos a la fecha actual.
          */
 
-        onView(ViewMatchers.withId(R.id.btn_ordenar)).perform(click()); // se selecciona botón ordenar
+        onView(ViewMatchers.withId(R.id.btn_ordenar)).perform(click()); // Se selecciona botón ordenar
         onView(withText("Más próximas primero")).perform(click());
         onView(withText("APLICAR")).perform(click());
 
-        onView(withId(R.id.eventsListView)).check(matches(withListSize(345)));
+        onView(withId(R.id.eventsListView)).check(matches(withListSize(345))); //Comprobamos que se cargan todos los eventos
         // Comprobamos que se muestran los eventos ordenados correctamente
         DataInteraction evento; // Objeto para referenciar el contenido dentro de los elementos del ListView
         evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
@@ -80,11 +80,11 @@ public class OrdenarPorHoraDeComienzoUITest {
          * aparecen primero los eventos más lejanos a la fecha actual.
          */
 
-        onView(ViewMatchers.withId(R.id.btn_ordenar)).perform(click()); // se selecciona botón ordenar
+        onView(ViewMatchers.withId(R.id.btn_ordenar)).perform(click()); // Se selecciona botón ordenar
         onView(withText("Menos próximas primero")).perform(click());
         onView(withText("APLICAR")).perform(click());
 
-        onView(withId(R.id.eventsListView)).check(matches(withListSize(345)));
+        onView(withId(R.id.eventsListView)).check(matches(withListSize(345))); // Comprobamos que se cargan todos los eventos
         // Comprobamos que se muestran los eventos ordenados correctamente
         evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
         evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("\"Niagara\", de Henry Hathaway")));
@@ -100,13 +100,15 @@ public class OrdenarPorHoraDeComienzoUITest {
 
         /*
          * UIT.1C: Se comprueba que tras marcar la opcion de ordenar por hora de comienzo "Mas proximas primero"
-         * y luego se pulsa el boton de cancelar aparece la lista de eventos sin aplicar ningun tipo de ordenacion.
+         * pulsar el boton de cancelar aparece la lista de eventos sin aplicar ningun tipo de ordenacion.
          */
 
-        onView(ViewMatchers.withId(R.id.btn_ordenar)).perform(click()); // se selecciona botón ordenar
+        onView(ViewMatchers.withId(R.id.btn_ordenar)).perform(click()); // Se selecciona botón ordenar
         onView(withText("Más próximas primero")).perform(click());
         onView(withText("CANCELAR")).perform(click());
 
+        onView(withId(R.id.eventsListView)).check(matches(withListSize(345))); // Comprobamos que se cargan todos los eventos
+        // Comprobamos que se muestran los eventos ordenados correctamente
         evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
         evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Abierto el plazo de inscripción para el Concurso Internacional de Piano de Santander Paloma O'Shea")));
         evento.onChildView(withId(R.id.item_event_date)).check(matches(withText("Sábado 31/07/2021, todo el día. ")));
@@ -124,9 +126,11 @@ public class OrdenarPorHoraDeComienzoUITest {
          * y pulsar el boton de cancelar aparece la lista de eventos sin aplicar ningun tipo de ordenacion.
          */
 
-        onView(ViewMatchers.withId(R.id.btn_ordenar)).perform(click()); // se selecciona botón ordenar
+        onView(ViewMatchers.withId(R.id.btn_ordenar)).perform(click()); // Se selecciona botón ordenar
         onView(withText("CANCELAR")).perform(click());
 
+        onView(withId(R.id.eventsListView)).check(matches(withListSize(345))); // Comprobamos que se cargan todos los eventos
+        // Comprobamos que se muestran los eventos ordenados correctamente
         evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
         evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Abierto el plazo de inscripción para el Concurso Internacional de Piano de Santander Paloma O'Shea")));
         evento.onChildView(withId(R.id.item_event_date)).check(matches(withText("Sábado 31/07/2021, todo el día. ")));
