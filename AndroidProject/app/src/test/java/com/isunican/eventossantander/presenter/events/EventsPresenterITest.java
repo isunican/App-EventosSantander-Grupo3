@@ -108,7 +108,7 @@ public class EventsPresenterITest {
         // IT.1C: Se comprueba que si la lista de tipos de evento introducida contiene
         // todos los tipos de evento, los eventos filtrados sean todos los eventos
         // cacheados menos aquellos que no tengan tipo y ordenados de manera descendente.
-        sut.onOrdenarClicked(1); //Ordenamos descendentemente los eventos
+        sut.onOrdenarClicked(1);//Ordenamos descendentemente los eventos
         sut.onFiltrarClicked(listaLlena);
         assertEquals(310, sut.getCachedEventsOrdenados().size());//Comprobamos que no estan los eventos sin tipo
 

@@ -9,7 +9,9 @@ import com.isunican.eventossantander.model.Event;
 import com.isunican.eventossantander.model.EventsRepository;
 import com.isunican.eventossantander.model.comparators.EventsComparatorCategoria;
 import com.isunican.eventossantander.model.comparators.EventsComparatorHora;
+import com.isunican.eventossantander.presenter.common.CommonPresenter;
 import com.isunican.eventossantander.view.Listener;
+import com.isunican.eventossantander.view.events.IEventsContract;
 import com.isunican.eventossantander.view.today.ITodayEventsContract;
 
 import java.time.LocalDate;
@@ -19,7 +21,7 @@ import java.util.List;
 
 public class TodayEventsPresenter implements ITodayEventsContract.Presenter {
 
-    private final ITodayEventsContract.View view;
+    private final IEventsContract.View view;
     private List<Event> cachedEvents;
     private List<Event> filteredEvents;
     private List<Event> eventosEnDeterminadasFechas;
@@ -28,7 +30,7 @@ public class TodayEventsPresenter implements ITodayEventsContract.Presenter {
     private List<Event> datosHoy;
     private int ordenFiltrado;
 
-    public TodayEventsPresenter(ITodayEventsContract.View view) {
+    public TodayEventsPresenter(IEventsContract.View view) {
         this.view = view;
         loadData();
         eventosEnDeterminadosFiltros = new ArrayList<>();
@@ -68,74 +70,25 @@ public class TodayEventsPresenter implements ITodayEventsContract.Presenter {
 
     @Override
     public void onEventClicked(int eventIndex) {
-        if (eventIndex >= cachedEvents.size() || eventIndex < 0) {
-            throw new IndexOutOfBoundsException();
-        }
-        Event event = cachedEvents.get(eventIndex);
-        view.openEventDetails(event);
+        CommonPresenter.onEventClicked(eventIndex, cachedEvents, view);
     }
 
     @Override
     public void onReloadClicked() {
+        eventosEnDeterminadosFiltros.clear();
+        eventosEnDeterminadasFechas.clear();
+        eventosEnFiltrosCombinados.clear();
         loadData();
     }
 
     @Override
     public void onInfoClicked() {
-        view.openInfoView();
+        CommonPresenter.onInfoClicked(view);
     }
 
     @Override
     public void onOrdenarClicked(int tipoOrdenacion) {
-
-        ordenFiltrado = tipoOrdenacion;
-        EventsComparatorCategoria ecc;
-        EventsComparatorHora ech;
-
-        switch(ordenFiltrado){
-            case 0:
-                ecc = new EventsComparatorCategoria();
-                if (eventosEnFiltrosCombinados.isEmpty()) {
-                    Collections.sort(cachedEvents,ecc);
-                    eventosEnFiltrosCombinados = cachedEvents;
-                } else {
-                    Collections.sort(eventosEnFiltrosCombinados,ecc);
-                }
-                break;
-            case 1:
-                ecc = new EventsComparatorCategoria();
-                if (eventosEnFiltrosCombinados.isEmpty()) {
-                    java.util.Collections.sort(cachedEvents,ecc);
-                    Collections.reverse(cachedEvents);
-                    eventosEnFiltrosCombinados = cachedEvents;
-                } else {
-                    java.util.Collections.sort(eventosEnFiltrosCombinados, ecc);
-                    Collections.reverse(eventosEnFiltrosCombinados);
-                }
-                break;
-            case 2:
-                ech = new EventsComparatorHora();
-                if (eventosEnFiltrosCombinados.isEmpty()) {
-                    Collections.sort(cachedEvents,ech);
-                    eventosEnFiltrosCombinados = cachedEvents;
-                } else {
-                    Collections.sort(eventosEnFiltrosCombinados,ech);
-                }
-                break;
-            case 3:
-                ech = new EventsComparatorHora();
-                if (eventosEnFiltrosCombinados.isEmpty()) {
-                    java.util.Collections.sort(cachedEvents,ech);
-                    Collections.reverse(cachedEvents);
-                    eventosEnFiltrosCombinados = cachedEvents;
-                } else {
-                    java.util.Collections.sort(eventosEnFiltrosCombinados, ech);
-                    Collections.reverse(eventosEnFiltrosCombinados);
-                }
-                break;
-            default:
-                break;
-        }
+        eventosEnFiltrosCombinados = CommonPresenter.onOrdenarClicked(tipoOrdenacion, eventosEnFiltrosCombinados, cachedEvents);
         view.onEventsLoaded(eventosEnFiltrosCombinados);
     }
 
