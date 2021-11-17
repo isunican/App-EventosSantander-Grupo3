@@ -42,7 +42,7 @@ public class EventsPresenterITest {
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
 
-    private static Phaser lock = EventsRepository.getAsyncCounter();
+    private static final Phaser lock = EventsRepository.getAsyncCounter();
 
 
     // Objetos
@@ -64,16 +64,16 @@ public class EventsPresenterITest {
      * @author Adrián García Cubas
      */
     @Test
-    public void onFiltrarClickedTest() throws InterruptedException {
+    public void onFiltrarClickedTest() {
 
         sut = new EventsPresenter(mockView);
         lock.arriveAndAwaitAdvance();
 
         //Inicilizamos las listas
-        listaVacia = new ArrayList<String>();
-        listaConElemento = new ArrayList<String>();
-        listaLlena = new ArrayList<String>();
-        listaErronea = new ArrayList<String>();
+        listaVacia = new ArrayList<>();
+        listaConElemento = new ArrayList<>();
+        listaLlena = new ArrayList<>();
+        listaErronea = new ArrayList<>();
 
         //Las rellenamos como correspondan
         listaConElemento.add("Música");
@@ -93,56 +93,56 @@ public class EventsPresenterITest {
         // IT.1A: Se comprueba que si la lista de tipos de evento esta vacía, los eventos filtrados
         // son igual a los eventos cacheados y no estarán ordenados.
         sut.onFiltrarClicked(listaVacia);
-        assertEquals(345, sut.getFilteredEvents().size());
-        assertEquals(sut.getFilteredEvents(), (sut.getCachedEvents()));
+        assertEquals(345, sut.getCachedEventsOrdenados().size());
+        assertEquals(sut.getCachedEventsOrdenados(), (sut.getCachedEvents()));
 
 
         // IT.1B: Se comprueba que si la lista de tipos de evento introducida contiene el tipo musica,
         // los eventos filtrados son de tipo música y estan ordenados de manera ascendente
-        sut.onOrdenarCategoriaClicked(0); //Ordenamos ascendentemente los eventos
+        sut.onOrdenarClicked(0); //Ordenamos ascendentemente los eventos
         sut.onFiltrarClicked(listaConElemento);
-        assertEquals("Música", sut.getFilteredEvents().get(0).getCategoria());
-        assertEquals("Música", sut.getFilteredEvents().get(20).getCategoria());
-        assertEquals("Música", sut.getFilteredEvents().get(45).getCategoria());
-        assertEquals(92, sut.getFilteredEvents().size()); //Comprobamos que solo hay eventos de tipo musica
+        assertEquals("Música", sut.getCachedEventsOrdenados().get(0).getCategoria());
+        assertEquals("Música", sut.getCachedEventsOrdenados().get(20).getCategoria());
+        assertEquals("Música", sut.getCachedEventsOrdenados().get(45).getCategoria());
+        assertEquals(92, sut.getCachedEventsOrdenados().size()); //Comprobamos que solo hay eventos de tipo musica
 
         // IT.1C: Se comprueba que si la lista de tipos de evento introducida contiene
         // todos los tipos de evento, los eventos filtrados sean todos los eventos
         // cacheados menos aquellos que no tengan tipo y ordenados de manera descendente.
-        sut.onOrdenarCategoriaClicked(1); //Ordenamos descendentemente los eventos
+        sut.onOrdenarClicked(1); //Ordenamos descendentemente los eventos
         sut.onFiltrarClicked(listaLlena);
-        assertEquals(310, sut.getFilteredEvents().size());//Comprobamos que no estan los eventos sin tipo
+        assertEquals(310, sut.getCachedEventsOrdenados().size());//Comprobamos que no estan los eventos sin tipo
 
         /*
         * Aqui comprobamos con todos los tipos de evento para comprbar que todos funcionan correctamente,
         * despues de estas comprobaciones, se comprobarán solo 4 tipos de eventos para mayor legibilidad.
         */
-        assertEquals("Otros", sut.getFilteredEvents().get(0).getCategoria());
-        assertEquals("Online", sut.getFilteredEvents().get(6).getCategoria());
-        assertEquals("Música", sut.getFilteredEvents().get(12).getCategoria());
-        assertEquals("Infantil", sut.getFilteredEvents().get(104).getCategoria());
-        assertEquals("Fotografía", sut.getFilteredEvents().get(120).getCategoria());
-        assertEquals("Formación/Talleres", sut.getFilteredEvents().get(127).getCategoria());
-        assertEquals("Edición/Literatura", sut.getFilteredEvents().get(145).getCategoria());
-        assertEquals("Cine/Audiovisual", sut.getFilteredEvents().get(165).getCategoria());
-        assertEquals("Artes plásticas", sut.getFilteredEvents().get(223).getCategoria());
-        assertEquals("Arquitectura", sut.getFilteredEvents().get(301).getCategoria());
+        assertEquals("Otros", sut.getCachedEventsOrdenados().get(0).getCategoria());
+        assertEquals("Online", sut.getCachedEventsOrdenados().get(6).getCategoria());
+        assertEquals("Música", sut.getCachedEventsOrdenados().get(12).getCategoria());
+        assertEquals("Infantil", sut.getCachedEventsOrdenados().get(104).getCategoria());
+        assertEquals("Fotografía", sut.getCachedEventsOrdenados().get(120).getCategoria());
+        assertEquals("Formación/Talleres", sut.getCachedEventsOrdenados().get(127).getCategoria());
+        assertEquals("Edición/Literatura", sut.getCachedEventsOrdenados().get(145).getCategoria());
+        assertEquals("Cine/Audiovisual", sut.getCachedEventsOrdenados().get(165).getCategoria());
+        assertEquals("Artes plásticas", sut.getCachedEventsOrdenados().get(223).getCategoria());
+        assertEquals("Arquitectura", sut.getCachedEventsOrdenados().get(301).getCategoria());
 
         // IT.1D: Se comprueba que si la lista de tipos de evento esta vacia, estarán todos los
         // eventos ordenados de manera ascendente
-        sut.onOrdenarCategoriaClicked(0); //Ordenamos ascendentemente los eventos
+        sut.onOrdenarClicked(0); //Ordenamos ascendentemente los eventos
         sut.onFiltrarClicked(listaVacia);
-        assertEquals(345, sut.getFilteredEvents().size()); //Comprobamos que estan todos los eventos
-        assertEquals("Otros", sut.getFilteredEvents().get(340).getCategoria());
-        assertEquals("Online", sut.getFilteredEvents().get(334).getCategoria());
-        assertEquals("Música", sut.getFilteredEvents().get(328).getCategoria());
-        assertEquals("Infantil", sut.getFilteredEvents().get(236).getCategoria());
+        assertEquals(345, sut.getCachedEventsOrdenados().size()); //Comprobamos que estan todos los eventos
+        assertEquals("Otros", sut.getCachedEventsOrdenados().get(340).getCategoria());
+        assertEquals("Online", sut.getCachedEventsOrdenados().get(334).getCategoria());
+        assertEquals("Música", sut.getCachedEventsOrdenados().get(328).getCategoria());
+        assertEquals("Infantil", sut.getCachedEventsOrdenados().get(236).getCategoria());
 
         // IT.1E: Se comprueba que si la lista contiene un evento no existente, se devuelve
         // la lista de eventos original
         sut.onFiltrarClicked(listaErronea);
-        assertEquals(345, sut.getFilteredEvents().size()); //Comprobamos que estan todos los eventos
-        assertEquals(sut.getFilteredEvents(), (sut.getCachedEvents()));
+        assertEquals(345, sut.getCachedEventsOrdenados().size()); //Comprobamos que estan todos los eventos
+        assertEquals(sut.getCachedEventsOrdenados(), (sut.getCachedEvents()));
 
     }
     /*
@@ -167,7 +167,7 @@ public class EventsPresenterITest {
         EventsRepository.setFakeSource();
         sut = new EventsPresenter(mockView);
         lock.arriveAndAwaitAdvance();
-        assertEquals(null, sut.getCachedEvents());
+        assertNull(sut.getCachedEvents());
 
     }
 
@@ -182,8 +182,8 @@ public class EventsPresenterITest {
         lock.arriveAndAwaitAdvance();
 
         //Inicializamos las listas
-        listaVacia = new ArrayList<String>();
-        listaConElemento = new ArrayList<String>();
+        listaVacia = new ArrayList<>();
+        listaConElemento = new ArrayList<>();
 
         //Las rellenamos como correspondan
         listaConElemento.add("Música");
@@ -192,59 +192,51 @@ public class EventsPresenterITest {
         // IT.2A: Se comprueba que si la lista eventosEnFiltrosCombinados esta ordenada de manera
         // ascendente correctamente con una lista de filtros vacia
         sut.onFiltrarClicked(listaVacia);
-        sut.onOrdenarCategoriaClicked(0);
-        assertEquals(345, sut.getFilteredEvents().size()); //Comprobamos que estan todos los eventos
-        assertEquals("Otros", sut.getFilteredEvents().get(340).getCategoria());
-        assertEquals("Online", sut.getFilteredEvents().get(334).getCategoria());
-        assertEquals("Música", sut.getFilteredEvents().get(328).getCategoria());
-        assertEquals("Infantil", sut.getFilteredEvents().get(236).getCategoria());
+        sut.onOrdenarClicked(0);
+        assertEquals(345, sut.getCachedEventsOrdenados().size()); //Comprobamos que estan todos los eventos
+        assertEquals("Otros", sut.getCachedEventsOrdenados().get(340).getCategoria());
+        assertEquals("Online", sut.getCachedEventsOrdenados().get(334).getCategoria());
+        assertEquals("Música", sut.getCachedEventsOrdenados().get(328).getCategoria());
+        assertEquals("Infantil", sut.getCachedEventsOrdenados().get(236).getCategoria());
 
         // IT.2B: Se comprueba que si la lista eventosEnFiltrosCombinados esta ordenada de manera
         // descendente correctamente con una lista de filtros vacia
         sut.onFiltrarClicked(listaVacia);
-        sut.onOrdenarCategoriaClicked(1);
-        assertEquals(345, sut.getFilteredEvents().size()); //Comprobamos que estan todos los eventos
-        assertEquals("Otros", sut.getFilteredEvents().get(0).getCategoria());
-        assertEquals("Online", sut.getFilteredEvents().get(6).getCategoria());
-        assertEquals("Música", sut.getFilteredEvents().get(12).getCategoria());
-        assertEquals("Infantil", sut.getFilteredEvents().get(104).getCategoria());
+        sut.onOrdenarClicked(1);
+        assertEquals(345, sut.getCachedEventsOrdenados().size()); //Comprobamos que estan todos los eventos
+        assertEquals("Otros", sut.getCachedEventsOrdenados().get(0).getCategoria());
+        assertEquals("Online", sut.getCachedEventsOrdenados().get(6).getCategoria());
+        assertEquals("Música", sut.getCachedEventsOrdenados().get(12).getCategoria());
+        assertEquals("Infantil", sut.getCachedEventsOrdenados().get(104).getCategoria());
 
         // IT.2C: Se comprueba que si la lista eventosEnFiltrosCombinados esta ordenada de manera
         // ascendente correctamente con una lista de filtros no vacia
         sut.onFiltrarClicked(listaConElemento);
-        sut.onOrdenarCategoriaClicked(0);
-        assertEquals(98, sut.getFilteredEvents().size()); //Comprobamos que estan todos los eventos
-        assertEquals("Otros", sut.getFilteredEvents().get(97).getCategoria());
-        assertEquals("Otros", sut.getFilteredEvents().get(96).getCategoria());
-        assertEquals("Otros", sut.getFilteredEvents().get(95).getCategoria());
-        assertEquals("Otros", sut.getFilteredEvents().get(94).getCategoria());
-        assertEquals("Otros", sut.getFilteredEvents().get(93).getCategoria());
-        assertEquals("Otros", sut.getFilteredEvents().get(92).getCategoria());
-        assertEquals("Música", sut.getFilteredEvents().get(91).getCategoria());
-        assertEquals("Música", sut.getFilteredEvents().get(30).getCategoria());
-        assertEquals("Música", sut.getFilteredEvents().get(0).getCategoria());
+        sut.onOrdenarClicked(0);
+        assertEquals(98, sut.getCachedEventsOrdenados().size()); //Comprobamos que estan todos los eventos
+        assertEquals("Otros", sut.getCachedEventsOrdenados().get(97).getCategoria());
+        assertEquals("Otros", sut.getCachedEventsOrdenados().get(93).getCategoria());
+        assertEquals("Otros", sut.getCachedEventsOrdenados().get(92).getCategoria());
+        assertEquals("Música", sut.getCachedEventsOrdenados().get(91).getCategoria());
+        assertEquals("Música", sut.getCachedEventsOrdenados().get(30).getCategoria());
+        assertEquals("Música", sut.getCachedEventsOrdenados().get(0).getCategoria());
 
         // IT.2D: Se comprueba que si la lista eventosEnFiltrosCombinados esta ordenada de manera
         // descendente correctamente con una lista de filtros no vacia
         sut.onFiltrarClicked(listaConElemento);
-        sut.onOrdenarCategoriaClicked(1);
-        assertEquals(98, sut.getFilteredEvents().size()); //Comprobamos que estan todos los eventos
-        assertEquals("Otros", sut.getFilteredEvents().get(0).getCategoria());
-        assertEquals("Otros", sut.getFilteredEvents().get(1).getCategoria());
-        assertEquals("Otros", sut.getFilteredEvents().get(2).getCategoria());
-        assertEquals("Otros", sut.getFilteredEvents().get(3).getCategoria());
-        assertEquals("Otros", sut.getFilteredEvents().get(4).getCategoria());
-        assertEquals("Otros", sut.getFilteredEvents().get(5).getCategoria());
-        assertEquals("Música", sut.getFilteredEvents().get(6).getCategoria());
-        assertEquals("Música", sut.getFilteredEvents().get(30).getCategoria());
-        assertEquals("Música", sut.getFilteredEvents().get(91).getCategoria());
+        sut.onOrdenarClicked(1);
+        assertEquals(98, sut.getCachedEventsOrdenados().size()); //Comprobamos que estan todos los eventos
+        assertEquals("Otros", sut.getCachedEventsOrdenados().get(0).getCategoria());
+        assertEquals("Otros", sut.getCachedEventsOrdenados().get(5).getCategoria());
+        assertEquals("Música", sut.getCachedEventsOrdenados().get(6).getCategoria());
+        assertEquals("Música", sut.getCachedEventsOrdenados().get(91).getCategoria());
 
         // IT.2E: Se comprueba que si se le pasa un indice distino de 0 o 1 al metodo onOrdenarCategoriaCLicked
         // no se actualiza nada, la lista se queda como si no se hubiese llamado al metodo
         sut.onFiltrarClicked(listaVacia);
-        sut.onOrdenarCategoriaClicked(2);
-        assertEquals(345, sut.getFilteredEvents().size()); //Comprobamos que estan todos los eventos
-        assertEquals(sut.getFilteredEvents(), sut.getCachedEvents());
+        sut.onOrdenarClicked(2);
+        assertEquals(345, sut.getCachedEventsOrdenados().size()); //Comprobamos que estan todos los eventos
+        assertEquals(sut.getCachedEventsOrdenados(), sut.getCachedEvents());
 
     }
 
@@ -257,7 +249,6 @@ public class EventsPresenterITest {
 
         sut = new EventsPresenter(mockView);
         lock.arriveAndAwaitAdvance();
-        List<Event> listaOriginal = sut.getCachedEventsOrdenados(); //Guardo una copia de la lista
 
         ///////////////////
         // IT.1A: Se comprueba que se actualiza la lista filteredEvents conteniendo los eventos entre fechaInicio < fechaFin
@@ -340,12 +331,6 @@ public class EventsPresenterITest {
         ///////////////////
         try {
             sut.onEventClicked(-1);
-            fail("No se ha cazado la excepcion");
-        } catch (IndexOutOfBoundsException e) {
-            assertTrue(true);
-        }
-
-        try {
             sut.onEventClicked(listaOriginal.size()+1);
             fail("No se ha cazado la excepcion");
         } catch (IndexOutOfBoundsException e) {
@@ -371,7 +356,7 @@ public class EventsPresenterITest {
         sut.setEventosEnDeterminadasFechas(listaVacia);
 
         sut.combinaFiltros();
-        List<Event> listaResultante = sut.getFilteredEvents();
+        List<Event> listaResultante = sut.getCachedEventsOrdenados();
         assertEquals(listaResultante.size(),listaLlena.size());
 
 
@@ -381,7 +366,7 @@ public class EventsPresenterITest {
         sut.setEventosEnDeterminadasFechas(listaLlena);
 
         sut.combinaFiltros();
-        listaResultante = sut.getFilteredEvents();
+        listaResultante = sut.getCachedEventsOrdenados();
         assertEquals(listaResultante.size(),listaLlena.size());
 
 
@@ -394,7 +379,7 @@ public class EventsPresenterITest {
         sut.setEventosEnDeterminadosFiltros(l1);
         sut.setEventosEnDeterminadasFechas(l2);
         sut.combinaFiltros();
-        listaResultante = sut.getFilteredEvents();
+        listaResultante = sut.getCachedEventsOrdenados();
         assertEquals(5, listaResultante.size());
 
         //IT.1A: Con las dos listas vacias no se actualiza nada
@@ -403,12 +388,11 @@ public class EventsPresenterITest {
         sut.setEventosEnDeterminadosFiltros(l3);
         sut.setEventosEnDeterminadasFechas(l4);
         sut.combinaFiltros();
-        assertEquals(sut.getFilteredEvents().size(), 0);
+        assertEquals(0, sut.getCachedEventsOrdenados().size());
 
         //IT.1B: Lista filtros nula tira NullPointerException
-        List<Event> l5 = null;
         List<Event> l6 = new ArrayList<>();
-        sut.setEventosEnDeterminadosFiltros(l5);
+        sut.setEventosEnDeterminadosFiltros(null);
         sut.setEventosEnDeterminadasFechas(l6);
         try {
             sut.combinaFiltros();
@@ -419,9 +403,8 @@ public class EventsPresenterITest {
 
         //IT.2B: Lista fechas nula tira NullPointerException
         List<Event> l7 = new ArrayList<>();
-        List<Event> l8 = null;
         sut.setEventosEnDeterminadosFiltros(l7);
-        sut.setEventosEnDeterminadasFechas(l8);
+        sut.setEventosEnDeterminadasFechas(null);
         try {
             sut.combinaFiltros();
             fail("No se lanza excepcion");

@@ -2,6 +2,7 @@ package com.isunican.eventossantander.model;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.test.espresso.IdlingResource;
 import androidx.test.espresso.idling.CountingIdlingResource;
 
@@ -18,11 +19,16 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class EventsRepository {
+    private EventsRepository() {
+        throw new IllegalStateException("Utility class");
+    }
+
 
     /**
      * The data source URL can be modified. This is useful for tests.
      */
-    private static EventsAPIService.Source source = EventsAPIService.Source.UNICAN;
+    private static EventsAPIService.Source source = EventsAPIService.Source.AYTO;
+
 
     /*
     Problem: in some UI Tests, the tests fails because Espresso does not wait until the data
@@ -47,7 +53,7 @@ public class EventsRepository {
     private static final CountingIdlingResource idlingResource = new CountingIdlingResource(RESOURCE);
 
     // Semaforo
-    private final static Phaser lock = new Phaser(1);
+    private static final Phaser lock = new Phaser(1);
 
     public static void getEvents(Listener<List<Event>> listener) {
         // signal Espresso that Retrofit has started execution. Espresso will wait until the
@@ -57,9 +63,9 @@ public class EventsRepository {
         EventsAPI eventosService = EventsAPIService.getEventsServiceInstance(source);
         Call<EventsAPIResponse> callEvents = eventosService.getEventosResponse();
 
-        callEvents.enqueue(new Callback<EventsAPIResponse>() {
+        callEvents.enqueue(new Callback<>() {
             @Override
-            public void onResponse(Call<EventsAPIResponse> call, Response<EventsAPIResponse> response) {
+            public void onResponse(@NonNull Call<EventsAPIResponse> call, @NonNull Response<EventsAPIResponse> response) {
                 EventsAPIResponse body = response.body();
                 if (body != null) {
                     listener.onSuccess(body.getEvents());
@@ -68,7 +74,7 @@ public class EventsRepository {
             }
 
             @Override
-            public void onFailure(Call<EventsAPIResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<EventsAPIResponse> call, @NonNull Throwable t) {
                 Log.d("DEBUG", "RETROFIT FAILURE");
                 listener.onFailure();
                 decrementIdlingResource(); // signal Espresso that Retrofit has finished
