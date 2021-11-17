@@ -47,7 +47,6 @@ public class TodayEventsPresenter implements ITodayEventsContract.Presenter {
                 cachedEvents = data;
                 ordenFiltrado = 2;
                 datosHoy = eventosHoy();
-                data = datosHoy;
                 cachedEvents = datosHoy;
 
 
