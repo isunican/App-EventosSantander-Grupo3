@@ -252,7 +252,7 @@ public class EventsPresenterITest {
      * @author David Moreno Pérez
      */
     @Test
-    public void onOrdenarClickedTest(){
+    public void onOrdenarPorFechaClickedTest(){
 
         sut = new EventsPresenter(mockView);
         lock.arriveAndAwaitAdvance();
@@ -261,30 +261,14 @@ public class EventsPresenterITest {
         listaVacia = new ArrayList<>();
         listaConElemento = new ArrayList<>();
 
-        //Las rellenamos como correspondan
+        //Las rellenamos con eventos de Arquitectura y Otros
         listaConElemento.add("Arquitectura");
         listaConElemento.add("Otros");
 
-        // IT.1A: Se comprueba si la lista eventosEnFiltrosCombinados esta ordenada por categoria
-        // ascendente
-        sut.onFiltrarClicked(listaConElemento);
-        sut.onOrdenarClicked(0);
-        assertEquals(15, sut.getEventosEnFiltrosCombinados().size()); //Comprobamos que estan todos los eventos
-        assertEquals("Arquitectura", sut.getEventosEnFiltrosCombinados().get(0).getCategoria());
-        assertEquals("Arquitectura", sut.getEventosEnFiltrosCombinados().get(1).getCategoria());
-        assertEquals("Otros", sut.getEventosEnFiltrosCombinados().get(11).getCategoria());
-        assertEquals("Otros", sut.getEventosEnFiltrosCombinados().get(14).getCategoria());
-
-
-        // IT.1B: Se comprueba si la lista eventosEnFiltrosCombinados esta ordenada por categoria
-        // descendentemente
-        sut.onFiltrarClicked(listaConElemento);
-        sut.onOrdenarClicked(1);
-        assertEquals(15, sut.getEventosEnFiltrosCombinados().size()); //Comprobamos que estan todos los eventos
-        assertEquals("Otros", sut.getEventosEnFiltrosCombinados().get(0).getCategoria());
-        assertEquals("Otros", sut.getEventosEnFiltrosCombinados().get(1).getCategoria());
-        assertEquals("Arquitectura", sut.getEventosEnFiltrosCombinados().get(11).getCategoria());
-        assertEquals("Arquitectura", sut.getEventosEnFiltrosCombinados().get(14).getCategoria());
+        /**
+         * Los casos de prueba IT.1A y IT.1B se encuentran implementados en el test anterior. En este test nos centramos en
+         * los casos de prueba correspondientes a la ordenación por hora de comienzo.
+         **/
 
         // IT.1C: Se comprueba si la lista eventosEnFiltrosCombinados esta ordenada de manera
         // que los eventos mas proximos a la fecha actual aparezcan primero
@@ -306,8 +290,6 @@ public class EventsPresenterITest {
         assertEquals("Viernes 06/08/2021, a las 19:00h. ", sut.getEventosEnFiltrosCombinados().get(9).getFecha());
         assertEquals("Viernes 03/09/2021, de 16:30 a 18:30h. ", sut.getEventosEnFiltrosCombinados().get(11).getFecha());
 
-        // CASOS DE PRUEBA NO VALIDOS
-
         // IT.1C: Se comprueba si la lista eventosEnFiltrosCombinados(vacia) esta ordenada de manera
         // que los eventos mas proximos a la fecha actual aparezcan primero
         sut.onFiltrarClicked(listaVacia);
@@ -327,10 +309,6 @@ public class EventsPresenterITest {
         assertEquals("Martes 31/08/2021, a las 19:00h. ", sut.getEventosEnFiltrosCombinados().get(1).getFecha());
         assertEquals("Martes 31/08/2021, a las 17:00h. ", sut.getEventosEnFiltrosCombinados().get(2).getFecha());
         assertEquals("Sábado 31/07/2021, a las 23:00h. ", sut.getEventosEnFiltrosCombinados().get(3).getFecha());
-
-        // IT.2E: Se comprueba que si se le pasa un indice distino de 0 o 1 al metodo onOrdenarCategoriaCLicked
-        // no se actualiza nada, la lista se queda como si no se hubiese llamado al metodo
-        sut.onOrdenarClicked(-1);
 
     }
 

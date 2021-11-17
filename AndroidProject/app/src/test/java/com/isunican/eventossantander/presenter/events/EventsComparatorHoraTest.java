@@ -3,43 +3,20 @@ package com.isunican.eventossantander.presenter.events;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import android.os.Build;
-
 import com.isunican.eventossantander.model.Event;
-import com.isunican.eventossantander.model.EventsRepository;
 import com.isunican.eventossantander.model.comparators.EventsComparatorHora;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
-import java.util.concurrent.Phaser;
-
-@RunWith(RobolectricTestRunner.class)
-@Config(sdk = {Build.VERSION_CODES.O_MR1})
-public class EventsComparatorHoraITest {
+public class EventsComparatorHoraTest {
 
     // Creación del sut
     private EventsComparatorHora sut;
 
-    // Mocks
-    //@Mock
-    //IEventsContract.View mockView;
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
-
-    private static final Phaser lock = EventsRepository.getAsyncCounter();
-
     @Before
     public void setUp() {
-
-       EventsRepository.setLocalSource();
-       lock.arriveAndAwaitAdvance();
+        sut = new EventsComparatorHora();
     }
 
     /*
@@ -49,22 +26,19 @@ public class EventsComparatorHoraITest {
     @Test
     public void onCompareTest() {
 
-        sut = new EventsComparatorHora();
-        lock.arriveAndAwaitAdvance();
-
+        int result;
         Event e1 = new Event();
         e1.setFecha("Lunes 02/08/2021, a las 0:00h. ");
         Event e2 = new Event();
         e2.setFecha("Domingo 01/08/2021, de 10:30 a 12:30h. ");
         Event e3 = new Event();
         e3.setFecha("Lunes 02/08/2021, a las 0:00h. ");
-        int result;
 
-        //IT.2A Fecha evento1 > Fecha evento2
+        //IT.2A Fecha evento1 superior a Fecha evento2
         result = sut.compare(e1, e2);
         assertTrue(result > 0);
 
-        //IT.2B Fecha evento1 < Fecha evento2
+        //IT.2B Fecha evento2 inferior a Fecha evento1
         result = sut.compare(e2, e1);
         assertTrue(result < 0);
 
