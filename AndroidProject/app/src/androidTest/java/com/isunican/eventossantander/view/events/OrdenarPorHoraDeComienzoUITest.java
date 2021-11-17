@@ -65,12 +65,13 @@ public class OrdenarPorHoraDeComienzoUITest {
         DataInteraction evento; // Objeto para referenciar el contenido dentro de los elementos del ListView
         evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
         evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Pasea con DidacArt por \"Zonas altas- zonas bajas\"")));
+        evento.onChildView(withId(R.id.item_event_date)).check(matches(withText("Domingo 01/08/2021, de 10:30 a 12:30h. ")));
         evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(1);
         evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Visitas a \"Picasso Ibero\"")));
+        evento.onChildView(withId(R.id.item_event_date)).check(matches(withText("Domingo 01/08/2021, a las 11:00h. ")));
         evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(2);
         evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Concierto dedicado al Folclore de Cantabria")));
-        evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(3);
-        evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Reggaeton Beach Festival")));
+        evento.onChildView(withId(R.id.item_event_date)).check(matches(withText("Domingo 01/08/2021, a las 12:00h. ")));
 
         onView((ViewMatchers.withId(R.id.menu_refresh))).perform(click()); // Recargamos la app para reiniciar los filtros
 
@@ -87,12 +88,13 @@ public class OrdenarPorHoraDeComienzoUITest {
         // Comprobamos que se muestran los eventos ordenados correctamente
         evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
         evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("\"Niagara\", de Henry Hathaway")));
+        evento.onChildView(withId(R.id.item_event_date)).check(matches(withText("Martes 31/08/2021, a las 19:00h. ")));
         evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(1);
         evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Isabel Bono en las Veladas Poéticas")));
+        evento.onChildView(withId(R.id.item_event_date)).check(matches(withText("Martes 31/08/2021, a las 19:00h. ")));
         evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(2);
         evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("\"No eran imprescindibles \", de John Ford (V.O.S.)")));
-        evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(3);
-        evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Video Mapping sobre la fachada sur del Palacio de Festivales")));
+        evento.onChildView(withId(R.id.item_event_date)).check(matches(withText("Martes 31/08/2021, a las 17:00h. ")));
 
         onView((ViewMatchers.withId(R.id.menu_refresh))).perform(click()); // Recargamos la app para reiniciar los filtros
 
@@ -107,10 +109,13 @@ public class OrdenarPorHoraDeComienzoUITest {
 
         evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
         evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Abierto el plazo de inscripción para el Concurso Internacional de Piano de Santander Paloma O'Shea")));
+        evento.onChildView(withId(R.id.item_event_date)).check(matches(withText("Sábado 31/07/2021, todo el día. ")));
         evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(1);
         evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Menéndez Pelayo y José Echegaray en la polémica de la Ciencia Española")));
+        evento.onChildView(withId(R.id.item_event_date)).check(matches(withText("Lunes 02/08/2021, a las 20:00h. ")));
         evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(5);
         evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Maria Sybilla Merian y Alida Withoos: Mujeres, Arte y Ciencia en la Edad Moderna")));
+        evento.onChildView(withId(R.id.item_event_date)).check(matches(withText("Sábado 31/07/2021, todo el día. ")));
 
         onView((ViewMatchers.withId(R.id.menu_refresh))).perform(click()); // Recargamos la app para reiniciar los filtros
 
@@ -124,10 +129,13 @@ public class OrdenarPorHoraDeComienzoUITest {
 
         evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(0);
         evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Abierto el plazo de inscripción para el Concurso Internacional de Piano de Santander Paloma O'Shea")));
+        evento.onChildView(withId(R.id.item_event_date)).check(matches(withText("Sábado 31/07/2021, todo el día. ")));
         evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(1);
         evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Menéndez Pelayo y José Echegaray en la polémica de la Ciencia Española")));
+        evento.onChildView(withId(R.id.item_event_date)).check(matches(withText("Lunes 02/08/2021, a las 20:00h. ")));
         evento = onData(anything()).inAdapterView(withId(R.id.eventsListView)).atPosition(5);
         evento.onChildView(withId(R.id.item_event_title)).check(matches(withText("Maria Sybilla Merian y Alida Withoos: Mujeres, Arte y Ciencia en la Edad Moderna")));
+        evento.onChildView(withId(R.id.item_event_date)).check(matches(withText("Sábado 31/07/2021, todo el día. ")));
 
     }
 }
