@@ -88,6 +88,7 @@ public class TodayEventsPresenter implements ITodayEventsContract.Presenter {
 
     @Override
     public void onOrdenarClicked(int tipoOrdenacion) {
+        ordenFiltrado = tipoOrdenacion;
         eventosEnFiltrosCombinados = CommonPresenter.onOrdenarClicked(tipoOrdenacion, eventosEnFiltrosCombinados, cachedEvents);
         view.onEventsLoaded(eventosEnFiltrosCombinados);
     }
@@ -95,27 +96,8 @@ public class TodayEventsPresenter implements ITodayEventsContract.Presenter {
 
     @Override
     public void onFiltrarClicked(List<String> checkboxSeleccionados) {
-
-        filteredEvents = new ArrayList<>();
-
-        for (Event e : cachedEvents) {
-            for (String tipo : checkboxSeleccionados) {
-                if (e.getCategoria().equals(tipo)) {
-                    filteredEvents.add(e);
-                }
-            }
-        }
-        if (filteredEvents.isEmpty()) {
-            eventosEnDeterminadosFiltros = cachedEvents;
-        } else {
-            eventosEnDeterminadosFiltros = filteredEvents;
-        }
-        combinaFiltros();
-
-        if (ordenFiltrado != 2) {
-            onOrdenarClicked(ordenFiltrado);
-        }
-
+        eventosEnFiltrosCombinados = CommonPresenter.onFiltrarClicked(checkboxSeleccionados, cachedEvents,
+                eventosEnDeterminadosFiltros, ordenFiltrado, eventosEnDeterminadasFechas);
         view.onEventsLoaded(eventosEnFiltrosCombinados);
         view.onLoadSuccess(eventosEnFiltrosCombinados.size());
     }
@@ -136,9 +118,9 @@ public class TodayEventsPresenter implements ITodayEventsContract.Presenter {
             int diaEvento = Integer.parseInt(dateSeparada[0]);
             int mesEvento = Integer.parseInt(dateSeparada[1]);
             int anhoEvento = Integer.parseInt(dateSeparada[2]);
-            fechaEvento = LocalDate.of(anhoEvento, mesEvento, diaEvento);
+            fechaEvento= LocalDate.of(anhoEvento,mesEvento,diaEvento);
 
-            if (fechaEvento.compareTo(fechaIni) >= 0 && fechaEvento.compareTo(fechaFin) <= 0) {
+            if(fechaEvento.compareTo(fechaIni)>=0 && fechaEvento.compareTo(fechaFin)<=0){
                 filteredEvents.add(e);
             }
         }
@@ -146,48 +128,12 @@ public class TodayEventsPresenter implements ITodayEventsContract.Presenter {
             eventosEnDeterminadasFechas = cachedEvents;
             combinaFiltros();
             view.onLoadNoEventsInDate();
-        } else {
+        }else {
             eventosEnDeterminadasFechas = filteredEvents;
             combinaFiltros();
             view.onLoadSuccess(eventosEnFiltrosCombinados.size());
         }
         view.onEventsLoaded(eventosEnFiltrosCombinados);
-    }
-
-    public List<Event> getCachedEvents() {
-        return cachedEvents;
-    }
-
-    @Override
-    public List<Event> getCachedEventsOrdenados() {
-        return eventosEnFiltrosCombinados;
-    }
-
-    @Override
-    public void setCachedEventsOrdenados(List<Event> events) {
-        eventosEnFiltrosCombinados = events;
-    }
-
-    public void combinaFiltros() {
-        if (eventosEnDeterminadasFechas == null || eventosEnDeterminadosFiltros == null) {
-            throw new NullPointerException();
-        }
-
-        eventosEnFiltrosCombinados = new ArrayList<>();
-
-        if (eventosEnDeterminadosFiltros.isEmpty()) {
-            eventosEnFiltrosCombinados = eventosEnDeterminadasFechas;
-        } else if (eventosEnDeterminadasFechas.isEmpty()) {
-            eventosEnFiltrosCombinados = eventosEnDeterminadosFiltros;
-        }
-
-        for (Event i : eventosEnDeterminadosFiltros) {
-            for (Event j : eventosEnDeterminadasFechas) {
-                if (i == j) {
-                    eventosEnFiltrosCombinados.add(j);
-                }
-            }
-        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -210,8 +156,42 @@ public class TodayEventsPresenter implements ITodayEventsContract.Presenter {
             }
         }
         return eventosHoy;
+    }
 
-        
+    public void combinaFiltros() {
+        if (eventosEnDeterminadasFechas == null || eventosEnDeterminadosFiltros == null) {
+            throw new NullPointerException();
+        }
+
+        eventosEnFiltrosCombinados = new ArrayList<>();
+
+        if (eventosEnDeterminadosFiltros.isEmpty()) {
+            eventosEnFiltrosCombinados = eventosEnDeterminadasFechas;
+        } else if (eventosEnDeterminadasFechas.isEmpty()){
+            eventosEnFiltrosCombinados = eventosEnDeterminadosFiltros;
+        }
+
+        for(Event i : eventosEnDeterminadosFiltros) {
+            for(Event j : eventosEnDeterminadasFechas) {
+                if(i == j) {
+                    eventosEnFiltrosCombinados.add(j);
+                }
+            }
+        }
+    }
+
+    public List<Event> getCachedEvents() {
+        return cachedEvents;
+    }
+
+    @Override
+    public List<Event> getCachedEventsOrdenados() {
+        return eventosEnFiltrosCombinados;
+    }
+
+    @Override
+    public void setCachedEventsOrdenados(List<Event> events) {
+        eventosEnFiltrosCombinados = events;
     }
 }
 
