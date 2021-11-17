@@ -15,13 +15,17 @@ public interface ITodayEventsContract {
 
         void onInfoClicked();
 
-        void onOrdenarCategoriaClicked(int tipoOrdenacion);
+        void onOrdenarClicked(int tipoOrdenacion);
 
         void onFiltrarClicked(List<String> checkboxSeleccionados);
 
         void onFiltrarDate(LocalDate fechaIni, LocalDate fechaFin);
 
         List<Event>eventosHoy();
+
+        List<Event> getCachedEventsOrdenados();
+
+        void setCachedEventsOrdenados(List<Event> events);
     }
 
     interface View {

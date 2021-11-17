@@ -8,6 +8,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,6 +23,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,8 +48,10 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
     private static final String APLICAR = "Aplicar";
     private static final String CANCELAR = "Cancelar";
 
-    private List<String> tiposSeleccionados;
-    private List<String> tiposSeleccionadosPrevio;
+    private ArrayList<String> tiposSeleccionados;
+    private ArrayList<String> tiposSeleccionadosPrevio;
+
+    private ArrayList<Event> eventosEnFiltrosCombinados;
 
     // Variables para filtrar por fecha
     private int diaInicio;
@@ -73,7 +77,6 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
     private TextView textoFechaFin;
 
     private static void onClick(DialogInterface dialog, int id) {
-        // TODO document why this method is empty
     }
 
 
@@ -99,7 +102,8 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
         btnFiltrar.setOnClickListener(this);
 
         presenter = new TodayEventsPresenter(this);
-
+        tiposSeleccionadosPrevio= new ArrayList<>();
+        eventosEnFiltrosCombinados = new ArrayList<>();
 
         // Se intenta recargar las variables de filtrar entre dos fechas
         onReloadFilteredDates();
@@ -143,6 +147,65 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
         startActivity(intent);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt("DIAINICIO",diaInicio);
+        outState.putInt("MESINICIO",mesInicio);
+        outState.putInt("ANHOINICIO",anhoInicio);
+
+        outState.putInt("DIAFIN",diaFin);
+        outState.putInt("MESFIN",mesFin);
+        outState.putInt("ANHOFIN",anhoFin);
+
+        outState.putInt("DIAINICIOPREVIO",diaInicioPrevio);
+        outState.putInt("MESINICIOPREVIO",mesInicioPrevio);
+        outState.putInt("ANHOINICIOPREVIO",anhoInicioPrevio);
+
+        outState.putInt("DIAFINPREVIO",diaFinPrevio);
+        outState.putInt("MESFINPREVIO",mesFinPrevio);
+        outState.putInt("ANHOFINPREVIO",anhoFinPrevio);
+
+        outState.putStringArrayList("TIPOSSLECCIONADOS", tiposSeleccionados);
+        outState.putStringArrayList("TIPOSSLECCIONADOSPREVIO", tiposSeleccionadosPrevio);
+
+        eventosEnFiltrosCombinados = (ArrayList<Event>) presenter.getCachedEventsOrdenados();
+        outState.putParcelableArrayList("FILTEREDEVENTS", eventosEnFiltrosCombinados);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState){
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // Guarda la informacion de los filtros por fecha
+        diaInicio = savedInstanceState.getInt("DIAINICIO");
+        mesInicio = savedInstanceState.getInt("MESINICIO");
+        anhoInicio = savedInstanceState.getInt("ANHOINICIO",anhoInicio);
+
+        diaFin = savedInstanceState.getInt("DIAFIN");
+        mesFin = savedInstanceState.getInt("MESFIN");
+        anhoFin = savedInstanceState.getInt("ANHOFIN");
+
+        diaInicioPrevio = savedInstanceState.getInt("DIAINICIOPREVIO");
+        mesInicioPrevio = savedInstanceState.getInt("MESINICIOPREVIO");
+        anhoInicioPrevio = savedInstanceState.getInt("ANHOINICIOPREVIO");
+
+        diaFinPrevio = savedInstanceState.getInt("DIAFINPREVIO");
+        mesFinPrevio = savedInstanceState.getInt("MESFINPREVIO");
+        anhoFinPrevio = savedInstanceState.getInt("ANHOFINPREVIO");
+
+        // Guarda la informacion de los filtros por tipo
+        tiposSeleccionados = savedInstanceState.getStringArrayList("TIPOSSLECCIONADOS");
+        tiposSeleccionadosPrevio = savedInstanceState.getStringArrayList("TIPOSSLECCIONADOSPREVIO");
+
+        eventosEnFiltrosCombinados = savedInstanceState.getParcelableArrayList("FILTEREDEVENTS");
+        presenter.setCachedEventsOrdenados(eventosEnFiltrosCombinados);
+    }
+
+    public ITodayEventsContract.Presenter getPresenter() {
+        return presenter;
+    }
 
     /*
     Menu Handling
@@ -187,8 +250,7 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
             AlertDialog ad = onFilterAlertDialog();
             ad.show();
         } else if (view.getId() == R.id.btn_ordenar) {
-            AlertDialog ado = onFilterAlertDialogOrdenar();
-            ado.show();
+            onOrdenarAlertDialog();
         }
     }
 
@@ -247,21 +309,85 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
     }
 
 
-    public AlertDialog onFilterAlertDialogOrdenar(){
+    public void onOrdenarAlertDialog() {
+        SharedPreferences sharpref = getPreferences(Context.MODE_PRIVATE); // Sensitive
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        String[] array = {"Ascendente(A-Z)", "Descendente(Z-A)"};
-        builder.setTitle("Ordenar");
+        View view = LayoutInflater.from(this).inflate(
+                R.layout.alert_dialog_ordenar,
+                (ConstraintLayout) findViewById(R.id.layout_dialog_container)
+        );
 
-        builder.setSingleChoiceItems(array, 0, (dialogInterface, i) -> posi = i);
-        // Set the action buttons
-        builder.setPositiveButton(APLICAR, (dialog, id) -> {
-            presenter.onOrdenarCategoriaClicked(posi);
-            // User clicked OK, so save the selectedItems results somewhere
-            // or return them to the component that opened the dialog
+        RadioButton btnTipoAscendente = (RadioButton) view.findViewById(R.id.btn_ordenar_ascendente);
+        RadioButton btnTipoDescendente = (RadioButton) view.findViewById(R.id.btn_ordenar_descendente);
+        RadioButton btnHoraMasProxima = (RadioButton) view.findViewById(R.id.btn_mas_proximas_primero);
+        RadioButton btnHoraMenosProxima = (RadioButton) view.findViewById(R.id.btn_menos_proximas_primero);
+
+        builder.setView(view);
+        final AlertDialog ad = builder.create();
+
+        view.findViewById(R.id.btn_ordenar_ascendente).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                posi = 0;
+                btnTipoDescendente.setChecked(false);
+                btnHoraMasProxima.setChecked(false);
+                btnHoraMenosProxima.setChecked(false);
+            }
         });
-        builder.setNegativeButton(CANCELAR, TodayEventsActivity::onClick);
-        return builder.create();
+
+        view.findViewById(R.id.btn_ordenar_descendente).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                posi = 1;
+                btnTipoAscendente.setChecked(false);
+                btnHoraMasProxima.setChecked(false);
+                btnHoraMenosProxima.setChecked(false);
+            }
+        });
+
+        view.findViewById(R.id.btn_mas_proximas_primero).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                posi = 2;
+                btnTipoAscendente.setChecked(false);
+                btnTipoDescendente.setChecked(false);
+                btnHoraMenosProxima.setChecked(false);
+            }
+        });
+
+        view.findViewById(R.id.btn_menos_proximas_primero).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                posi = 3;
+                btnTipoAscendente.setChecked(false);
+                btnTipoDescendente.setChecked(false);
+                btnHoraMasProxima.setChecked(false);
+            }
+        });
+
+        // Caso en el que se pulsa el boton de cancelar
+        view.findViewById(R.id.ordenar_cancelar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ad.dismiss();
+            }
+        });
+
+        // Caso en el que se pulsa el boton de aceptar
+        view.findViewById(R.id.ordenar_aplicar);
+        view.setOnClickListener(new View.OnClickListener() {
+
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onClick(View view) {
+                presenter.onOrdenarClicked(posi);
+                // Se cierra el Alert Dialog
+                ad.dismiss();
+            }
+        });
+        ad.show();
+        btnTipoAscendente.setChecked(true);
     }
 
     public void anhadirTiposeventos(List<String> tipostotales){
@@ -295,7 +421,7 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
         mesFin = mesFinPrevio;
         anhoFin = anhoFinPrevio;
 
-        SharedPreferences sharpref = getPreferences(MODE_PRIVATE);
+        SharedPreferences sharpref = getPreferences(Context.MODE_PRIVATE); // Sensitive
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = LayoutInflater.from(this).inflate(
@@ -422,7 +548,7 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void onReloadFilteredDates() {
 
-        SharedPreferences sharpref = getPreferences(MODE_PRIVATE);
+        SharedPreferences sharpref = getPreferences(Context.MODE_PRIVATE); // Sensitive
         diaInicioPrevio = sharpref.getInt("diaInicioPrevioGuardado", -1);
         mesInicioPrevio = sharpref.getInt("mesInicioPrevioGuardado", -1);
         anhoInicioPrevio = sharpref.getInt("anhoInicioPrevioGuardado", -1);
