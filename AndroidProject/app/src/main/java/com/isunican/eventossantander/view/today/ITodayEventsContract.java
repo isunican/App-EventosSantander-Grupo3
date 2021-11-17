@@ -15,7 +15,7 @@ public interface ITodayEventsContract {
 
         void onInfoClicked();
 
-        void onOrdenarCategoriaClicked(int tipoOrdenacion);
+        void onOrdenarClicked(int tipoOrdenacion);
 
         void onFiltrarClicked(List<String> checkboxSeleccionados);
 

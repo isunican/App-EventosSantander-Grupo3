@@ -53,7 +53,6 @@ public class EventsPresenter implements IEventsContract.Presenter {
             @Override
             public void onSuccess(List<Event> data) {
 
-
                 cachedEvents = data;
                 ordenFiltrado = 2;
 
