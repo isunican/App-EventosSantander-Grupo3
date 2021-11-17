@@ -18,7 +18,6 @@ import com.isunican.eventossantander.model.Event;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class EventArrayAdapter extends ArrayAdapter<Event> {
@@ -77,7 +76,7 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
 
     private static String getNormalizedCategory(Event event) {
         return StringUtils.deleteWhitespace(
-                StringUtils.stripAccents(event.getCategoria()))
+                StringUtils.stripAccents(StringUtils.remove(event.getCategoria(),"/")))
                 .toLowerCase();
     }
 }
