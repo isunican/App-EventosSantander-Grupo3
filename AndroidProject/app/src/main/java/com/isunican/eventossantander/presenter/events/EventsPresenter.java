@@ -7,8 +7,6 @@ import androidx.annotation.RequiresApi;
 
 import com.isunican.eventossantander.model.Event;
 import com.isunican.eventossantander.model.EventsRepository;
-import com.isunican.eventossantander.model.comparators.EventsComparatorCategoria;
-import com.isunican.eventossantander.model.comparators.EventsComparatorHora;
 import com.isunican.eventossantander.presenter.common.CommonPresenter;
 import com.isunican.eventossantander.view.Listener;
 import com.isunican.eventossantander.view.events.IEventsContract;
@@ -16,7 +14,6 @@ import com.isunican.eventossantander.view.events.IEventsContract;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,7 +23,6 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
     private final IEventsContract.View view;
     private List<Event> cachedEvents;
-    private List<Event> filteredEvents;
     private List<Event> eventosEnDeterminadasFechas;
     private List<Event> eventosEnDeterminadosFiltros;
     private List<Event> eventosEnFiltrosCombinados;
@@ -93,7 +89,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
     @Override
     public void onFiltrarClicked(List<String> checkboxSeleccionados) {
         eventosEnFiltrosCombinados = CommonPresenter.onFiltrarClicked(checkboxSeleccionados, cachedEvents,
-                eventosEnDeterminadosFiltros, ordenFiltrado, eventosEnDeterminadasFechas);
+                ordenFiltrado, eventosEnDeterminadasFechas);
         view.onEventsLoaded(eventosEnFiltrosCombinados);
         view.onLoadSuccess(eventosEnFiltrosCombinados.size());
     }
@@ -103,7 +99,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
     public void onFiltrarDate(LocalDate fechaIni, LocalDate fechaFin) {
         LocalDate fechaEvento;
 
-        filteredEvents = new ArrayList<>();
+        List<Event> filteredEvents = new ArrayList<>();
 
         for (Event e : cachedEvents) {
             String[] date1 = e.getFecha().split(" ");

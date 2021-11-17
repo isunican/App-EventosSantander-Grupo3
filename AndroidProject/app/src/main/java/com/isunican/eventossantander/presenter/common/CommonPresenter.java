@@ -2,6 +2,7 @@ package com.isunican.eventossantander.presenter.common;
 
 import android.os.Build;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 import com.isunican.eventossantander.model.Event;
@@ -15,6 +16,10 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class CommonPresenter implements IEventsContract.Presenter {
+
+    private CommonPresenter() {
+        throw new IllegalStateException("Utility class");
+    }
 
     public static void onEventClicked(int eventIndex, List<Event> cachedEvents, IEventsContract.View view) {
         if (eventIndex >= cachedEvents.size() || eventIndex < 0) {
@@ -83,10 +88,11 @@ public abstract class CommonPresenter implements IEventsContract.Presenter {
         return eventosConFiltrosCombinados;
     }
 
-    public static List<Event> onFiltrarClicked(List<String> checkboxSeleccionados, List<Event> cachedEvents, List<Event> eventosEnDeterminadosFiltros,
-                                        int ordenFiltrado, List<Event> eventosEnDeterminadasFechas) {
+    public static List<Event> onFiltrarClicked(List<String> checkboxSeleccionados, @NonNull List<Event> cachedEvents,
+                                               int ordenFiltrado, List<Event> eventosEnDeterminadasFechas) {
 
         List<Event> filteredEvents = new ArrayList<>();
+        List<Event> eventosEnDeterminadosFiltros;
 
         for (Event e : cachedEvents) {
             for (String tipo : checkboxSeleccionados) {
@@ -105,43 +111,6 @@ public abstract class CommonPresenter implements IEventsContract.Presenter {
         if(ordenFiltrado != 2) {
             eventosEnFiltrosCombinados = onOrdenarClicked(ordenFiltrado, eventosEnFiltrosCombinados, cachedEvents);
         }
-        return eventosEnFiltrosCombinados;
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public static List<Event> onFiltrarDate(LocalDate fechaIni, LocalDate fechaFin, List<Event> cachedEvents,
-                              List<Event> eventosEnDeterminadosFiltros, IEventsContract.View view) {
-
-        LocalDate fechaEvento;
-        List<Event> filteredEvents = new ArrayList<>();
-        List<Event> eventosEnDeterminadasFechas = new ArrayList<Event>();
-        List<Event> eventosEnFiltrosCombinados = new ArrayList<Event>();
-
-        for (Event e : cachedEvents) {
-            String[] date1 = e.getFecha().split(" ");
-            String[] dateDefinitive = date1[1].split(",");
-            String[] dateSeparada = dateDefinitive[0].split("/");
-
-            int diaEvento = Integer.parseInt(dateSeparada[0]);
-            int mesEvento = Integer.parseInt(dateSeparada[1]);
-            int anhoEvento = Integer.parseInt(dateSeparada[2]);
-            fechaEvento = LocalDate.of(anhoEvento, mesEvento, diaEvento);
-
-            if (fechaEvento.compareTo(fechaIni) >= 0 && fechaEvento.compareTo(fechaFin) <= 0) {
-                filteredEvents.add(e);
-            }
-        }
-        if (filteredEvents.isEmpty()) {
-            eventosEnDeterminadasFechas = cachedEvents;
-            combinaFiltros(eventosEnDeterminadosFiltros, eventosEnDeterminadasFechas);
-            view.onLoadNoEventsInDate();
-        } else {
-            eventosEnDeterminadasFechas = filteredEvents;
-            eventosEnFiltrosCombinados = combinaFiltros(eventosEnDeterminadosFiltros, eventosEnDeterminadasFechas);
-            view.onLoadSuccess(eventosEnFiltrosCombinados.size());
-        }
-        view.onEventsLoaded(eventosEnFiltrosCombinados);
-
         return eventosEnFiltrosCombinados;
     }
 
