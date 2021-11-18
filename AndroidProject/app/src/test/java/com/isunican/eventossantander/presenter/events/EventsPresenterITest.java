@@ -396,6 +396,12 @@ public class EventsPresenterITest {
         ///////////////////
         try {
             sut.onEventClicked(-1);
+            fail("No se ha cazado la excepcion");
+        } catch (IndexOutOfBoundsException e) {
+            assertTrue(true);
+        }
+
+        try {
             sut.onEventClicked(listaOriginal.size()+1);
             fail("No se ha cazado la excepcion");
         } catch (IndexOutOfBoundsException e) {
