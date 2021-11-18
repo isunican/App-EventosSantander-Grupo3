@@ -9,7 +9,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
@@ -30,6 +29,7 @@ import android.widget.Toast;
 import com.isunican.eventossantander.R;
 import com.isunican.eventossantander.model.Event;
 import com.isunican.eventossantander.presenter.today.TodayEventsPresenter;
+import com.isunican.eventossantander.view.events.IEventsContract;
 import com.isunican.eventossantander.view.eventsdetail.EventsDetailActivity;
 import com.isunican.eventossantander.view.info.InfoActivity;
 
@@ -39,7 +39,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
-public class TodayEventsActivity extends AppCompatActivity implements ITodayEventsContract.View, View.OnClickListener {
+public class TodayEventsActivity extends AppCompatActivity implements IEventsContract.View, View.OnClickListener {
 
     private ITodayEventsContract.Presenter presenter;
 
@@ -76,10 +76,6 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
     private TextView textoFechaInicio;
     private TextView textoFechaFin;
 
-    private static void onClick(DialogInterface dialog, int id) {
-    }
-
-
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +97,7 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
         Button btnFiltrar = findViewById(R.id.btn_filtrar);
         btnFiltrar.setOnClickListener(this);
 
-        presenter = new TodayEventsPresenter(this);
+        presenter = new TodayEventsPresenter( this);
         tiposSeleccionadosPrevio= new ArrayList<>();
         eventosEnFiltrosCombinados = new ArrayList<>();
 
@@ -310,8 +306,6 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
 
 
     public void onOrdenarAlertDialog() {
-        SharedPreferences sharpref = getPreferences(Context.MODE_PRIVATE); // Sensitive
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = LayoutInflater.from(this).inflate(
                 R.layout.alert_dialog_ordenar,
