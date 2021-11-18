@@ -45,7 +45,7 @@ public class EventsComparatorHoraTest {
 
         //IT.2C Fechas de eventos iguales
         result = sut.compare(e1, e3);
-        assertEquals(result,  0);
+        assertEquals(0,  result);
 
         //IT.2D Evento e1=null
         try{
