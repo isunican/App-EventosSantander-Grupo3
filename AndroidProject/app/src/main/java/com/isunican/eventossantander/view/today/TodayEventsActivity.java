@@ -167,7 +167,7 @@ public class TodayEventsActivity extends AppCompatActivity implements IEventsCon
         outState.putStringArrayList("TIPOSSLECCIONADOSPREVIO", tiposSeleccionadosPrevio);
 
         eventosEnFiltrosCombinados = (ArrayList<Event>) presenter.getCachedEventsOrdenados();
-        outState.putParcelableArrayList("FILTEREDEVENTS", eventosEnFiltrosCombinados);
+        //outState.putParcelableArrayList("FILTEREDEVENTS", eventosEnFiltrosCombinados);
     }
 
     @Override
