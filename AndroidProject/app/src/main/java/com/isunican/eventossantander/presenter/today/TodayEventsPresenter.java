@@ -34,6 +34,7 @@ public class TodayEventsPresenter implements ITodayEventsContract.Presenter {
         eventosEnFiltrosCombinados = new ArrayList<>();
     }
 
+
     private void loadData() {
         EventsRepository.getEvents(new Listener<>() {
             @RequiresApi(api = Build.VERSION_CODES.O)
