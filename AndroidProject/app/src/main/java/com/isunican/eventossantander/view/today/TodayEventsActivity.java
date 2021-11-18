@@ -9,7 +9,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
@@ -23,12 +22,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.isunican.eventossantander.R;
 import com.isunican.eventossantander.model.Event;
 import com.isunican.eventossantander.presenter.today.TodayEventsPresenter;
+import com.isunican.eventossantander.view.events.IEventsContract;
 import com.isunican.eventossantander.view.eventsdetail.EventsDetailActivity;
 import com.isunican.eventossantander.view.info.InfoActivity;
 
@@ -38,7 +39,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
-public class TodayEventsActivity extends AppCompatActivity implements ITodayEventsContract.View, View.OnClickListener {
+public class TodayEventsActivity extends AppCompatActivity implements IEventsContract.View, View.OnClickListener {
 
     private ITodayEventsContract.Presenter presenter;
 
@@ -75,10 +76,6 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
     private TextView textoFechaInicio;
     private TextView textoFechaFin;
 
-    private static void onClick(DialogInterface dialog, int id) {
-    }
-
-
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +97,7 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
         Button btnFiltrar = findViewById(R.id.btn_filtrar);
         btnFiltrar.setOnClickListener(this);
 
-        presenter = new TodayEventsPresenter(this);
+        presenter = new TodayEventsPresenter( this);
         tiposSeleccionadosPrevio= new ArrayList<>();
         eventosEnFiltrosCombinados = new ArrayList<>();
 
@@ -249,8 +246,7 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
             AlertDialog ad = onFilterAlertDialog();
             ad.show();
         } else if (view.getId() == R.id.btn_ordenar) {
-            AlertDialog ado = onFilterAlertDialogOrdenar();
-            ado.show();
+            onOrdenarAlertDialog();
         }
     }
 
@@ -309,21 +305,83 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
     }
 
 
-    public AlertDialog onFilterAlertDialogOrdenar(){
-
+    public void onOrdenarAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        String[] array = {"Ascendente(A-Z)", "Descendente(Z-A)"};
-        builder.setTitle("Ordenar");
+        View view = LayoutInflater.from(this).inflate(
+                R.layout.alert_dialog_ordenar,
+                (ConstraintLayout) findViewById(R.id.layout_dialog_container)
+        );
 
-        builder.setSingleChoiceItems(array, 0, (dialogInterface, i) -> posi = i);
-        // Set the action buttons
-        builder.setPositiveButton(APLICAR, (dialog, id) -> {
-            presenter.onOrdenarCategoriaClicked(posi);
-            // User clicked OK, so save the selectedItems results somewhere
-            // or return them to the component that opened the dialog
+        RadioButton btnTipoAscendente = (RadioButton) view.findViewById(R.id.btn_ordenar_ascendente);
+        RadioButton btnTipoDescendente = (RadioButton) view.findViewById(R.id.btn_ordenar_descendente);
+        RadioButton btnHoraMasProxima = (RadioButton) view.findViewById(R.id.btn_mas_proximas_primero);
+        RadioButton btnHoraMenosProxima = (RadioButton) view.findViewById(R.id.btn_menos_proximas_primero);
+
+        builder.setView(view);
+        final AlertDialog ad = builder.create();
+
+        view.findViewById(R.id.btn_ordenar_ascendente).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                posi = 0;
+                btnTipoDescendente.setChecked(false);
+                btnHoraMasProxima.setChecked(false);
+                btnHoraMenosProxima.setChecked(false);
+            }
         });
-        builder.setNegativeButton(CANCELAR, TodayEventsActivity::onClick);
-        return builder.create();
+
+        view.findViewById(R.id.btn_ordenar_descendente).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                posi = 1;
+                btnTipoAscendente.setChecked(false);
+                btnHoraMasProxima.setChecked(false);
+                btnHoraMenosProxima.setChecked(false);
+            }
+        });
+
+        view.findViewById(R.id.btn_mas_proximas_primero).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                posi = 2;
+                btnTipoAscendente.setChecked(false);
+                btnTipoDescendente.setChecked(false);
+                btnHoraMenosProxima.setChecked(false);
+            }
+        });
+
+        view.findViewById(R.id.btn_menos_proximas_primero).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                posi = 3;
+                btnTipoAscendente.setChecked(false);
+                btnTipoDescendente.setChecked(false);
+                btnHoraMasProxima.setChecked(false);
+            }
+        });
+
+        // Caso en el que se pulsa el boton de cancelar
+        view.findViewById(R.id.ordenar_cancelar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ad.dismiss();
+            }
+        });
+
+        // Caso en el que se pulsa el boton de aceptar
+        view.findViewById(R.id.ordenar_aplicar);
+        view.setOnClickListener(new View.OnClickListener() {
+
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onClick(View view) {
+                presenter.onOrdenarClicked(posi);
+                // Se cierra el Alert Dialog
+                ad.dismiss();
+            }
+        });
+        ad.show();
+        btnTipoAscendente.setChecked(true);
     }
 
     public void anhadirTiposeventos(List<String> tipostotales){
