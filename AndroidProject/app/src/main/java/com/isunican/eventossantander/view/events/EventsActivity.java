@@ -28,6 +28,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.isunican.eventossantander.R;
 import com.isunican.eventossantander.model.Event;
 import com.isunican.eventossantander.presenter.events.EventsPresenter;
+import com.isunican.eventossantander.view.common.CommonEventsActivity;
 import com.isunican.eventossantander.view.eventsdetail.EventsDetailActivity;
 import com.isunican.eventossantander.view.info.InfoActivity;
 import com.isunican.eventossantander.view.today.TodayEventsActivity;
@@ -124,8 +125,6 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 
-    
-
     @Override
     public void onLoadSuccess(int elementsLoaded) {
         @SuppressLint("DefaultLocale") String text = String.format("Loaded %d events", elementsLoaded);
@@ -153,62 +152,15 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
-        outState.putInt("DIAINICIO",diaInicio);
-        outState.putInt("MESINICIO",mesInicio);
-        outState.putInt("ANHOINICIO",anhoInicio);
-
-        outState.putInt("DIAFIN",diaFin);
-        outState.putInt("MESFIN",mesFin);
-        outState.putInt("ANHOFIN",anhoFin);
-
-        outState.putInt("DIAINICIOPREVIO",diaInicioPrevio);
-        outState.putInt("MESINICIOPREVIO",mesInicioPrevio);
-        outState.putInt("ANHOINICIOPREVIO",anhoInicioPrevio);
-
-        outState.putInt("DIAFINPREVIO",diaFinPrevio);
-        outState.putInt("MESFINPREVIO",mesFinPrevio);
-        outState.putInt("ANHOFINPREVIO",anhoFinPrevio);
-
-        outState.putStringArrayList("TIPOSSLECCIONADOS", tiposSeleccionados);
-        outState.putStringArrayList("TIPOSSLECCIONADOSPREVIO", tiposSeleccionadosPrevio);
-
+        CommonEventsActivity.onSaveInstanceState(outState);
         eventosEnFiltrosCombinados = (ArrayList<Event>) presenter.getCachedEventsOrdenados();
-
-
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState){
         super.onRestoreInstanceState(savedInstanceState);
-
-        // Guarda la informacion de los filtros por fecha
-        diaInicio = savedInstanceState.getInt("DIAINICIO");
-        mesInicio = savedInstanceState.getInt("MESINICIO");
-        anhoInicio = savedInstanceState.getInt("ANHOINICIO",anhoInicio);
-
-        diaFin = savedInstanceState.getInt("DIAFIN");
-        mesFin = savedInstanceState.getInt("MESFIN");
-        anhoFin = savedInstanceState.getInt("ANHOFIN");
-
-        diaInicioPrevio = savedInstanceState.getInt("DIAINICIOPREVIO");
-        mesInicioPrevio = savedInstanceState.getInt("MESINICIOPREVIO");
-        anhoInicioPrevio = savedInstanceState.getInt("ANHOINICIOPREVIO");
-
-        diaFinPrevio = savedInstanceState.getInt("DIAFINPREVIO");
-        mesFinPrevio = savedInstanceState.getInt("MESFINPREVIO");
-        anhoFinPrevio = savedInstanceState.getInt("ANHOFINPREVIO");
-
-        // Guarda la informacion de los filtros por tipo
-        tiposSeleccionados = savedInstanceState.getStringArrayList("TIPOSSLECCIONADOS");
-        tiposSeleccionadosPrevio = savedInstanceState.getStringArrayList("TIPOSSLECCIONADOSPREVIO");
-
-        eventosEnFiltrosCombinados = savedInstanceState.getParcelableArrayList("FILTEREDEVENTS");
+        CommonEventsActivity.onRestoreInstanceState(savedInstanceState);
         presenter.setCachedEventsOrdenados(eventosEnFiltrosCombinados);
-    }
-
-    public IEventsContract.Presenter getPresenter() {
-        return presenter;
     }
 
     /*
@@ -261,7 +213,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     public AlertDialog onFilterAlertDialog(){
         //Creamos dos listas donde tenemos los tipos de evento, y los tipos marcados para filtrar
         ArrayList<String> tipostotales = new ArrayList<>();
-        anhadirTiposeventos(tipostotales);
+        CommonEventsActivity.anhadirTiposeventos(tipostotales);
         tipostotales.toArray(new String[0]);
 
         tiposSeleccionados = new ArrayList<>();
@@ -311,55 +263,22 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     }
 
 
-    public AlertDialog onFilterAlertDialogOrdenar(){
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        String[] array = {"Ascendente(A-Z)", "Descendente(Z-A)"};
-        builder.setTitle("Ordenar");
-
-        builder.setSingleChoiceItems(array, 0, (dialogInterface, i) -> posi = i);
-        // Set the action buttons
-        builder.setPositiveButton(APLICAR, (dialog, id) -> presenter.onOrdenarClicked(posi));
-            // User clicked OK, so save the selectedItems results somewhere
-            // or return them to the component that opened the dialog
-
-        builder.setNegativeButton(CANCELAR, (dialog, id) -> {
-
-        });
-        return builder.create();
-    }
-
-    public void anhadirTiposeventos(List<String> tipostotales){
-        tipostotales.add("Arquitectura");
-        tipostotales.add("Artes plásticas");
-        tipostotales.add("Cine/Audiovisual");
-        tipostotales.add("Edición/Literatura");
-        tipostotales.add("Formación/Talleres");
-        tipostotales.add("Fotografía");
-        tipostotales.add("Infantil");
-        tipostotales.add("Música");
-        tipostotales.add("Online");
-        tipostotales.add("Otros");
-
-    }
-
     /**
      * Crea un alertDialog personalizado que permite seleccionar una ordenación de la lista
      * de eventos ascendentemente y descendentemente por el tipo de evento o por la hora de comienzo.
      */
     public void onOrdenarAlertDialog() {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = LayoutInflater.from(this).inflate(
-                R.layout.alert_dialog_ordenar,
-                (ConstraintLayout) findViewById(R.id.layout_dialog_container)
+                R.layout.alert_dialog_ordenar, findViewById(R.id.layout_dialog_container)
         );
 
-        RadioButton btnTipoAscendente = (RadioButton) view.findViewById(R.id.btn_ordenar_ascendente);
-        RadioButton btnTipoDescendente = (RadioButton) view.findViewById(R.id.btn_ordenar_descendente);
         RadioButton btnHoraMasProxima = (RadioButton) view.findViewById(R.id.btn_mas_proximas_primero);
         RadioButton btnHoraMenosProxima = (RadioButton) view.findViewById(R.id.btn_menos_proximas_primero);
+        RadioButton btnTipoAscendente = (RadioButton) view.findViewById(R.id.btn_ordenar_ascendente);
+        RadioButton btnTipoDescendente = (RadioButton) view.findViewById(R.id.btn_ordenar_descendente);
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(view);
         final AlertDialog ad = builder.create();
 
