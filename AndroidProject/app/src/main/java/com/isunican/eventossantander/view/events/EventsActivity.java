@@ -152,14 +152,59 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        CommonEventsActivity.onSaveInstanceState(outState);
+        super.onSaveInstanceState(outState);
+
+        outState.putInt("DIAINICIO",diaInicio);
+        outState.putInt("MESINICIO",mesInicio);
+        outState.putInt("ANHOINICIO",anhoInicio);
+
+        outState.putInt("DIAFIN",diaFin);
+        outState.putInt("MESFIN",mesFin);
+        outState.putInt("ANHOFIN",anhoFin);
+
+        outState.putInt("DIAINICIOPREVIO",diaInicioPrevio);
+        outState.putInt("MESINICIOPREVIO",mesInicioPrevio);
+        outState.putInt("ANHOINICIOPREVIO",anhoInicioPrevio);
+
+        outState.putInt("DIAFINPREVIO",diaFinPrevio);
+        outState.putInt("MESFINPREVIO",mesFinPrevio);
+        outState.putInt("ANHOFINPREVIO",anhoFinPrevio);
+
+        outState.putStringArrayList("TIPOSSLECCIONADOS", tiposSeleccionados);
+        outState.putStringArrayList("TIPOSSLECCIONADOSPREVIO", tiposSeleccionadosPrevio);
+
+        eventosEnFiltrosCombinados = (ArrayList<Event>) presenter.getCachedEventsOrdenados();
         eventosEnFiltrosCombinados = (ArrayList<Event>) presenter.getCachedEventsOrdenados();
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState){
         super.onRestoreInstanceState(savedInstanceState);
-        CommonEventsActivity.onRestoreInstanceState(savedInstanceState);
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // Guarda la informacion de los filtros por fecha
+        diaInicio = savedInstanceState.getInt("DIAINICIO");
+        mesInicio = savedInstanceState.getInt("MESINICIO");
+        anhoInicio = savedInstanceState.getInt("ANHOINICIO",anhoInicio);
+
+        diaFin = savedInstanceState.getInt("DIAFIN");
+        mesFin = savedInstanceState.getInt("MESFIN");
+        anhoFin = savedInstanceState.getInt("ANHOFIN");
+
+        diaInicioPrevio = savedInstanceState.getInt("DIAINICIOPREVIO");
+        mesInicioPrevio = savedInstanceState.getInt("MESINICIOPREVIO");
+        anhoInicioPrevio = savedInstanceState.getInt("ANHOINICIOPREVIO");
+
+        diaFinPrevio = savedInstanceState.getInt("DIAFINPREVIO");
+        mesFinPrevio = savedInstanceState.getInt("MESFINPREVIO");
+        anhoFinPrevio = savedInstanceState.getInt("ANHOFINPREVIO");
+
+        // Guarda la informacion de los filtros por tipo
+        tiposSeleccionados = savedInstanceState.getStringArrayList("TIPOSSLECCIONADOS");
+        tiposSeleccionadosPrevio = savedInstanceState.getStringArrayList("TIPOSSLECCIONADOSPREVIO");
+
+        eventosEnFiltrosCombinados = savedInstanceState.getParcelableArrayList("FILTEREDEVENTS");
+
         presenter.setCachedEventsOrdenados(eventosEnFiltrosCombinados);
     }
 
