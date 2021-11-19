@@ -14,33 +14,33 @@ public class CommonAtributes {
     private static final String APLICAR = "Aplicar";
     private static final String CANCELAR = "Cancelar";
 
-    private ArrayList<String> tiposSeleccionados;
-    private ArrayList<String> tiposSeleccionadosPrevio;
+    private ArrayList<String> tiposSeleccionados = new ArrayList<>();
+    private ArrayList<String> tiposSeleccionadosPrevio = new ArrayList<>();
 
-    private ArrayList<Event> eventosEnFiltrosCombinados;
+    private ArrayList<Event> eventosEnFiltrosCombinados = new ArrayList<>();
 
     // Variables para filtrar por fecha
-    private int diaInicio;
-    private int mesInicio;
-    private int anhoInicio;
+    private int diaInicio = 0;
+    private int mesInicio = 0;
+    private int anhoInicio = 0;
 
     // Variables para guardar las fechas seleccionadas
-    private LocalDate fechaIni;
-    private LocalDate fechaFin;
-    private int diaFin;
-    private int mesFin;
-    private int anhoFin;
+    private LocalDate fechaIni = null;
+    private LocalDate fechaFin = null;
+    private int diaFin = 0;
+    private int mesFin = 0;
+    private int anhoFin = 0;
 
-    private int diaInicioPrevio;
-    private int mesInicioPrevio;
-    private int anhoInicioPrevio;
+    private int diaInicioPrevio = 0;
+    private int mesInicioPrevio = 0;
+    private int anhoInicioPrevio = 0;
 
-    private int diaFinPrevio;
-    private int mesFinPrevio;
-    private int anhoFinPrevio;
+    private int diaFinPrevio = 0;
+    private int mesFinPrevio = 0;
+    private int anhoFinPrevio = 0;
 
-    private TextView textoFechaInicio;
-    private TextView textoFechaFin;
+    private TextView textoFechaInicio = null;
+    private TextView textoFechaFin = null;
 
     //GETTERS
     public int getPosi(){return posi;}

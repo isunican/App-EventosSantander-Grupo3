@@ -117,15 +117,56 @@ public class TodayEventsActivity extends AppCompatActivity implements IEventsCon
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        CommonEventsActivity.onSaveInstanceState(outState);
+
+        outState.putInt("DIAINICIO",commonAtributes.getDiaInicio());
+        outState.putInt("MESINICIO",commonAtributes.getMesInicio());
+        outState.putInt("ANHOINICIO",commonAtributes.getAnhoInicio());
+
+        outState.putInt("DIAFIN",commonAtributes.getDiaFin());
+        outState.putInt("MESFIN",commonAtributes.getMesFin());
+        outState.putInt("ANHOFIN",commonAtributes.getAnhoFin());
+
+        outState.putInt("DIAINICIOPREVIO",commonAtributes.getDiaInicioPrevio());
+        outState.putInt("MESINICIOPREVIO",commonAtributes.getMesInicioPrevio());
+        outState.putInt("ANHOINICIOPREVIO",commonAtributes.getAnhoInicioPrevio());
+
+        outState.putInt("DIAFINPREVIO",commonAtributes.getDiaFinPrevio());
+        outState.putInt("MESFINPREVIO",commonAtributes.getMesFinPrevio());
+        outState.putInt("ANHOFINPREVIO",commonAtributes.getAnhoFinPrevio());
+
+        outState.putStringArrayList("TIPOSSLECCIONADOS", commonAtributes.getTiposSeleccionados());
+        outState.putStringArrayList("TIPOSSLECCIONADOSPREVIO", commonAtributes.getTiposSeleccionadosPrevio());
+
         commonAtributes.setEventosEnFiltrosCombinados((ArrayList<Event>) presenter.getCachedEventsOrdenados());
-        outState.putParcelableArrayList("FILTEREDEVENTS", commonAtributes.getEventosEnFiltrosCombinados());
+        //outState.putParcelableArrayList("FILTEREDEVENTS", eventosEnFiltrosCombinados);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState){
         super.onRestoreInstanceState(savedInstanceState);
-        CommonEventsActivity.onRestoreInstanceState(savedInstanceState);
+
+        // Guarda la informacion de los filtros por fecha
+        commonAtributes.setDiaInicio(savedInstanceState.getInt("DIAINICIO"));
+        commonAtributes.setMesInicio(savedInstanceState.getInt("MESINICIO"));
+        commonAtributes.setAnhoInicio(savedInstanceState.getInt("ANHOINICIO",commonAtributes.getAnhoInicio()));
+
+        commonAtributes.setDiaFin(savedInstanceState.getInt("DIAFIN"));
+        commonAtributes.setMesFin(savedInstanceState.getInt("MESFIN"));
+        commonAtributes.setAnhoFin(savedInstanceState.getInt("ANHOFIN"));
+
+        commonAtributes.setDiaInicioPrevio(savedInstanceState.getInt("DIAINICIOPREVIO"));
+        commonAtributes.setMesInicioPrevio(savedInstanceState.getInt("MESINICIOPREVIO"));
+        commonAtributes.setAnhoInicioPrevio(savedInstanceState.getInt("ANHOINICIOPREVIO"));
+
+        commonAtributes.setDiaFinPrevio(savedInstanceState.getInt("DIAFINPREVIO"));
+        commonAtributes.setMesFinPrevio(savedInstanceState.getInt("MESFINPREVIO"));
+        commonAtributes.setAnhoFinPrevio(savedInstanceState.getInt("ANHOFINPREVIO"));
+
+        // Guarda la informacion de los filtros por tipo
+        commonAtributes.setTiposSeleccionados(savedInstanceState.getStringArrayList("TIPOSSLECCIONADOS"));
+        commonAtributes.setTiposSeleccionadosPrevio(savedInstanceState.getStringArrayList("TIPOSSLECCIONADOSPREVIO"));
+
+        commonAtributes.setEventosEnFiltrosCombinados(savedInstanceState.getParcelableArrayList("FILTEREDEVENTS"));
         presenter.setCachedEventsOrdenados(commonAtributes.getEventosEnFiltrosCombinados());
     }
 
