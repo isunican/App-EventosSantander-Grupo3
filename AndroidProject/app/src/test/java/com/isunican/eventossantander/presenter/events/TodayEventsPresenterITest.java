@@ -33,7 +33,7 @@ public class TodayEventsPresenterITest {
 
     // Mocks
     @Mock
-    ITodayEventsContract.View mockView;
+    IEventsContract.View mockView;
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
 
