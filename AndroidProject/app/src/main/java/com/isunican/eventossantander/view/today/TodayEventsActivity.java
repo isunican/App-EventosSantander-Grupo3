@@ -9,7 +9,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
@@ -24,12 +23,15 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.RadioButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.isunican.eventossantander.R;
 import com.isunican.eventossantander.model.Event;
 import com.isunican.eventossantander.presenter.today.TodayEventsPresenter;
+import com.isunican.eventossantander.view.common.CommonAtributes;
+import com.isunican.eventossantander.view.common.CommonEventsActivity;
+import com.isunican.eventossantander.view.events.EventArrayAdapter;
+import com.isunican.eventossantander.view.events.IEventsContract;
 import com.isunican.eventossantander.view.eventsdetail.EventsDetailActivity;
 import com.isunican.eventossantander.view.info.InfoActivity;
 
@@ -39,45 +41,10 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
-public class TodayEventsActivity extends AppCompatActivity implements ITodayEventsContract.View, View.OnClickListener {
+public class TodayEventsActivity extends AppCompatActivity implements IEventsContract.View, View.OnClickListener {
 
     private ITodayEventsContract.Presenter presenter;
-
-    private int posi;
-
-    private static final String APLICAR = "Aplicar";
-    private static final String CANCELAR = "Cancelar";
-
-    private ArrayList<String> tiposSeleccionados;
-    private ArrayList<String> tiposSeleccionadosPrevio;
-
-    private ArrayList<Event> eventosEnFiltrosCombinados;
-
-    // Variables para filtrar por fecha
-    private int diaInicio;
-    private int mesInicio;
-    private int anhoInicio;
-
-    // Variables para guardar las fechas seleccionadas
-    private LocalDate fechaIni;
-    private LocalDate fechaFin;
-    private int diaFin;
-    private int mesFin;
-    private int anhoFin;
-
-    private int diaInicioPrevio;
-    private int mesInicioPrevio;
-    private int anhoInicioPrevio;
-
-    private int diaFinPrevio;
-    private int mesFinPrevio;
-    private int anhoFinPrevio;
-
-    private TextView textoFechaInicio;
-    private TextView textoFechaFin;
-
-    private static void onClick(DialogInterface dialog, int id) {
-    }
+    private CommonAtributes commonAtributes;
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -101,9 +68,9 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
         Button btnFiltrar = findViewById(R.id.btn_filtrar);
         btnFiltrar.setOnClickListener(this);
 
-        presenter = new TodayEventsPresenter(this);
-        tiposSeleccionadosPrevio= new ArrayList<>();
-        eventosEnFiltrosCombinados = new ArrayList<>();
+        presenter = new TodayEventsPresenter( this);
+        commonAtributes.setTiposSeleccionadosPrevio(new ArrayList<>());
+        commonAtributes.setEventosEnFiltrosCombinados(new ArrayList<>());
 
         // Se intenta recargar las variables de filtrar entre dos fechas
         onReloadFilteredDates();
@@ -111,7 +78,7 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
 
     @Override
     public void onEventsLoaded(List<Event> events) {
-        TodayEventArrayAdapter adapter = new TodayEventArrayAdapter(TodayEventsActivity.this, 0, events);
+        EventArrayAdapter adapter = new EventArrayAdapter(TodayEventsActivity.this, 0, events);
         ListView listView = findViewById(R.id.eventsListView);
         listView.setAdapter(adapter);
 
@@ -151,27 +118,27 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putInt("DIAINICIO",diaInicio);
-        outState.putInt("MESINICIO",mesInicio);
-        outState.putInt("ANHOINICIO",anhoInicio);
+        outState.putInt("DIAINICIO",commonAtributes.getDiaInicio());
+        outState.putInt("MESINICIO",commonAtributes.getMesInicio());
+        outState.putInt("ANHOINICIO",commonAtributes.getAnhoInicio());
 
-        outState.putInt("DIAFIN",diaFin);
-        outState.putInt("MESFIN",mesFin);
-        outState.putInt("ANHOFIN",anhoFin);
+        outState.putInt("DIAFIN",commonAtributes.getDiaFin());
+        outState.putInt("MESFIN",commonAtributes.getMesFin());
+        outState.putInt("ANHOFIN",commonAtributes.getAnhoFin());
 
-        outState.putInt("DIAINICIOPREVIO",diaInicioPrevio);
-        outState.putInt("MESINICIOPREVIO",mesInicioPrevio);
-        outState.putInt("ANHOINICIOPREVIO",anhoInicioPrevio);
+        outState.putInt("DIAINICIOPREVIO",commonAtributes.getDiaInicioPrevio());
+        outState.putInt("MESINICIOPREVIO",commonAtributes.getMesInicioPrevio());
+        outState.putInt("ANHOINICIOPREVIO",commonAtributes.getAnhoInicioPrevio());
 
-        outState.putInt("DIAFINPREVIO",diaFinPrevio);
-        outState.putInt("MESFINPREVIO",mesFinPrevio);
-        outState.putInt("ANHOFINPREVIO",anhoFinPrevio);
+        outState.putInt("DIAFINPREVIO",commonAtributes.getDiaFinPrevio());
+        outState.putInt("MESFINPREVIO",commonAtributes.getMesFinPrevio());
+        outState.putInt("ANHOFINPREVIO",commonAtributes.getAnhoFinPrevio());
 
-        outState.putStringArrayList("TIPOSSLECCIONADOS", tiposSeleccionados);
-        outState.putStringArrayList("TIPOSSLECCIONADOSPREVIO", tiposSeleccionadosPrevio);
+        outState.putStringArrayList("TIPOSSLECCIONADOS", commonAtributes.getTiposSeleccionados());
+        outState.putStringArrayList("TIPOSSLECCIONADOSPREVIO", commonAtributes.getTiposSeleccionadosPrevio());
 
-        eventosEnFiltrosCombinados = (ArrayList<Event>) presenter.getCachedEventsOrdenados();
-        outState.putParcelableArrayList("FILTEREDEVENTS", eventosEnFiltrosCombinados);
+        commonAtributes.setEventosEnFiltrosCombinados((ArrayList<Event>) presenter.getCachedEventsOrdenados());
+        //outState.putParcelableArrayList("FILTEREDEVENTS", eventosEnFiltrosCombinados);
     }
 
     @Override
@@ -179,32 +146,28 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
         super.onRestoreInstanceState(savedInstanceState);
 
         // Guarda la informacion de los filtros por fecha
-        diaInicio = savedInstanceState.getInt("DIAINICIO");
-        mesInicio = savedInstanceState.getInt("MESINICIO");
-        anhoInicio = savedInstanceState.getInt("ANHOINICIO",anhoInicio);
+        commonAtributes.setDiaInicio(savedInstanceState.getInt("DIAINICIO"));
+        commonAtributes.setMesInicio(savedInstanceState.getInt("MESINICIO"));
+        commonAtributes.setAnhoInicio(savedInstanceState.getInt("ANHOINICIO",commonAtributes.getAnhoInicio()));
 
-        diaFin = savedInstanceState.getInt("DIAFIN");
-        mesFin = savedInstanceState.getInt("MESFIN");
-        anhoFin = savedInstanceState.getInt("ANHOFIN");
+        commonAtributes.setDiaFin(savedInstanceState.getInt("DIAFIN"));
+        commonAtributes.setMesFin(savedInstanceState.getInt("MESFIN"));
+        commonAtributes.setAnhoFin(savedInstanceState.getInt("ANHOFIN"));
 
-        diaInicioPrevio = savedInstanceState.getInt("DIAINICIOPREVIO");
-        mesInicioPrevio = savedInstanceState.getInt("MESINICIOPREVIO");
-        anhoInicioPrevio = savedInstanceState.getInt("ANHOINICIOPREVIO");
+        commonAtributes.setDiaInicioPrevio(savedInstanceState.getInt("DIAINICIOPREVIO"));
+        commonAtributes.setMesInicioPrevio(savedInstanceState.getInt("MESINICIOPREVIO"));
+        commonAtributes.setAnhoInicioPrevio(savedInstanceState.getInt("ANHOINICIOPREVIO"));
 
-        diaFinPrevio = savedInstanceState.getInt("DIAFINPREVIO");
-        mesFinPrevio = savedInstanceState.getInt("MESFINPREVIO");
-        anhoFinPrevio = savedInstanceState.getInt("ANHOFINPREVIO");
+        commonAtributes.setDiaFinPrevio(savedInstanceState.getInt("DIAFINPREVIO"));
+        commonAtributes.setMesFinPrevio(savedInstanceState.getInt("MESFINPREVIO"));
+        commonAtributes.setAnhoFinPrevio(savedInstanceState.getInt("ANHOFINPREVIO"));
 
         // Guarda la informacion de los filtros por tipo
-        tiposSeleccionados = savedInstanceState.getStringArrayList("TIPOSSLECCIONADOS");
-        tiposSeleccionadosPrevio = savedInstanceState.getStringArrayList("TIPOSSLECCIONADOSPREVIO");
+        commonAtributes.setTiposSeleccionados(savedInstanceState.getStringArrayList("TIPOSSLECCIONADOS"));
+        commonAtributes.setTiposSeleccionadosPrevio(savedInstanceState.getStringArrayList("TIPOSSLECCIONADOSPREVIO"));
 
-        eventosEnFiltrosCombinados = savedInstanceState.getParcelableArrayList("FILTEREDEVENTS");
-        presenter.setCachedEventsOrdenados(eventosEnFiltrosCombinados);
-    }
-
-    public ITodayEventsContract.Presenter getPresenter() {
-        return presenter;
+        commonAtributes.setEventosEnFiltrosCombinados(savedInstanceState.getParcelableArrayList("FILTEREDEVENTS"));
+        presenter.setCachedEventsOrdenados(commonAtributes.getEventosEnFiltrosCombinados());
     }
 
     /*
@@ -225,10 +188,10 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
         switch (item.getItemId()) {
             case R.id.menu_refresh:
                 // Se reinician las variables del filtro de fecha
-                diaInicioPrevio = -1; mesInicioPrevio = -1; anhoInicioPrevio = -1;
-                diaFinPrevio = -1; mesFinPrevio = -1; anhoFinPrevio = -1;
+                commonAtributes.setDiaInicioPrevio(-1); commonAtributes.setMesInicioPrevio(-1); commonAtributes.setAnhoInicioPrevio(-1);
+                commonAtributes.setDiaFinPrevio(-1); commonAtributes.setMesFinPrevio(-1); commonAtributes.setAnhoFinPrevio(-1);
 
-                tiposSeleccionadosPrevio.clear();
+                commonAtributes.getTiposSeleccionadosPrevio().clear();
                 presenter.onReloadClicked();
                 return true;
             case R.id.menu_filter_date:
@@ -257,13 +220,12 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
 
     public AlertDialog onFilterAlertDialog(){
         //Creamos dos listas donde tenemos los tipos de evento, y los tipos marcados para filtrar
-        List<String> tipostotales = new ArrayList<>();
-        anhadirTiposeventos(tipostotales);
+        ArrayList<String> tipostotales = new ArrayList<>();
+        CommonEventsActivity.anhadirTiposeventos(tipostotales);
         tipostotales.toArray(new String[0]);
 
-        tiposSeleccionados = new ArrayList<>();
+        commonAtributes.setTiposSeleccionados(new ArrayList<>());
 
-        //Creamos una AlertDialog
         //Creamos una AlertDialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -276,10 +238,10 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
         int posChecked = 0;
         Arrays.fill(checked, false);
         for(String s : tipostotales){
-            for(String p : tiposSeleccionadosPrevio){
+            for(String p : commonAtributes.getTiposSeleccionadosPrevio()){
                 if(s.equals(p)){
                     checked[posChecked]=true;
-                    tiposSeleccionados.add(s);
+                    commonAtributes.getTiposSeleccionados().add(s);
                 }
             }
             posChecked++;
@@ -290,28 +252,25 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
         builder.setMultiChoiceItems(tipostotales.toArray(new String[0]), checked, (dialog, which, estaMarcado) -> {
             if (estaMarcado) {
                 // If the user checked the item, add it to the selected items
-                tiposSeleccionados.add(tipostotales.get(which));
-                tiposSeleccionadosPrevio=tiposSeleccionados;
-            } else if (tiposSeleccionados.contains(tipostotales.get(which))) {
+                commonAtributes.getTiposSeleccionados().add(tipostotales.get(which));
+                commonAtributes.setTiposSeleccionadosPrevio(commonAtributes.getTiposSeleccionados());
+            } else if (commonAtributes.getTiposSeleccionados().contains(tipostotales.get(which))) {
                 // Else, if the item is already in the array, remove it
-                tiposSeleccionados.remove(tipostotales.get(which));
-                tiposSeleccionadosPrevio=tiposSeleccionados;
+                commonAtributes.getTiposSeleccionados().remove(tipostotales.get(which));
+                commonAtributes.setTiposSeleccionadosPrevio(commonAtributes.getTiposSeleccionados());
             }
         });
 
         //Creamos el boton de aplicar
-        builder.setPositiveButton(APLICAR, (dialogInterface, i) -> presenter.onFiltrarClicked(tiposSeleccionados));
-        builder.setNegativeButton(CANCELAR, (dialogInterface, i) -> {
+        builder.setPositiveButton(commonAtributes.getAplicar(), (dialogInterface, i) -> presenter.onFiltrarClicked(commonAtributes.getTiposSeleccionados()));
+        builder.setNegativeButton(commonAtributes.getCancelar(), (dialogInterface, i) -> {
             //si se cancela no se hace nada
         });
-
         return builder.create();
     }
 
 
     public void onOrdenarAlertDialog() {
-        SharedPreferences sharpref = getPreferences(Context.MODE_PRIVATE); // Sensitive
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = LayoutInflater.from(this).inflate(
                 R.layout.alert_dialog_ordenar,
@@ -326,82 +285,46 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
         builder.setView(view);
         final AlertDialog ad = builder.create();
 
-        view.findViewById(R.id.btn_ordenar_ascendente).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                posi = 0;
-                btnTipoDescendente.setChecked(false);
-                btnHoraMasProxima.setChecked(false);
-                btnHoraMenosProxima.setChecked(false);
-            }
+        view.findViewById(R.id.btn_ordenar_ascendente).setOnClickListener(view0 -> {
+            commonAtributes.setPosi(0);
+            btnTipoDescendente.setChecked(false);
+            btnHoraMasProxima.setChecked(false);
+            btnHoraMenosProxima.setChecked(false);
         });
 
-        view.findViewById(R.id.btn_ordenar_descendente).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                posi = 1;
-                btnTipoAscendente.setChecked(false);
-                btnHoraMasProxima.setChecked(false);
-                btnHoraMenosProxima.setChecked(false);
-            }
+        view.findViewById(R.id.btn_ordenar_descendente).setOnClickListener(view1 -> {
+            commonAtributes.setPosi(1);
+            btnTipoAscendente.setChecked(false);
+            btnHoraMasProxima.setChecked(false);
+            btnHoraMenosProxima.setChecked(false);
         });
 
-        view.findViewById(R.id.btn_mas_proximas_primero).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                posi = 2;
-                btnTipoAscendente.setChecked(false);
-                btnTipoDescendente.setChecked(false);
-                btnHoraMenosProxima.setChecked(false);
-            }
+        view.findViewById(R.id.btn_mas_proximas_primero).setOnClickListener(view2 -> {
+            commonAtributes.setPosi(2);;
+            btnTipoAscendente.setChecked(false);
+            btnTipoDescendente.setChecked(false);
+            btnHoraMenosProxima.setChecked(false);
         });
 
-        view.findViewById(R.id.btn_menos_proximas_primero).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                posi = 3;
-                btnTipoAscendente.setChecked(false);
-                btnTipoDescendente.setChecked(false);
-                btnHoraMasProxima.setChecked(false);
-            }
+        view.findViewById(R.id.btn_menos_proximas_primero).setOnClickListener(view3 -> {
+            commonAtributes.setPosi(3);
+            btnTipoAscendente.setChecked(false);
+            btnTipoDescendente.setChecked(false);
+            btnHoraMasProxima.setChecked(false);
         });
 
         // Caso en el que se pulsa el boton de cancelar
-        view.findViewById(R.id.ordenar_cancelar).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ad.dismiss();
-            }
-        });
+        view.findViewById(R.id.ordenar_cancelar).setOnClickListener(view4 -> ad.dismiss());
 
         // Caso en el que se pulsa el boton de aceptar
         view.findViewById(R.id.ordenar_aplicar);
-        view.setOnClickListener(new View.OnClickListener() {
-
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onClick(View view) {
-                presenter.onOrdenarClicked(posi);
-                // Se cierra el Alert Dialog
-                ad.dismiss();
-            }
+        view.setOnClickListener(view5 -> {
+            presenter.onOrdenarClicked(commonAtributes.getPosi());
+            // Se cierra el Alert Dialog
+            ad.dismiss();
         });
         ad.show();
         btnTipoAscendente.setChecked(true);
-    }
-
-    public void anhadirTiposeventos(List<String> tipostotales){
-        tipostotales.add("Arquitectura");
-        tipostotales.add("Artes plásticas");
-        tipostotales.add("Cine/Audiovisual");
-        tipostotales.add("Edición/Literatura");
-        tipostotales.add("Formación/Talleres");
-        tipostotales.add("Fotografía");
-        tipostotales.add("Infantil");
-        tipostotales.add("Música");
-        tipostotales.add("Online");
-        tipostotales.add("Otros");
-
     }
 
     /**
@@ -414,12 +337,12 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void onDateFilterAlertDialog() {
 
-        diaInicio = diaInicioPrevio;
-        mesInicio = mesInicioPrevio;
-        anhoInicio = anhoInicioPrevio;
-        diaFin = diaFinPrevio;
-        mesFin = mesFinPrevio;
-        anhoFin = anhoFinPrevio;
+        commonAtributes.setDiaInicio(commonAtributes.getDiaInicioPrevio());
+        commonAtributes.setMesInicio(commonAtributes.getMesInicioPrevio());
+        commonAtributes.setAnhoInicio(commonAtributes.getAnhoInicioPrevio());
+        commonAtributes.setDiaFin(commonAtributes.getDiaFinPrevio());
+        commonAtributes.setMesFin(commonAtributes.getMesFinPrevio());
+        commonAtributes.setAnhoFin(commonAtributes.getAnhoFinPrevio());
 
         SharedPreferences sharpref = getPreferences(Context.MODE_PRIVATE); // Sensitive
 
@@ -430,13 +353,13 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
         );
 
         // Texto de fecha de inicio y de final a mostrar en el AlertDialog de filtrar por fecha
-        textoFechaInicio = (TextView) view.findViewById(R.id.filtrar_fecha_inicio_texto);
-        textoFechaFin = (TextView) view.findViewById(R.id.filtrar_fecha_fin_texto);
+        commonAtributes.setTextoFechaInicio(view.findViewById(R.id.filtrar_fecha_inicio_texto));
+        commonAtributes.setTextoFechaFin(view.findViewById(R.id.filtrar_fecha_fin_texto));
 
         // Si habia fechas introducidas anteriormente se muestran
-        if (diaInicioPrevio!=-1) {
-            textoFechaFin.setText(diaFinPrevio+"/"+(mesFinPrevio+1)+"/"+anhoFinPrevio);
-            textoFechaInicio.setText(diaInicioPrevio+"/"+(mesInicioPrevio+1)+"/"+anhoInicioPrevio);
+        if (commonAtributes.getDiaInicioPrevio()!=-1) {
+            commonAtributes.getTextoFechaFin().setText(commonAtributes.getDiaFinPrevio()+"/"+(commonAtributes.getMesFinPrevio()+1)+"/"+commonAtributes.getAnhoFinPrevio());
+            commonAtributes.getTextoFechaInicio().setText(commonAtributes.getDiaInicioPrevio()+"/"+(commonAtributes.getMesInicioPrevio()+1)+"/"+commonAtributes.getAnhoInicioPrevio());
         }
 
         builder.setView(view);
@@ -458,30 +381,30 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
         view.setOnClickListener(view1 -> {
 
             // Si falta una fecha muestra un mensaje de error
-            if (diaFin == -1 || diaInicio == -1) {
+            if (commonAtributes.getDiaFin() == -1 || commonAtributes.getDiaInicio() == -1) {
                 Toast.makeText(getBaseContext(), "Ambas fechas deben estar seleccionadas", Toast.LENGTH_SHORT).show();
             } else {
                 // Si la fecha de inicio es posterior ala de fin se notifica al usuario
                 if (!onCheckDateOrder()) {
                     Toast.makeText(getBaseContext(), "Fecha de fin debe ser posterior a fecha de inicio", Toast.LENGTH_SHORT).show();
                 } else {
-                    diaInicioPrevio = diaInicio;
-                    mesInicioPrevio = mesInicio;
-                    anhoInicioPrevio = anhoInicio;
-                    diaFinPrevio = diaFin;
-                    mesFinPrevio = mesFin;
-                    anhoFinPrevio = anhoFin;
-                    fechaIni = LocalDate.of(anhoInicio, mesInicio+1, diaInicio);
-                    fechaFin = LocalDate.of(anhoFin, mesFin+1, diaFin);
-                    presenter.onFiltrarDate(fechaIni,fechaFin);
+                    commonAtributes.setDiaInicioPrevio(commonAtributes.getDiaInicio());
+                    commonAtributes.setMesInicioPrevio(commonAtributes.getMesInicio());
+                    commonAtributes.setAnhoInicioPrevio(commonAtributes.getAnhoInicio());
+                    commonAtributes.setDiaFinPrevio(commonAtributes.getDiaFin());
+                    commonAtributes.setMesFinPrevio(commonAtributes.getMesFin());
+                    commonAtributes.setAnhoFinPrevio(commonAtributes.getAnhoFin());
+                    commonAtributes.setFechaInicio(LocalDate.of(commonAtributes.getAnhoInicio(), commonAtributes.getMesInicio()+1, commonAtributes.getDiaInicio()));
+                    commonAtributes.setFechaFin(LocalDate.of(commonAtributes.getAnhoFin(), commonAtributes.getMesFin()+1, commonAtributes.getDiaFin()));
+                    presenter.onFiltrarDate(commonAtributes.getFechaInicio(),commonAtributes.getFechaFin());
 
                     SharedPreferences.Editor editor = sharpref.edit();
-                    editor.putInt("diaInicioPrevioGuardado", diaInicioPrevio);
-                    editor.putInt("mesInicioPrevioGuardado", mesInicioPrevio);
-                    editor.putInt("anhoInicioPrevioGuardado", anhoInicioPrevio);
-                    editor.putInt("diaFinPrevioGuardado", diaFinPrevio);
-                    editor.putInt("mesFinPrevioGuardado", mesFinPrevio);
-                    editor.putInt("anhoFinPrevioGuardado", anhoFinPrevio);
+                    editor.putInt("diaInicioPrevioGuardado", commonAtributes.getDiaInicioPrevio());
+                    editor.putInt("mesInicioPrevioGuardado", commonAtributes.getMesInicioPrevio());
+                    editor.putInt("anhoInicioPrevioGuardado",  commonAtributes.getAnhoInicioPrevio());
+                    editor.putInt("diaFinPrevioGuardado", commonAtributes.getDiaFinPrevio());
+                    editor.putInt("mesFinPrevioGuardado", commonAtributes.getMesFinPrevio());
+                    editor.putInt("anhoFinPrevioGuardado", commonAtributes.getAnhoFinPrevio());
                     editor.apply();
 
                     // Se cierra el Alert Dialog
@@ -501,17 +424,17 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
      */
     private void onSelectStartDate() {
         final Calendar c = Calendar.getInstance();
-        diaInicio= c.get(Calendar.DAY_OF_MONTH);
-        mesInicio= c.get(Calendar.MONTH);
-        anhoInicio= c.get(Calendar.YEAR);
+        commonAtributes.setDiaInicio(c.get(Calendar.DAY_OF_MONTH));
+        commonAtributes.setMesInicio(c.get(Calendar.MONTH));
+        commonAtributes.setAnhoInicio(c.get(Calendar.YEAR));
 
         @SuppressLint("SetTextI18n") DatePickerDialog datePickerDialog = new DatePickerDialog(this, (datePicker, anho, mes, dia) -> {
-            diaInicio = dia;
-            mesInicio = mes;
-            anhoInicio = anho;
-            textoFechaInicio.setText(diaInicio+"/"+(mesInicio+1)+"/"+anhoInicio);
+            commonAtributes.setDiaInicio(dia);
+            commonAtributes.setMesInicio(mes);
+            commonAtributes.setAnhoInicio(anho);
+            commonAtributes.getTextoFechaInicio().setText(commonAtributes.getDiaInicio()+"/"+(commonAtributes.getMesInicio()+1)+"/"+commonAtributes.getAnhoInicio());
         }
-                ,diaInicio,mesInicio,anhoInicio);
+                ,commonAtributes.getDiaInicio(),commonAtributes.getMesInicio(),commonAtributes.getAnhoInicio());
         datePickerDialog.show();
     }
 
@@ -520,12 +443,13 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
      */
     private void onSelectFinishDate() {
         final Calendar c = Calendar.getInstance();
-        diaFin= c.get(Calendar.DAY_OF_MONTH);
-        mesFin= c.get(Calendar.MONTH);
-        anhoFin= c.get(Calendar.YEAR);
+
+        commonAtributes.setDiaFin(c.get(Calendar.DAY_OF_MONTH));
+        commonAtributes.setMesFin(c.get(Calendar.MONTH));
+        commonAtributes.setAnhoFin(c.get(Calendar.YEAR));
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, this::onDateSet
-                ,diaFin,mesFin,anhoFin);
+                ,commonAtributes.getDiaFin(),commonAtributes.getMesFin(),commonAtributes.getAnhoFin());
         datePickerDialog.show();
     }
 
@@ -535,33 +459,33 @@ public class TodayEventsActivity extends AppCompatActivity implements ITodayEven
      */
     private boolean onCheckDateOrder() {
 
-        if (anhoInicio < anhoFin) {
+        if (commonAtributes.getAnhoInicio() < commonAtributes.getAnhoFin()) {
             return true;
-        } else if (anhoInicio == anhoFin) {
-            if(mesInicio < mesFin) {
+        } else if (commonAtributes.getAnhoInicio() == commonAtributes.getAnhoFin()) {
+            if(commonAtributes.getMesInicio() < commonAtributes.getMesFin()) {
                 return true;
-            }else return mesInicio == mesFin && diaInicio <= diaFin;
+            }else return commonAtributes.getMesInicio() == commonAtributes.getMesFin() &&
+                    commonAtributes.getDiaInicio() <= commonAtributes.getDiaFin();
         }
         return false;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void onReloadFilteredDates() {
-
         SharedPreferences sharpref = getPreferences(Context.MODE_PRIVATE); // Sensitive
-        diaInicioPrevio = sharpref.getInt("diaInicioPrevioGuardado", -1);
-        mesInicioPrevio = sharpref.getInt("mesInicioPrevioGuardado", -1);
-        anhoInicioPrevio = sharpref.getInt("anhoInicioPrevioGuardado", -1);
-        diaFinPrevio = sharpref.getInt("diaFinPrevioGuardado", -1);
-        mesFinPrevio = sharpref.getInt("mesFinPrevioGuardado", -1);
-        anhoFinPrevio = sharpref.getInt("anhoFinPrevioGuardado", -1);
+        commonAtributes.setDiaInicioPrevio(sharpref.getInt("diaInicioPrevioGuardado", -1));
+        commonAtributes.setMesInicioPrevio(sharpref.getInt("mesInicioPrevioGuardado", -1));
+        commonAtributes.setAnhoInicioPrevio(sharpref.getInt("anhoInicioPrevioGuardado", -1));
+        commonAtributes.setDiaFinPrevio(sharpref.getInt("diaFinPrevioGuardado", -1));
+        commonAtributes.setMesFinPrevio(sharpref.getInt("mesFinPrevioGuardado", -1));
+        commonAtributes.setAnhoFinPrevio(sharpref.getInt("anhoFinPrevioGuardado", -1));
     }
 
     @SuppressLint("SetTextI18n")
     private void onDateSet(DatePicker datePicker, int anho, int mes, int dia) {
-        diaFin = dia;
-        mesFin = mes;
-        anhoFin = anho;
-        textoFechaFin.setText(diaFin + "/" + (mesFin + 1) + "/" + anhoFin);
+        commonAtributes.setDiaFin(dia);
+        commonAtributes.setMesFin(mes);
+        commonAtributes.setAnhoFin(anho);
+        commonAtributes.getTextoFechaFin().setText(commonAtributes.getDiaFin() + "/" + (commonAtributes.getMesFin() + 1) + "/" + commonAtributes.getAnhoFin());
     }
 }

@@ -1,5 +1,6 @@
 package com.isunican.eventossantander.presenter.events;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -44,7 +45,7 @@ public class EventsComparatorHoraTest {
 
         //IT.2C Fechas de eventos iguales
         result = sut.compare(e1, e3);
-        assertTrue(result == 0);
+        assertEquals(0,  result);
 
         //IT.2D Evento e1=null
         try{

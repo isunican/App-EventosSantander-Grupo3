@@ -28,6 +28,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.isunican.eventossantander.R;
 import com.isunican.eventossantander.model.Event;
 import com.isunican.eventossantander.presenter.events.EventsPresenter;
+import com.isunican.eventossantander.view.common.CommonEventsActivity;
 import com.isunican.eventossantander.view.eventsdetail.EventsDetailActivity;
 import com.isunican.eventossantander.view.info.InfoActivity;
 import com.isunican.eventossantander.view.today.TodayEventsActivity;
@@ -124,8 +125,6 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 
-    
-
     @Override
     public void onLoadSuccess(int elementsLoaded) {
         @SuppressLint("DefaultLocale") String text = String.format("Loaded %d events", elementsLoaded);
@@ -153,6 +152,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        super.onSaveInstanceState(outState);
 
         outState.putInt("DIAINICIO",diaInicio);
         outState.putInt("MESINICIO",mesInicio);
@@ -174,12 +174,12 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         outState.putStringArrayList("TIPOSSLECCIONADOSPREVIO", tiposSeleccionadosPrevio);
 
         eventosEnFiltrosCombinados = (ArrayList<Event>) presenter.getCachedEventsOrdenados();
-
-
+        eventosEnFiltrosCombinados = (ArrayList<Event>) presenter.getCachedEventsOrdenados();
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState){
+        super.onRestoreInstanceState(savedInstanceState);
         super.onRestoreInstanceState(savedInstanceState);
 
         // Guarda la informacion de los filtros por fecha
@@ -204,11 +204,8 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         tiposSeleccionadosPrevio = savedInstanceState.getStringArrayList("TIPOSSLECCIONADOSPREVIO");
 
         eventosEnFiltrosCombinados = savedInstanceState.getParcelableArrayList("FILTEREDEVENTS");
-        presenter.setCachedEventsOrdenados(eventosEnFiltrosCombinados);
-    }
 
-    public IEventsContract.Presenter getPresenter() {
-        return presenter;
+        presenter.setCachedEventsOrdenados(eventosEnFiltrosCombinados);
     }
 
     /*
@@ -261,7 +258,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     public AlertDialog onFilterAlertDialog(){
         //Creamos dos listas donde tenemos los tipos de evento, y los tipos marcados para filtrar
         ArrayList<String> tipostotales = new ArrayList<>();
-        anhadirTiposeventos(tipostotales);
+        CommonEventsActivity.anhadirTiposeventos(tipostotales);
         tipostotales.toArray(new String[0]);
 
         tiposSeleccionados = new ArrayList<>();
@@ -311,107 +308,55 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
     }
 
 
-    public AlertDialog onFilterAlertDialogOrdenar(){
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        String[] array = {"Ascendente(A-Z)", "Descendente(Z-A)"};
-        builder.setTitle("Ordenar");
-
-        builder.setSingleChoiceItems(array, 0, (dialogInterface, i) -> posi = i);
-        // Set the action buttons
-        builder.setPositiveButton(APLICAR, (dialog, id) -> {
-            // User clicked OK, so save the selectedItems results somewhere
-            // or return them to the component that opened the dialog
-            presenter.onOrdenarClicked(posi);
-        });
-        builder.setNegativeButton(CANCELAR, (dialog, id) -> {
-
-        });
-        return builder.create();
-    }
-
-    public void anhadirTiposeventos(List<String> tipostotales){
-        tipostotales.add("Arquitectura");
-        tipostotales.add("Artes plásticas");
-        tipostotales.add("Cine/Audiovisual");
-        tipostotales.add("Edición/Literatura");
-        tipostotales.add("Formación/Talleres");
-        tipostotales.add("Fotografía");
-        tipostotales.add("Infantil");
-        tipostotales.add("Música");
-        tipostotales.add("Online");
-        tipostotales.add("Otros");
-
-    }
-
     /**
      * Crea un alertDialog personalizado que permite seleccionar una ordenación de la lista
      * de eventos ascendentemente y descendentemente por el tipo de evento o por la hora de comienzo.
      */
     public void onOrdenarAlertDialog() {
-        SharedPreferences sharpref = getPreferences(Context.MODE_PRIVATE); // Sensitive
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = LayoutInflater.from(this).inflate(
-                R.layout.alert_dialog_ordenar,
-                (ConstraintLayout) findViewById(R.id.layout_dialog_container)
+                R.layout.alert_dialog_ordenar, findViewById(R.id.layout_dialog_container)
         );
 
-        RadioButton btnTipoAscendente = (RadioButton) view.findViewById(R.id.btn_ordenar_ascendente);
-        RadioButton btnTipoDescendente = (RadioButton) view.findViewById(R.id.btn_ordenar_descendente);
         RadioButton btnHoraMasProxima = (RadioButton) view.findViewById(R.id.btn_mas_proximas_primero);
         RadioButton btnHoraMenosProxima = (RadioButton) view.findViewById(R.id.btn_menos_proximas_primero);
+        RadioButton btnTipoAscendente = (RadioButton) view.findViewById(R.id.btn_ordenar_ascendente);
+        RadioButton btnTipoDescendente = (RadioButton) view.findViewById(R.id.btn_ordenar_descendente);
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(view);
         final AlertDialog ad = builder.create();
 
-        view.findViewById(R.id.btn_ordenar_ascendente).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                posi = 0;
-                btnTipoDescendente.setChecked(false);
-                btnHoraMasProxima.setChecked(false);
-                btnHoraMenosProxima.setChecked(false);
-            }
+        view.findViewById(R.id.btn_ordenar_ascendente).setOnClickListener(view0 -> {
+            posi = 0;
+            btnTipoDescendente.setChecked(false);
+            btnHoraMasProxima.setChecked(false);
+            btnHoraMenosProxima.setChecked(false);
         });
 
-        view.findViewById(R.id.btn_ordenar_descendente).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                posi = 1;
-                btnTipoAscendente.setChecked(false);
-                btnHoraMasProxima.setChecked(false);
-                btnHoraMenosProxima.setChecked(false);
-            }
+        view.findViewById(R.id.btn_ordenar_descendente).setOnClickListener(view1 -> {
+            posi = 1;
+            btnTipoAscendente.setChecked(false);
+            btnHoraMasProxima.setChecked(false);
+            btnHoraMenosProxima.setChecked(false);
         });
 
-        view.findViewById(R.id.btn_mas_proximas_primero).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                posi = 2;
-                btnTipoAscendente.setChecked(false);
-                btnTipoDescendente.setChecked(false);
-                btnHoraMenosProxima.setChecked(false);
-            }
+        view.findViewById(R.id.btn_mas_proximas_primero).setOnClickListener(view2 -> {
+            posi = 2;
+            btnTipoAscendente.setChecked(false);
+            btnTipoDescendente.setChecked(false);
+            btnHoraMenosProxima.setChecked(false);
         });
 
-        view.findViewById(R.id.btn_menos_proximas_primero).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                posi = 3;
-                btnTipoAscendente.setChecked(false);
-                btnTipoDescendente.setChecked(false);
-                btnHoraMasProxima.setChecked(false);
-            }
+        view.findViewById(R.id.btn_menos_proximas_primero).setOnClickListener(view3 -> {
+            posi = 3;
+            btnTipoAscendente.setChecked(false);
+            btnTipoDescendente.setChecked(false);
+            btnHoraMasProxima.setChecked(false);
         });
 
         // Caso en el que se pulsa el boton de cancelar
-        view.findViewById(R.id.ordenar_cancelar).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ad.dismiss();
-            }
-        });
+        view.findViewById(R.id.ordenar_cancelar).setOnClickListener(view4 -> ad.dismiss());
 
         // Caso en el que se pulsa el boton de aceptar
         view.findViewById(R.id.ordenar_aplicar);
@@ -576,8 +521,10 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         } else if (anhoInicio == anhoFin) {
             if(mesInicio < mesFin) {
                 return true;
-            }else if(mesInicio == mesFin && diaInicio <= diaFin) {
-                return true;
+            }else if(mesInicio == mesFin) {
+                if (diaInicio <= diaFin){
+                    return true;
+                }
             }
         }
         return false;
@@ -585,7 +532,6 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void onReloadFilteredDates() {
-
 
         SharedPreferences sharpref = getPreferences(Context.MODE_PRIVATE); // Sensitive
 
