@@ -8,7 +8,10 @@ import com.isunican.eventossantander.model.Event;
 import com.isunican.eventossantander.model.comparators.EventsComparatorHora;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 public class EventsComparatorHoraTest {
 
@@ -18,6 +21,7 @@ public class EventsComparatorHoraTest {
     @Before
     public void setUp() {
         sut = new EventsComparatorHora();
+
     }
 
     /*
@@ -45,7 +49,7 @@ public class EventsComparatorHoraTest {
 
         //IT.2C Fechas de eventos iguales
         result = sut.compare(e1, e3);
-        assertEquals(result,  0);
+        assertEquals(0,  result);
 
         //IT.2D Evento e1=null
         try{
@@ -59,5 +63,22 @@ public class EventsComparatorHoraTest {
             sut.compare(e1, null);
             fail("No se ha lanzado la excepción NullPointerException");
         }catch (NullPointerException e){}
+    }
+
+    /*
+     * Test del método cortarHoraDeComienzo(String fecha)
+     * @author Sergio Gallego Álvarez
+     */
+    @Test
+    public void onCortarHoraDeComienzoTest() {
+
+        //IT.1A fecha = null
+        assertEquals("23:59", sut.cortarHoraDeComienzo(null));
+
+        //IT.1B fecha sin hora
+        assertEquals("00:00", sut.cortarHoraDeComienzo("Jueves 18/11/2021"));
+
+        //IT.1C fecha con hora
+        assertEquals("10:00", sut.cortarHoraDeComienzo("Jueves 18/11/2021, de 10:00 a 13:00h."));
     }
 }

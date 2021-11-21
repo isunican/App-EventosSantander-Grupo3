@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -124,7 +125,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 
-    
+
 
     @Override
     public void onLoadSuccess(int elementsLoaded) {
@@ -174,7 +175,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         outState.putStringArrayList("TIPOSSLECCIONADOSPREVIO", tiposSeleccionadosPrevio);
 
         eventosEnFiltrosCombinados = (ArrayList<Event>) presenter.getCachedEventsOrdenados();
-
+        outState.putParcelableArrayList("FILTEREDEVENTS", eventosEnFiltrosCombinados);
 
     }
 
@@ -320,8 +321,8 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         builder.setSingleChoiceItems(array, 0, (dialogInterface, i) -> posi = i);
         // Set the action buttons
         builder.setPositiveButton(APLICAR, (dialog, id) -> presenter.onOrdenarClicked(posi));
-            // User clicked OK, so save the selectedItems results somewhere
-            // or return them to the component that opened the dialog
+        // User clicked OK, so save the selectedItems results somewhere
+        // or return them to the component that opened the dialog
 
         builder.setNegativeButton(CANCELAR, (dialog, id) -> {
 

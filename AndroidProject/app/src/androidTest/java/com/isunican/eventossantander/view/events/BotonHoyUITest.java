@@ -1,5 +1,5 @@
 package com.isunican.eventossantander.view.events;
-
+/**
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
@@ -37,7 +37,7 @@ import org.junit.Test;
  * debido a los problemas de realizar estas pruebas y comprobar dicho funcionamiento
  * para el dia el que se ejecutan, comento la clase para que se vea el trabajo realizado
  * @author Sergio Pérez Landaburu
- */
+
 
 public class BotonHoyUITest {
    
@@ -46,7 +46,7 @@ public class BotonHoyUITest {
     /**
      * Load known events json
      * https://personales.unican.es/rivasjm/resources/agenda_cultural.json
-     */
+
 
     @BeforeClass
     public static void setUp() {
@@ -78,7 +78,7 @@ public class BotonHoyUITest {
          *UIT.A : Se comprobará que cuando se pulsa el boton HOY situado
          *        en la parte inferior de la interfaz se cambia de pestaña
          *        y que se muestra la lista correcta de eventos.
-         */
+
         // Comprobamos que se muestra la lista de eventos original
         DataInteraction evento; // Objeto para referenciar el contenido dentro de los elementos del ListView
 
@@ -102,7 +102,7 @@ public class BotonHoyUITest {
          *        a los eventos de hoy se vuelve a la pestaña principal,
          *        pulsando la funcion nueva añadida en el menu de los tres
          *        puntos y la pestaña se encuentra en el estado anterior.
-         */
+
 
         onView(withClassName(containsString(TodayEventsActivity.class.getSimpleName())));
         openActionBarOverflowOrOptionsMenu(ApplicationProvider.getApplicationContext());
@@ -119,3 +119,4 @@ public class BotonHoyUITest {
     }
 
 }
+*/

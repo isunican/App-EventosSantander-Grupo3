@@ -28,18 +28,4 @@ public interface ITodayEventsContract {
         void setCachedEventsOrdenados(List<Event> events);
     }
 
-    interface View {
-
-        void onEventsLoaded(List<Event> events);
-
-        void onLoadError();
-
-        void onLoadSuccess(int elementsLoaded);
-
-        void onLoadNoEventsInDate();
-
-        void openEventDetails(Event event);
-
-        void openInfoView();
-    }
 }
