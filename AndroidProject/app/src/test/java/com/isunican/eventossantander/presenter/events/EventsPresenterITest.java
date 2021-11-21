@@ -267,40 +267,40 @@ public class EventsPresenterITest {
         sut.onFiltrarClicked(listaConElemento);
         sut.onOrdenarClicked(2);
         assertEquals(15, sut.getCachedEventsOrdenados().size()); //Comprobamos que estan todos los eventos
-        assertEquals("Domingo 01/08/2021, de 10:30 a 12:30h. ", sut.getCachedEventsOrdenados().get(0).getFecha());
-        assertEquals("Lunes 02/08/2021, a las 0:00h. ", sut.getCachedEventsOrdenados().get(2).getFecha());
-        assertEquals("Sábado 31/07/2021, de 10:30 a 12:30h. ", sut.getCachedEventsOrdenados().get(13).getFecha());
-        assertEquals("Sábado 31/07/2021, de 11:30 a 14:30h. ", sut.getCachedEventsOrdenados().get(14).getFecha());
+        assertEquals("Sábado 31/07/2021, de 10:30 a 12:30h. ", sut.getCachedEventsOrdenados().get(0).getFecha());
+        assertEquals("Domingo 01/08/2021, de 10:30 a 12:30h. ", sut.getCachedEventsOrdenados().get(2).getFecha());
+        assertEquals("Sábado 04/09/2021, de 10:30 a 12:30h. ", sut.getCachedEventsOrdenados().get(13).getFecha());
+        assertEquals("Lunes 13/09/2021, a las 09.45h. ", sut.getCachedEventsOrdenados().get(14).getFecha());
 
         // IT.1D: Se comprueba si la lista eventosEnFiltrosCombinados esta ordenada de manera
         // que los eventos mas lejanos a la fecha actual aparezcan primero.
         sut.onFiltrarClicked(listaConElemento);
         sut.onOrdenarClicked(3);
         assertEquals(15, sut.getCachedEventsOrdenados().size()); //Comprobamos que estan todos los eventos
-        assertEquals("Sábado 31/07/2021, de 11:30 a 14:30h. ", sut.getCachedEventsOrdenados().get(0).getFecha());
-        assertEquals("Sábado 31/07/2021, de 10:30 a 12:30h. ", sut.getCachedEventsOrdenados().get(1).getFecha());
-        assertEquals("Viernes 06/08/2021, a las 19:00h. ", sut.getCachedEventsOrdenados().get(9).getFecha());
-        assertEquals("Viernes 03/09/2021, de 16:30 a 18:30h. ", sut.getCachedEventsOrdenados().get(11).getFecha());
+        assertEquals("Lunes 13/09/2021, a las 09.45h. ", sut.getCachedEventsOrdenados().get(0).getFecha());
+        assertEquals("Sábado 04/09/2021, de 10:30 a 12:30h. ", sut.getCachedEventsOrdenados().get(1).getFecha());
+        assertEquals("Sábado 07/08/2021, de 10:30 a 12:30h. ", sut.getCachedEventsOrdenados().get(9).getFecha());
+        assertEquals("Lunes 02/08/2021, a las 0:00h. ", sut.getCachedEventsOrdenados().get(11).getFecha());
 
         // IT.1C: Se comprueba si la lista eventosEnFiltrosCombinados(vacia) esta ordenada de manera
         // que los eventos mas proximos a la fecha actual aparezcan primero
         sut.onFiltrarClicked(listaVacia);
         sut.onOrdenarClicked(2);
         assertEquals(345, sut.getCachedEventsOrdenados().size()); //Comprobamos que estan todos los eventos
-        assertEquals("Domingo 01/08/2021, de 10:30 a 12:30h. ", sut.getCachedEventsOrdenados().get(0).getFecha());
-        assertEquals("Domingo 01/08/2021, a las 11:00h. ", sut.getCachedEventsOrdenados().get(1).getFecha());
-        assertEquals("Domingo 01/08/2021, a las 12:00h. ", sut.getCachedEventsOrdenados().get(2).getFecha());
-        assertEquals("Domingo 01/08/2021, de 15:00 a 01:00h. ", sut.getCachedEventsOrdenados().get(3).getFecha());
+        assertEquals("Sábado 31/07/2021, todo el día. ", sut.getCachedEventsOrdenados().get(0).getFecha());
+        assertEquals("Sábado 31/07/2021, todo el día. ", sut.getCachedEventsOrdenados().get(1).getFecha());
+        assertEquals("Sábado 31/07/2021, a las 0:00h. ", sut.getCachedEventsOrdenados().get(2).getFecha());
+        assertEquals("Sábado 31/07/2021, todo el día. ", sut.getCachedEventsOrdenados().get(3).getFecha());
 
         // IT.1D: Se comprueba si la lista eventosEnFiltrosCombinados(vacia) esta ordenada de manera
         // que los eventos mas lejanos a la fecha actual aparezcan primero
         sut.onFiltrarClicked(listaVacia);
         sut.onOrdenarClicked(3);
         assertEquals(345, sut.getCachedEventsOrdenados().size()); //Comprobamos que estan todos los eventos
-        assertEquals("Martes 31/08/2021, a las 19:00h. ", sut.getCachedEventsOrdenados().get(0).getFecha());
-        assertEquals("Martes 31/08/2021, a las 19:00h. ", sut.getCachedEventsOrdenados().get(1).getFecha());
-        assertEquals("Martes 31/08/2021, a las 17:00h. ", sut.getCachedEventsOrdenados().get(2).getFecha());
-        assertEquals("Sábado 31/07/2021, a las 23:00h. ", sut.getCachedEventsOrdenados().get(3).getFecha());
+        assertEquals("Viernes 11/03/2022, a las 21:00h. ", sut.getCachedEventsOrdenados().get(0).getFecha());
+        assertEquals("Sábado 12/02/2022, a las 21:00h. ", sut.getCachedEventsOrdenados().get(1).getFecha());
+        assertEquals("Viernes 04/02/2022, a las 21:00h. ", sut.getCachedEventsOrdenados().get(2).getFecha());
+        assertEquals("Viernes 28/01/2022, a las 21:00h. ", sut.getCachedEventsOrdenados().get(3).getFecha());
 
     }
 
@@ -396,6 +396,12 @@ public class EventsPresenterITest {
         ///////////////////
         try {
             sut.onEventClicked(-1);
+            fail("No se ha cazado la excepcion");
+        } catch (IndexOutOfBoundsException e) {
+            assertTrue(true);
+        }
+
+        try {
             sut.onEventClicked(listaOriginal.size()+1);
             fail("No se ha cazado la excepcion");
         } catch (IndexOutOfBoundsException e) {
