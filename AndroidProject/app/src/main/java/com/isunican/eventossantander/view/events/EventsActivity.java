@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -124,7 +125,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 
-    
+
 
     @Override
     public void onLoadSuccess(int elementsLoaded) {
@@ -174,7 +175,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         outState.putStringArrayList("TIPOSSLECCIONADOSPREVIO", tiposSeleccionadosPrevio);
 
         eventosEnFiltrosCombinados = (ArrayList<Event>) presenter.getCachedEventsOrdenados();
-
+        outState.putParcelableArrayList("FILTEREDEVENTS", eventosEnFiltrosCombinados);
 
     }
 
@@ -319,11 +320,10 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
 
         builder.setSingleChoiceItems(array, 0, (dialogInterface, i) -> posi = i);
         // Set the action buttons
-        builder.setPositiveButton(APLICAR, (dialog, id) -> {
-            // User clicked OK, so save the selectedItems results somewhere
-            // or return them to the component that opened the dialog
-            presenter.onOrdenarClicked(posi);
-        });
+        builder.setPositiveButton(APLICAR, (dialog, id) -> presenter.onOrdenarClicked(posi));
+        // User clicked OK, so save the selectedItems results somewhere
+        // or return them to the component that opened the dialog
+
         builder.setNegativeButton(CANCELAR, (dialog, id) -> {
 
         });
@@ -349,7 +349,6 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
      * de eventos ascendentemente y descendentemente por el tipo de evento o por la hora de comienzo.
      */
     public void onOrdenarAlertDialog() {
-        SharedPreferences sharpref = getPreferences(Context.MODE_PRIVATE); // Sensitive
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = LayoutInflater.from(this).inflate(
@@ -365,53 +364,36 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         builder.setView(view);
         final AlertDialog ad = builder.create();
 
-        view.findViewById(R.id.btn_ordenar_ascendente).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                posi = 0;
-                btnTipoDescendente.setChecked(false);
-                btnHoraMasProxima.setChecked(false);
-                btnHoraMenosProxima.setChecked(false);
-            }
+        view.findViewById(R.id.btn_ordenar_ascendente).setOnClickListener(view0 -> {
+            posi = 0;
+            btnTipoDescendente.setChecked(false);
+            btnHoraMasProxima.setChecked(false);
+            btnHoraMenosProxima.setChecked(false);
         });
 
-        view.findViewById(R.id.btn_ordenar_descendente).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                posi = 1;
-                btnTipoAscendente.setChecked(false);
-                btnHoraMasProxima.setChecked(false);
-                btnHoraMenosProxima.setChecked(false);
-            }
+        view.findViewById(R.id.btn_ordenar_descendente).setOnClickListener(view1 -> {
+            posi = 1;
+            btnTipoAscendente.setChecked(false);
+            btnHoraMasProxima.setChecked(false);
+            btnHoraMenosProxima.setChecked(false);
         });
 
-        view.findViewById(R.id.btn_mas_proximas_primero).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                posi = 2;
-                btnTipoAscendente.setChecked(false);
-                btnTipoDescendente.setChecked(false);
-                btnHoraMenosProxima.setChecked(false);
-            }
+        view.findViewById(R.id.btn_mas_proximas_primero).setOnClickListener(view2 -> {
+            posi = 2;
+            btnTipoAscendente.setChecked(false);
+            btnTipoDescendente.setChecked(false);
+            btnHoraMenosProxima.setChecked(false);
         });
 
-        view.findViewById(R.id.btn_menos_proximas_primero).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                posi = 3;
-                btnTipoAscendente.setChecked(false);
-                btnTipoDescendente.setChecked(false);
-                btnHoraMasProxima.setChecked(false);
-            }
+        view.findViewById(R.id.btn_menos_proximas_primero).setOnClickListener(view3 -> {
+            posi = 3;
+            btnTipoAscendente.setChecked(false);
+            btnTipoDescendente.setChecked(false);
+            btnHoraMasProxima.setChecked(false);
         });
 
         // Caso en el que se pulsa el boton de cancelar
-        view.findViewById(R.id.ordenar_cancelar).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ad.dismiss();
-            }
-        });
+        view.findViewById(R.id.ordenar_cancelar).setOnClickListener(view4 -> ad.dismiss());
 
         // Caso en el que se pulsa el boton de aceptar
         view.findViewById(R.id.ordenar_aplicar);
@@ -576,8 +558,10 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         } else if (anhoInicio == anhoFin) {
             if(mesInicio < mesFin) {
                 return true;
-            }else if(mesInicio == mesFin && diaInicio <= diaFin) {
-                return true;
+            }else if(mesInicio == mesFin) {
+                if (diaInicio <= diaFin){
+                    return true;
+                }
             }
         }
         return false;
@@ -585,7 +569,6 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void onReloadFilteredDates() {
-
 
         SharedPreferences sharpref = getPreferences(Context.MODE_PRIVATE); // Sensitive
 
