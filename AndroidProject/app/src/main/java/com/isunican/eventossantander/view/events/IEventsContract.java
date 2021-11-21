@@ -23,6 +23,10 @@ public interface IEventsContract {
 
         List<Event> getCachedEventsOrdenados();
 
+        List<Event> getEventosEnDeterminadosFiltros();
+
+        List<Event> getEventosEnDeterminadasFechas();
+
         void setCachedEventsOrdenados(List<Event> events);
     }
 

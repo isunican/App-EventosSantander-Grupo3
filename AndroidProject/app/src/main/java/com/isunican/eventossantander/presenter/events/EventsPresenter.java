@@ -174,6 +174,12 @@ public class EventsPresenter implements IEventsContract.Presenter {
     public List<Event> getCachedEventsOrdenados() {
         return eventosEnFiltrosCombinados;
     }
+    public List<Event> getEventosEnDeterminadosFiltros() {
+        return eventosEnDeterminadosFiltros;
+    }
+    public List<Event> getEventosEnDeterminadasFechas() {
+        return eventosEnDeterminadasFechas;
+    }
 
     //SETTERS
     @Override
