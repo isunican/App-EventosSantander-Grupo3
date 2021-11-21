@@ -45,7 +45,7 @@ public class TodayEventsPresenter implements ITodayEventsContract.Presenter {
 
                 cachedEvents = data;
                 ordenFiltrado = 2;
-                datosHoy = eventosHoy();
+                datosHoy = eventosHoy(false);
                 cachedEvents = datosHoy;
 
 
@@ -135,8 +135,15 @@ public class TodayEventsPresenter implements ITodayEventsContract.Presenter {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
-    public List<Event> eventosHoy() {
+    public List<Event> eventosHoy(Boolean test) {
         List<Event> eventosHoy = new ArrayList<>();
+        LocalDate now;
+        if (!test) {
+            now = LocalDate.now();
+        }else {
+            now = LocalDate.ofYearDay(2021, 323);
+        }
+
         for (Event e : cachedEvents) {
             String[] date1 = e.getFecha().split(" ");
             String[] dateDefinitive = date1[1].split(",");
@@ -148,7 +155,7 @@ public class TodayEventsPresenter implements ITodayEventsContract.Presenter {
 
             LocalDate fechaEvento = LocalDate.of(anhoEvento, mesEvento, diaEvento);
 
-            if (fechaEvento.equals(LocalDate.now())) {
+            if (fechaEvento.equals(now)) {
                 eventosHoy.add(e);
             }
         }

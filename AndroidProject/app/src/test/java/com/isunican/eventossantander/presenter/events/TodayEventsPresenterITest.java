@@ -8,7 +8,6 @@ import com.isunican.eventossantander.model.Event;
 import com.isunican.eventossantander.model.EventsRepository;
 import com.isunican.eventossantander.presenter.today.TodayEventsPresenter;
 import com.isunican.eventossantander.view.events.IEventsContract;
-import com.isunican.eventossantander.view.today.ITodayEventsContract;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -22,7 +21,6 @@ import org.robolectric.annotation.Config;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Phaser;
 
@@ -56,7 +54,7 @@ public class TodayEventsPresenterITest {
     }
 
     /*
-     * Test del método onFiltrarClickedTest
+     * Test del método onEventosHoy
      * @author Sergio Pérez Landaburu
      */
     @Test
@@ -64,7 +62,7 @@ public class TodayEventsPresenterITest {
 
         sut = new TodayEventsPresenter(mockView);
         lock.arriveAndAwaitAdvance();
-        eventosHoyTest = sut.eventosHoy();
+        eventosHoyTest = sut.eventosHoy(true);
         cachedEventsEventosHoyTest = sut.getCachedEvents();
 
         ////////////////
@@ -114,7 +112,7 @@ public class TodayEventsPresenterITest {
         ////////////////
 
         cachedEventsEventosHoyTest.clear();
-        eventosHoyTest = sut.eventosHoy();
+        eventosHoyTest = sut.eventosHoy(false);
         eventosHoyTest.clear();
         assertEquals(0,cachedEventsEventosHoyTest.size());
         assertEquals(0,eventosHoyTest.size());
