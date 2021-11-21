@@ -483,4 +483,45 @@ public class EventsPresenterITest {
             assertTrue(true);
         }
     }
+
+    /*
+     * Test del método onReloadClicked()
+     * @author Sergio Pérez Landaburu
+     */
+    @Test
+    public void onReloadClicked() {
+
+        sut = new EventsPresenter(mockView);
+        lock.arriveAndAwaitAdvance();
+
+        //IT.2A: Comprueba que las listas quedan vacias despues de ejecutar el metodo, cuando contiene elementos
+        // Extraigo las listas
+        List<Event> listaCombinadosTest  = sut.getCachedEventsOrdenados();
+        List<Event> listaFiltrosTest = sut.getEventosEnDeterminadosFiltros();
+        List<Event> listaFechasTest = sut.getEventosEnDeterminadasFechas();
+        Event e= sut.getCachedEvents().get(1);
+        listaCombinadosTest.add(e);
+        listaFiltrosTest.add(e);
+        listaFechasTest.add(e);
+        assertEquals(1,listaCombinadosTest.size());
+        assertEquals(1,listaFiltrosTest.size());
+        assertEquals(1,listaFechasTest.size());
+        sut.onReloadClicked();
+        assertEquals(0,listaCombinadosTest.size());
+        assertEquals(0,listaFiltrosTest.size());
+        assertEquals(0,listaFechasTest.size());
+
+        //IT.2B: Comprueba que las listas quedan vacias despues de ejecutar el metodo, estando vacias
+        // Extraigo las listas
+        listaCombinadosTest  = sut.getCachedEventsOrdenados();
+        listaFiltrosTest = sut.getEventosEnDeterminadosFiltros();
+        listaFechasTest = sut.getEventosEnDeterminadasFechas();
+        assertEquals(0,listaCombinadosTest.size());
+        assertEquals(0,listaFiltrosTest.size());
+        assertEquals(0,listaFechasTest.size());
+        sut.onReloadClicked();
+        assertEquals(0,listaCombinadosTest.size());
+        assertEquals(0,listaFiltrosTest.size());
+        assertEquals(0,listaFechasTest.size());
+    }
 }
