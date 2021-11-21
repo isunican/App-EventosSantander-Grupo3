@@ -14,6 +14,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -167,7 +168,7 @@ public class TodayEventsActivity extends AppCompatActivity implements IEventsCon
         outState.putStringArrayList("TIPOSSLECCIONADOSPREVIO", tiposSeleccionadosPrevio);
 
         eventosEnFiltrosCombinados = (ArrayList<Event>) presenter.getCachedEventsOrdenados();
-        //outState.putParcelableArrayList("FILTEREDEVENTS", eventosEnFiltrosCombinados);
+        outState.putParcelableArrayList("FILTEREDEVENTS", eventosEnFiltrosCombinados);
     }
 
     @Override
