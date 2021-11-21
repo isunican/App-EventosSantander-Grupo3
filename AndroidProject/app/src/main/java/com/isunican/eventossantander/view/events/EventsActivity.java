@@ -393,7 +393,10 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         });
 
         // Caso en el que se pulsa el boton de cancelar
-        view.findViewById(R.id.ordenar_cancelar).setOnClickListener(view4 -> ad.dismiss());
+        view.findViewById(R.id.ordenar_cancelar).setOnClickListener(view4 -> {
+            posi = 0;
+            ad.dismiss();
+        });
 
         // Caso en el que se pulsa el boton de aceptar
         view.findViewById(R.id.ordenar_aplicar);
@@ -403,6 +406,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
             @Override
             public void onClick(View view) {
                 presenter.onOrdenarClicked(posi);
+                posi = 0;
                 // Se cierra el Alert Dialog
                 ad.dismiss();
             }
