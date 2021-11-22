@@ -11,10 +11,10 @@ package com.isunican.eventossantander.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
-
 public class Event implements Parcelable {
-
     @SerializedName(value = "dc:identifier") private int identificador;
     @SerializedName(value = "dc:name") private String nombre;
     @SerializedName(value = "ayto:alt-name") private String nombreAlternativo;
@@ -32,7 +32,6 @@ public class Event implements Parcelable {
      * Constructor, getters y setters
      */
     public Event(int identificador, String nombre, String nombreAlternativo, String categoria, String descripcion, String descripcionAlternativa, String fecha, double longitud, double latitud, String enlace, String enlaceAlternativo, String imagen){
-
         this.identificador = identificador;
         this.nombre = nombre;
         this.nombreAlternativo = nombreAlternativo;
@@ -107,9 +106,10 @@ public class Event implements Parcelable {
      * Redefine el método toString para obtener los datos
      * de una Evento en formato texto
      *
-     * @param
+     *
      * @return String
      */
+    @NonNull
     @Override
     public String toString(){
         String textoEvento = "";
@@ -178,7 +178,7 @@ public class Event implements Parcelable {
     }
 
     @SuppressWarnings("unused")
-    public static final Creator<Event> CREATOR = new Creator<Event>() {
+    public static final Creator<Event> CREATOR = new Creator<>() {
         @Override
         public Event createFromParcel(Parcel in) {
             return new Event(in);
