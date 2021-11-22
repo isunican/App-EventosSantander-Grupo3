@@ -100,8 +100,6 @@ public class FiltrarEventosPorFechaUITest {
          */
 
         onView(withId(R.id.menu_filter_date)).perform(click()); // Se selecciona el botón de filtrar
-        onView(withId(R.id.filtrar_fecha_inicio_texto)).check(matches(withText("")));
-        onView(withId(R.id.filtrar_fecha_fin_texto)).check(matches(withText("")));
         onView(withId(R.id.filtrar_fecha_inicio_texto)).perform(click());
         onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2017, 6, 30));
         onView(withText("OK")).perform(click());
@@ -118,8 +116,6 @@ public class FiltrarEventosPorFechaUITest {
          */
 
         onView(withId(R.id.menu_filter_date)).perform(click()); // Se selecciona el botón de filtrar
-        onView(withId(R.id.filtrar_fecha_inicio_texto)).check(matches(withText("")));
-        onView(withId(R.id.filtrar_fecha_fin_texto)).check(matches(withText("")));
         onView(withId(R.id.filtrar_fecha_fin_texto)).perform(click());
         onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2017, 6, 30));
         onView(withText("OK")).perform(click());
@@ -136,8 +132,6 @@ public class FiltrarEventosPorFechaUITest {
     */
 
         onView(withId(R.id.menu_filter_date)).perform(click()); // Se selecciona el botón de filtrar
-        onView(withId(R.id.filtrar_fecha_inicio_texto)).check(matches(withText("")));
-        onView(withId(R.id.filtrar_fecha_fin_texto)).check(matches(withText("")));
         onView(withId(R.id.filtrar_fecha_inicio_texto)).perform(click());
         onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(1920, 6, 30));
         onView(withText("OK")).perform(click());
@@ -164,8 +158,6 @@ public class FiltrarEventosPorFechaUITest {
         onView(withId(R.id.menu_refresh)).perform(click());
         onView(withId(R.id.menu_filter_date)).perform(click()); // Se selecciona el botón de filtrar
 
-        onView(withId(R.id.filtrar_fecha_inicio_texto)).check(matches(withText("")));
-        onView(withId(R.id.filtrar_fecha_fin_texto)).check(matches(withText("")));
         onView(withId(R.id.filtrar_fecha_inicio_texto)).perform(click());
         onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2021, 8, 2));
         onView(withText("OK")).perform(click());
@@ -189,8 +181,6 @@ public class FiltrarEventosPorFechaUITest {
          */
         onView(withId(R.id.menu_refresh)).perform(click());
         onView(withId(R.id.menu_filter_date)).perform(click()); // Se selecciona el botón de filtrar
-        onView(withId(R.id.filtrar_fecha_inicio_texto)).check(matches(withText("")));
-        onView(withId(R.id.filtrar_fecha_fin_texto)).check(matches(withText("")));
         onView(withId(R.id.filtrar_fecha_inicio_texto)).perform(click());
         onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2021, 8, 2));
         onView(withText("OK")).perform(click());

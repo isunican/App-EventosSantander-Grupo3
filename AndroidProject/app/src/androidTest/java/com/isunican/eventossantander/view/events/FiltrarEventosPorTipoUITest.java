@@ -17,7 +17,6 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
 import com.isunican.eventossantander.R;
 import com.isunican.eventossantander.model.EventsRepository;
-import com.isunican.eventossantander.view.events.EventsActivity;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -48,7 +47,7 @@ public class FiltrarEventosPorTipoUITest {
 
     @Rule
     public ActivityScenarioRule<EventsActivity> activityRule =
-            new ActivityScenarioRule(EventsActivity.class);
+            new ActivityScenarioRule<>(EventsActivity.class);
 
 
     @Test
