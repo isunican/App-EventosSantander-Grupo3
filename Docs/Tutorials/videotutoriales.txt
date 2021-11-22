@@ -3,3 +3,8 @@ US434997-OrdenarEventoPorTipo:  	https://1drv.ms/v/s!ArX_q-9W1YnYgqQvHXAwflIxWEL
 US434997-OrdenarSobreListaFiltrada:	https://1drv.ms/v/s!Aju6n1CcW_5chvs3Dllu1_kwwb0kNw
 US437801-MantenerEstadoDeFiltros:	https://1drv.ms/v/s!Aju6n1CcW_5chvs2V4p49eejySLxtw
 US435132-FiltrarPorFecha:		https://1drv.ms/v/s!Aju6n1CcW_5chvs4YW1H6itNS6FAaA
+US439707-OrdenarAscendentePorDefecto	https://unicancloud-my.sharepoint.com/:v:/g/personal/agc819_alumnos_unican_es/ETUwwykX9FdHq9R1Pu7-XPIBlIrhDmexeSRCeW7xr3-llw?e=biVXSI
+US439697-ConservarListaAlGirar		https://unicancloud-my.sharepoint.com/:v:/g/personal/agc819_alumnos_unican_es/EQYwqnnAhUFNu9OFAInwPS4BEkpyeJ_mqFhdD_bNkX2ctg?e=LRX7rA
+US438733-BotonDeHoy			https://unicancloud-my.sharepoint.com/:v:/g/personal/agc819_alumnos_unican_es/EciIwhGN-9RHhsfLDjyQZwsByZqWdfjgBLfuLzJM_UkFLA?e=ZQBHVX
+US437802-AnhadirIconosDeTipo		https://unicancloud-my.sharepoint.com/:v:/g/personal/agc819_alumnos_unican_es/EfSg1V7DY1FIsdiySQa1n6QB_oKHciO6Hn-791pL5LGf3A?e=UTPEyD
+US434996-OrdenarPorHoraDeComienzo	https://unicancloud-my.sharepoint.com/:v:/g/personal/agc819_alumnos_unican_es/EaaTgzLQ78FAjCOLClUG4hsBO--2UeUCA8lltgB-OyNBbQ?e=QgWuEY
