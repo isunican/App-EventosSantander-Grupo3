@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface IEventsContract {
 
-    public interface Presenter {
+    interface Presenter {
 
         void onEventClicked(int eventIndex);
 
@@ -15,7 +15,7 @@ public interface IEventsContract {
 
         void onInfoClicked();
 
-        void onOrdenarCategoriaClicked(int tipoOrdenacion);
+        void onOrdenarClicked(int tipoOrdenacion);
 
         void onFiltrarClicked(List<String> checkboxSeleccionados);
 
@@ -23,10 +23,14 @@ public interface IEventsContract {
 
         List<Event> getCachedEventsOrdenados();
 
+        List<Event> getEventosEnDeterminadosFiltros();
+
+        List<Event> getEventosEnDeterminadasFechas();
+
         void setCachedEventsOrdenados(List<Event> events);
     }
 
-    public interface View {
+    interface View {
 
         void onEventsLoaded(List<Event> events);
 

@@ -1,26 +1,20 @@
 package com.isunican.eventossantander.presenter.events;
 
-
 import android.annotation.SuppressLint;
 import android.os.Build;
-import android.os.Bundle;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
 import com.isunican.eventossantander.model.Event;
 import com.isunican.eventossantander.model.EventsRepository;
-import com.isunican.eventossantander.model.comparators.EventsComparatorCategoria;
+import com.isunican.eventossantander.presenter.common.CommonPresenter;
 import com.isunican.eventossantander.view.Listener;
 import com.isunican.eventossantander.view.events.IEventsContract;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Calendar;
-import java.util.Collections;
-
 import java.util.ArrayList;
-
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -29,30 +23,10 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
     private final IEventsContract.View view;
     private List<Event> cachedEvents;
-    private List<Event> filteredEvents;
     private List<Event> eventosEnDeterminadasFechas;
     private List<Event> eventosEnDeterminadosFiltros;
     private List<Event> eventosEnFiltrosCombinados;
     private int ordenFiltrado;
-    
-    public List<Event> getEventosEnDeterminadasFechas() {
-        return eventosEnDeterminadasFechas;
-    }
-    public List<Event> getEventosEnDeterminadosFiltros() {
-        return eventosEnDeterminadosFiltros;
-    }
-
-    public void setEventosEnDeterminadosFiltros(List<Event> list) {
-         eventosEnDeterminadosFiltros = list;
-    }
-
-    public void setEventosEnDeterminadasFechas(List<Event> list) {
-        eventosEnDeterminadasFechas = list;
-    }
-
-    public void setFilteredEvents(List<Event> list){
-        filteredEvents = list;
-    }
 
     public EventsPresenter(IEventsContract.View view) {
         this.view = view;
@@ -63,10 +37,9 @@ public class EventsPresenter implements IEventsContract.Presenter {
     }
 
     private void loadData() {
-        EventsRepository.getEvents(new Listener<List<Event>>() {
+        EventsRepository.getEvents(new Listener<>() {
             @Override
             public void onSuccess(List<Event> data) {
-
 
                 cachedEvents = data;
                 ordenFiltrado = 2;
@@ -90,75 +63,33 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
     @Override
     public void onEventClicked(int eventIndex) {
-        if (eventIndex >= cachedEvents.size() || eventIndex < 0) {
-            throw new IndexOutOfBoundsException();
-        }
-        if (eventIndex < cachedEvents.size()) {
-            Event event = cachedEvents.get(eventIndex);
-            view.openEventDetails(event);
-        }
+        CommonPresenter.onEventClicked(eventIndex, cachedEvents, view);
     }
 
     @Override
     public void onReloadClicked() {
+            eventosEnDeterminadosFiltros.clear();
+            eventosEnDeterminadasFechas.clear();
+            eventosEnFiltrosCombinados.clear();
         loadData();
     }
 
     @Override
     public void onInfoClicked() {
-        view.openInfoView();
+        CommonPresenter.onInfoClicked(view);
     }
 
     @Override
-    public void onOrdenarCategoriaClicked(int tipoOrdenacion) {
-
+    public void onOrdenarClicked(int tipoOrdenacion) {
         ordenFiltrado = tipoOrdenacion;
-
-        if (tipoOrdenacion == 0) { //ascendente
-            EventsComparatorCategoria ecc = new EventsComparatorCategoria();
-            if (eventosEnFiltrosCombinados.isEmpty()) {
-                Collections.sort(cachedEvents,ecc);
-                eventosEnFiltrosCombinados = cachedEvents;
-            } else {
-                Collections.sort(eventosEnFiltrosCombinados,ecc);
-            }
-        } else if (tipoOrdenacion == 1) { //descendente
-            EventsComparatorCategoria ecc = new EventsComparatorCategoria();
-            if (eventosEnFiltrosCombinados.isEmpty()) {
-                java.util.Collections.sort(cachedEvents,ecc);
-                Collections.reverse(cachedEvents);
-                eventosEnFiltrosCombinados = cachedEvents;
-            } else {
-                java.util.Collections.sort(eventosEnFiltrosCombinados, ecc);
-                Collections.reverse(eventosEnFiltrosCombinados);
-            }
-        }
+        eventosEnFiltrosCombinados = CommonPresenter.onOrdenarClicked(tipoOrdenacion, eventosEnFiltrosCombinados, cachedEvents);
         view.onEventsLoaded(eventosEnFiltrosCombinados);
     }
 
     @Override
     public void onFiltrarClicked(List<String> checkboxSeleccionados) {
-
-        filteredEvents = new ArrayList<>();
-
-        for (Event e : cachedEvents) {
-            for (String tipo : checkboxSeleccionados) {
-                if (e.getCategoria().equals(tipo)) {
-                    filteredEvents.add(e);
-                }
-            }
-        }
-        if (filteredEvents.isEmpty()) {
-            eventosEnDeterminadosFiltros = cachedEvents;
-        } else {
-            eventosEnDeterminadosFiltros = filteredEvents;
-        }
-        combinaFiltros();
-
-        if(ordenFiltrado != 2) {
-            onOrdenarCategoriaClicked(ordenFiltrado);
-        }
-
+        eventosEnFiltrosCombinados = CommonPresenter.onFiltrarClicked(checkboxSeleccionados, cachedEvents,
+                ordenFiltrado, eventosEnDeterminadasFechas);
         view.onEventsLoaded(eventosEnFiltrosCombinados);
         view.onLoadSuccess(eventosEnFiltrosCombinados.size());
     }
@@ -166,10 +97,9 @@ public class EventsPresenter implements IEventsContract.Presenter {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onFiltrarDate(LocalDate fechaIni, LocalDate fechaFin) {
-
         LocalDate fechaEvento;
 
-        filteredEvents = new ArrayList<>();
+        List<Event> filteredEvents = new ArrayList<>();
 
         for (Event e : cachedEvents) {
             String[] date1 = e.getFecha().split(" ");
@@ -197,25 +127,6 @@ public class EventsPresenter implements IEventsContract.Presenter {
         view.onEventsLoaded(eventosEnFiltrosCombinados);
     }
 
-
-    public List<Event> getFilteredEvents() {
-        return eventosEnFiltrosCombinados;
-    }
-
-    public List<Event> getCachedEvents() {
-        return cachedEvents;
-    }
-
-    @Override
-    public List<Event> getCachedEventsOrdenados() {
-        return eventosEnFiltrosCombinados;
-    }
-
-    @Override
-    public void setCachedEventsOrdenados(List<Event> events) {
-        eventosEnFiltrosCombinados = events;
-    }
-
     public void combinaFiltros() {
         if (eventosEnDeterminadasFechas == null || eventosEnDeterminadosFiltros == null) {
             throw new NullPointerException();
@@ -238,6 +149,7 @@ public class EventsPresenter implements IEventsContract.Presenter {
         }
     }
 
+    //Metodo para los test, si da tiempo se quita
     public static Date obtenerFechaActual(String zonaHoraria) {
         String formato = "yyyy-MM-dd";
         return obtenerFechaConFormato(formato, zonaHoraria);
@@ -250,7 +162,36 @@ public class EventsPresenter implements IEventsContract.Presenter {
         SimpleDateFormat sdf;
         sdf = new SimpleDateFormat(formato);
         sdf.setTimeZone(TimeZone.getTimeZone(zonaHoraria));
-        //return sdf.format(date);
         return date;
     }
+
+    // GETTERS
+    public List<Event> getCachedEvents() {
+        return cachedEvents;
+    }
+
+    @Override
+    public List<Event> getCachedEventsOrdenados() {
+        return eventosEnFiltrosCombinados;
+    }
+    public List<Event> getEventosEnDeterminadosFiltros() {
+        return eventosEnDeterminadosFiltros;
+    }
+    public List<Event> getEventosEnDeterminadasFechas() {
+        return eventosEnDeterminadasFechas;
+    }
+
+    //SETTERS
+    @Override
+    public void setCachedEventsOrdenados(List<Event> events) {
+        eventosEnFiltrosCombinados = events;
+    }
+    public void setEventosEnDeterminadosFiltros(List<Event> list) {
+        eventosEnDeterminadosFiltros = list;
+    }
+
+    public void setEventosEnDeterminadasFechas(List<Event> list) {
+        eventosEnDeterminadasFechas = list;
+    }
+
 }
