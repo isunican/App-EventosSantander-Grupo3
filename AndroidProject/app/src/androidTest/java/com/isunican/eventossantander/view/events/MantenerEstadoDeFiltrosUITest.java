@@ -46,8 +46,8 @@ public class MantenerEstadoDeFiltrosUITest {
     }
 
     @Rule
-    public ActivityScenarioRule activityRule =
-            new ActivityScenarioRule(EventsActivity.class);
+    public ActivityScenarioRule<EventsActivity> activityRule =
+            new ActivityScenarioRule<>(EventsActivity.class);
 
     @Test
     public void filtrarEventosPorTipo(){
