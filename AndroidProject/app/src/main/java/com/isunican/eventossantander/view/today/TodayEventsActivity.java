@@ -356,6 +356,7 @@ public class TodayEventsActivity extends AppCompatActivity implements IEventsCon
         view.findViewById(R.id.ordenar_aplicar);
         view.setOnClickListener(view5 -> {
             presenter.onOrdenarClicked(posi);
+            posi = 0;
             // Se cierra el Alert Dialog
             ad.dismiss();
         });
