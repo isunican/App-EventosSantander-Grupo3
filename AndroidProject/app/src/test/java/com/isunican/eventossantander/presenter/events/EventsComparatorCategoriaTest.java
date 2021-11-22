@@ -5,24 +5,21 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import com.isunican.eventossantander.model.Event;
-import com.isunican.eventossantander.model.comparators.EventsComparatorHora;
+import com.isunican.eventossantander.model.comparators.EventsComparatorCategoria;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
-public class EventsComparatorHoraTest {
+public class EventsComparatorCategoriaTest {
 
     // Creación del sut
-    private EventsComparatorHora sut;
+    private EventsComparatorCategoria sut;
 
     @Before
     public void setUp() {
-        sut = new EventsComparatorHora();
-
+        sut = new EventsComparatorCategoria();
     }
+
 
     /*
      * Test del método compare
@@ -33,21 +30,21 @@ public class EventsComparatorHoraTest {
 
         int result;
         Event e1 = new Event();
-        e1.setFecha("Lunes 02/08/2021, a las 0:00h. ");
+        e1.setCategoria("Online");
         Event e2 = new Event();
-        e2.setFecha("Domingo 01/08/2021, de 10:30 a 12:30h. ");
+        e2.setCategoria("Arquitectura");
         Event e3 = new Event();
-        e3.setFecha("Lunes 02/08/2021, a las 0:00h. ");
+        e3.setCategoria("Online");
 
-        //IT.2A Fecha evento1 superior a Fecha evento2
+        //IT.2A Categoria evento1 superior a Categoria evento2
         result = sut.compare(e1, e2);
         assertTrue(result > 0);
 
-        //IT.2B Fecha evento2 inferior a Fecha evento1
+        //IT.2B Categoria evento2 inferior a Categoria evento1
         result = sut.compare(e2, e1);
         assertTrue(result < 0);
 
-        //IT.2C Fechas de eventos iguales
+        //IT.2C Categorias de eventos iguales
         result = sut.compare(e1, e3);
         assertEquals(0,  result);
 
@@ -63,22 +60,5 @@ public class EventsComparatorHoraTest {
             sut.compare(e1, null);
             fail("No se ha lanzado la excepción NullPointerException");
         }catch (NullPointerException e){}
-    }
-
-    /*
-     * Test del método cortarHoraDeComienzo(String fecha)
-     * @author Sergio Gallego Álvarez
-     */
-    @Test
-    public void onCortarHoraDeComienzoTest() {
-
-        //IT.1A fecha = null
-        assertEquals("23:59", sut.cortarHoraDeComienzo(null));
-
-        //IT.1B fecha sin hora
-        assertEquals("00:00", sut.cortarHoraDeComienzo("Jueves 18/11/2021"));
-
-        //IT.1C fecha con hora
-        assertEquals("10:00", sut.cortarHoraDeComienzo("Jueves 18/11/2021, de 10:00 a 13:00h."));
     }
 }

@@ -1,16 +1,13 @@
 package com.isunican.eventossantander.presenter.common;
 
-import android.os.Build;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 
 import com.isunican.eventossantander.model.Event;
 import com.isunican.eventossantander.model.comparators.EventsComparatorCategoria;
 import com.isunican.eventossantander.model.comparators.EventsComparatorHora;
 import com.isunican.eventossantander.view.events.IEventsContract;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -134,8 +131,4 @@ public abstract class CommonPresenter implements IEventsContract.Presenter {
 
         return eventosEnFiltrosCombinados;
     }
-
-
-
-
 }

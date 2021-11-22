@@ -68,9 +68,9 @@ public class EventsPresenter implements IEventsContract.Presenter {
 
     @Override
     public void onReloadClicked() {
-        eventosEnDeterminadosFiltros.clear();
-        eventosEnDeterminadasFechas.clear();
-        eventosEnFiltrosCombinados.clear();
+            eventosEnDeterminadosFiltros.clear();
+            eventosEnDeterminadasFechas.clear();
+            eventosEnFiltrosCombinados.clear();
         loadData();
     }
 
@@ -173,6 +173,12 @@ public class EventsPresenter implements IEventsContract.Presenter {
     @Override
     public List<Event> getCachedEventsOrdenados() {
         return eventosEnFiltrosCombinados;
+    }
+    public List<Event> getEventosEnDeterminadosFiltros() {
+        return eventosEnDeterminadosFiltros;
+    }
+    public List<Event> getEventosEnDeterminadasFechas() {
+        return eventosEnDeterminadasFechas;
     }
 
     //SETTERS

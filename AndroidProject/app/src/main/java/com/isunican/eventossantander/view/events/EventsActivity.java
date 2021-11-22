@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -124,7 +125,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 
-    
+
 
     @Override
     public void onLoadSuccess(int elementsLoaded) {
@@ -174,7 +175,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         outState.putStringArrayList("TIPOSSLECCIONADOSPREVIO", tiposSeleccionadosPrevio);
 
         eventosEnFiltrosCombinados = (ArrayList<Event>) presenter.getCachedEventsOrdenados();
-
+        outState.putParcelableArrayList("FILTEREDEVENTS", eventosEnFiltrosCombinados);
 
     }
 
@@ -320,8 +321,8 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         builder.setSingleChoiceItems(array, 0, (dialogInterface, i) -> posi = i);
         // Set the action buttons
         builder.setPositiveButton(APLICAR, (dialog, id) -> presenter.onOrdenarClicked(posi));
-            // User clicked OK, so save the selectedItems results somewhere
-            // or return them to the component that opened the dialog
+        // User clicked OK, so save the selectedItems results somewhere
+        // or return them to the component that opened the dialog
 
         builder.setNegativeButton(CANCELAR, (dialog, id) -> {
 
@@ -392,7 +393,10 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
         });
 
         // Caso en el que se pulsa el boton de cancelar
-        view.findViewById(R.id.ordenar_cancelar).setOnClickListener(view4 -> ad.dismiss());
+        view.findViewById(R.id.ordenar_cancelar).setOnClickListener(view4 -> {
+            posi = 0;
+            ad.dismiss();
+        });
 
         // Caso en el que se pulsa el boton de aceptar
         view.findViewById(R.id.ordenar_aplicar);
@@ -402,6 +406,7 @@ public class EventsActivity extends AppCompatActivity implements IEventsContract
             @Override
             public void onClick(View view) {
                 presenter.onOrdenarClicked(posi);
+                posi = 0;
                 // Se cierra el Alert Dialog
                 ad.dismiss();
             }

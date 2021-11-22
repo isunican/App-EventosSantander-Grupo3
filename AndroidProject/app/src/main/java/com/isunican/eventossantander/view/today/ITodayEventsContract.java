@@ -21,25 +21,11 @@ public interface ITodayEventsContract {
 
         void onFiltrarDate(LocalDate fechaIni, LocalDate fechaFin);
 
-        List<Event>eventosHoy();
+        List<Event>eventosHoy(Boolean test);
 
         List<Event> getCachedEventsOrdenados();
 
         void setCachedEventsOrdenados(List<Event> events);
     }
 
-    interface View {
-
-        void onEventsLoaded(List<Event> events);
-
-        void onLoadError();
-
-        void onLoadSuccess(int elementsLoaded);
-
-        void onLoadNoEventsInDate();
-
-        void openEventDetails(Event event);
-
-        void openInfoView();
-    }
 }
