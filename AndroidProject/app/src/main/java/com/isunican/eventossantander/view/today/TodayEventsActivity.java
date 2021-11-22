@@ -14,6 +14,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -320,65 +321,44 @@ public class TodayEventsActivity extends AppCompatActivity implements IEventsCon
         builder.setView(view);
         final AlertDialog ad = builder.create();
 
-        view.findViewById(R.id.btn_ordenar_ascendente).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                posi = 0;
-                btnTipoDescendente.setChecked(false);
-                btnHoraMasProxima.setChecked(false);
-                btnHoraMenosProxima.setChecked(false);
-            }
+        view.findViewById(R.id.btn_ordenar_ascendente).setOnClickListener(view0 -> {
+            posi = 0;
+            btnTipoDescendente.setChecked(false);
+            btnHoraMasProxima.setChecked(false);
+            btnHoraMenosProxima.setChecked(false);
         });
 
-        view.findViewById(R.id.btn_ordenar_descendente).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                posi = 1;
-                btnTipoAscendente.setChecked(false);
-                btnHoraMasProxima.setChecked(false);
-                btnHoraMenosProxima.setChecked(false);
-            }
+        view.findViewById(R.id.btn_ordenar_descendente).setOnClickListener(view1 -> {
+            posi = 1;
+            btnTipoAscendente.setChecked(false);
+            btnHoraMasProxima.setChecked(false);
+            btnHoraMenosProxima.setChecked(false);
         });
 
-        view.findViewById(R.id.btn_mas_proximas_primero).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                posi = 2;
-                btnTipoAscendente.setChecked(false);
-                btnTipoDescendente.setChecked(false);
-                btnHoraMenosProxima.setChecked(false);
-            }
+        view.findViewById(R.id.btn_mas_proximas_primero).setOnClickListener(view2 -> {
+            posi = 2;
+            btnTipoAscendente.setChecked(false);
+            btnTipoDescendente.setChecked(false);
+            btnHoraMenosProxima.setChecked(false);
         });
 
-        view.findViewById(R.id.btn_menos_proximas_primero).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                posi = 3;
-                btnTipoAscendente.setChecked(false);
-                btnTipoDescendente.setChecked(false);
-                btnHoraMasProxima.setChecked(false);
-            }
+        view.findViewById(R.id.btn_menos_proximas_primero).setOnClickListener(view3 -> {
+            posi = 3;
+            btnTipoAscendente.setChecked(false);
+            btnTipoDescendente.setChecked(false);
+            btnHoraMasProxima.setChecked(false);
         });
 
         // Caso en el que se pulsa el boton de cancelar
-        view.findViewById(R.id.ordenar_cancelar).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ad.dismiss();
-            }
-        });
+        view.findViewById(R.id.ordenar_cancelar).setOnClickListener(view4 -> ad.dismiss());
 
         // Caso en el que se pulsa el boton de aceptar
         view.findViewById(R.id.ordenar_aplicar);
-        view.setOnClickListener(new View.OnClickListener() {
-
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onClick(View view) {
-                presenter.onOrdenarClicked(posi);
-                // Se cierra el Alert Dialog
-                ad.dismiss();
-            }
+        view.setOnClickListener(view5 -> {
+            presenter.onOrdenarClicked(posi);
+            posi = 0;
+            // Se cierra el Alert Dialog
+            ad.dismiss();
         });
         ad.show();
         btnTipoAscendente.setChecked(true);
